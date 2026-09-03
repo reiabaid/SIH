@@ -85,3 +85,17 @@ def test_corner_ordering_produces_a_valid_non_self_intersecting_polygon():
     poly = _corners_to_polygon(a)
     assert poly.is_valid
     assert poly.area == pytest.approx(1.0)
+
+
+def test_footprint_overlap_at_the_actual_target_area():
+    """Real search box (2026-09-03 update): the CH2/LRO target moved from the
+    Chandrayaan-3 landing site to lat -74.4..-73.1, lon 42.4..44.0E, where
+    Mehak's two actual downloads sit. footprint_overlap doesn't convert to
+    metres, so high-latitude longitude compression doesn't change the answer
+    -- but this wasn't tested at real, non-equatorial coordinates before.
+    """
+    a = _square_product(-74.4, -73.1, 42.4, 44.0, pid="ch2_actual")
+    b = _square_product(-74.0, -72.7, 42.4, 44.0, pid="lro_actual")  # shifted +0.4 deg lat
+    # lon range is identical for both, so it cancels: fraction = lat-overlap / lat-range-of-a
+    expected = 0.9 / 1.3
+    assert footprint_overlap(a, b) == pytest.approx(expected)
