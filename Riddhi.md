@@ -448,3 +448,278 @@ demo around it.
 venue wifi is assumed absent per the team's own planning note); if time
 allows, prioritize LunarPhoto over StereoGeo since it needs zero extra
 engineering to use.
+
+---
+
+**2026-09-04 — scope update.** The "Who Builds What" doc was quietly
+updated (missed on first read — a keyword grep for "Riddhi" skipped past
+the actual task list) with two new deliverables: `src/sweep.py` (the
+illumination-robustness sweep plot — success rate vs sun-azimuth
+difference, second line vs sun-elevation difference) and `src/cnet.py`
+(ISIS control network writer). The MoonAnything survey above is no longer
+listed as an official deliverable in that doc, though it doesn't hurt to
+have it. Of the two new items, only `sweep.py` depends on anyone else's
+work (Manya's `src/render.py` + SLDEM2015 elevation model, neither built
+yet) — `cnet.py` is fully independent, same as everything else in this
+lane. Starting with `cnet.py` first for that reason.
+
+## Phase 7 — `src/cnet.py` (ISIS control network writer) ✅ done
+
+**File:** [`src/cnet.py`](src/cnet.py)
+**Test:** [`tests/test_cnet.py`](tests/test_cnet.py) — 23/23 passing
+
+**What it does:** writes a `MatchResult` out as a PVL-format ISIS control
+network — the file format ISRO's existing photogrammetry pipeline reads.
+Every match becomes one `ControlPoint` with two `ControlMeasure`s (one per
+image); outliers are kept by default with `Ignore = True` (not silently
+dropped) rather than filtered out, since that's the documented meaning of
+that flag; pass `inliers_only=True` to drop them instead.
+
+**Format verified before writing a line of code**, not assumed: fetched
+USGS's public PVL Control Network spec
+(isis.astrogeology.usgs.gov/.../ControlNetworks) for the real keyword set,
+then — since ISIS itself isn't installable here and isn't needed to be
+(the deliverable is explicitly scoped to "write the file format") —
+installed the independent `pvl` library (same one real planetary-science
+Python tooling uses to read ISIS labels) and round-tripped a draft through
+it before committing to the design. That caught two real things before
+they became bugs discovered later:
+- **PVL has no backslash-escape for an embedded double quote inside a
+  quoted string.** My first draft tried `\"` and the parser rejected it
+  outright as invalid syntax. Fixed by swapping an embedded `"` for `'`
+  instead of trying to escape it — there's no valid way to represent a
+  literal double quote in this grammar.
+- **`pvl` auto-parses ISO-8601-looking bare values into real
+  `datetime.datetime` objects**, not strings. Not a bug — confirms
+  `Created`/`DateTime` are being written as proper PVL date-time literals,
+  matching what a real ISIS label does. My first test asserted string
+  equality and had to be corrected to compare parsed datetimes instead.
+
+**A deliberate scope decision, not an oversight:** every `ControlPoint` is
+written as `Free` (a tie point whose ground position is solved for later by
+whichever bundle-adjustment tool runs on it) with no `AprioriXYZ`. We only
+have pixel correspondences, not a triangulated 3D ground position — writing
+fabricated XYZ values would be worse than omitting them, and `Free` is
+documented as exactly the correct type for "you only have image measures."
+
+**Tests, verified independently rather than by re-reading our own output:**
+- **basic structure** — 2 points (one inlier, one outlier), parsed by
+  `pvl`, checking every field: `NetworkId`/`TargetName`/`Version` at the
+  network level, `PointId`/`PointType` per point, `SerialNumber`/`Sample`/
+  `Line`/`Ignore`/`GoodnessOfFit` per measure — including that the outlier
+  point's `Ignore` comes back `True` and the inlier's `False`
+- **empty match result** — a valid network with zero `ControlPoint`
+  children, still parses; `getall("ControlPoint")` correctly raises
+  `KeyError` (by that method's own documented design) rather than
+  returning an empty list
+- **single point**, and **all-outliers kept vs `inliers_only=True` drops
+  them entirely** — both counted explicitly
+- **structural balance** — exact counts of `Object =`/`End_Object` and
+  `Group = ControlMeasure`/`End_Group` for a 10-point network, on top of
+  the parser already implicitly requiring balance to parse at all
+- **unique, sequential PointIds** across 12 points
+- **special characters in a product ID** (space, `#`, and the embedded
+  double-quote that found the escaping bug above) — parses and the value
+  survives intact
+- **fixed 6-decimal precision** on Sample/Line — checked both the raw
+  string (no float64 repr noise) and the parsed-back value
+- **`created_utc` injectable** for determinism, and **defaults sanely**
+  when omitted
+- **`_serial_number`** — includes `acquired_utc` when the Product has one,
+  omits it when `None`
+- **file-based round trip** — `write_control_network` writes to disk, then
+  `pvl.load()` (not `pvl.loads()` on a string) reads it back, mirroring
+  Phase 5's Pillow check: verify with a tool independent of the one that
+  wrote it
+- **`_pvl_value` unit tests** for every Python type it formats, including
+  the quote-escaping fix
+
+**Dependency added:** `pvl`, added to `requirements.txt` (test-only, same
+as `pillow`).
+
+**Second round, after a further review pass — a real bug caught, plus three
+design decisions made explicit instead of left implicit:**
+- **realistic mixed ratio** — 10 matches, 7 inliers, 3 outliers (not just
+  the all-or-nothing cases from the first round) — confirms all 10 are
+  kept as `ControlPoint`s with exactly the right 7 `False`/3 `True`
+  `Ignore` flags
+- **duplicate correspondences** — the same `(pts_a[i], pts_b[i])` pair
+  appearing twice is written as two separate `ControlPoint`s, not merged
+  or deduplicated. Documented as deliberate: this function transcribes
+  `MatchResult` faithfully; deduplication, if ever needed, is
+  `match.py`/RANSAC's job upstream, not the writer's
+- **non-finite coordinates (`NaN`/`inf`/`-inf`) now raise `ValueError`
+  — a real gap, not just an added test.** `pvl` itself happily parses
+  `Sample = nan` back into a real Python float, so the file format alone
+  wouldn't have caught a bad coordinate reaching this writer; without the
+  new validation it would have silently produced a file that's
+  syntactically valid PVL but semantically meaningless to any real
+  bundle-adjustment tool. Added an explicit `np.isfinite` check, tested
+  for all three non-finite cases, plus confirmed a `NaN` in a match that
+  `inliers_only=True` filters out doesn't block the ones actually being
+  written, and that ordinary finite-but-out-of-bounds coordinates
+  (negative, past the image edge — legitimate near-edge sub-pixel results,
+  same as `scripts/report.py`'s equivalent case) still pass through
+  unchanged
+- **"multiple image pairs" is an explicit scope boundary, not an
+  oversight** — `MatchResult` is frozen to exactly one image pair in
+  `types.py`; a true multi-image control network needs to know which
+  points across *different* pairs represent the same ground feature,
+  information independent pairwise `MatchResult`s don't carry. Documented
+  in the function's own docstring rather than left to be discovered later,
+  and added a test confirming two separate per-pair calls don't leak state
+  into each other (`PointId` numbering restarts, serial numbers don't
+  cross-contaminate) — the one thing actually worth guaranteeing given
+  that boundary.
+
+**Not yet done at the time:** Phase 8, `src/sweep.py`.
+
+---
+
+**2026-09-04 — Manya's render.py landed.** Checked before starting: it's on
+`origin/main` (merged from her `origin/Manya` branch), not yet in this
+branch. Pulled in with a deliberately narrow scope:
+- **`src/render.py` copied in as a clean new file** (`load_dem_patch`,
+  `render_hillshade`, `sun_direction`, `compute_surface_normals`) — no
+  ownership conflict, nobody else was touching it.
+- **`src/match.py` deliberately left untouched.** `main`'s version adds an
+  optional `rung: int = 0` parameter (backward-compatible, not a breaking
+  change like the work-division doc's `rung=0|1` phrasing had suggested)
+  but it's Reia's actively-developed file — pulling someone else's
+  in-progress file mid-stream risks silently clobbering work she hasn't
+  finished, so `sweep.py` calls `match()` with only the parameters that
+  already exist in this branch (`matcher=`), which stays forward-compatible
+  regardless of what `rung` eventually does.
+- **No DEM GeoTIFF exists anywhere in the repo** (too large to commit) —
+  confirmed by checking `origin/Manya`'s tracked file list before assuming
+  otherwise. Manya's own `premise_test.py` handles this by catching
+  `FileNotFoundError` and skipping; `sweep.py`'s tests do the same in
+  spirit, using monkeypatching instead of a real file (below).
+- **`rasterio` and `matplotlib` installed and confirmed clean** before
+  committing to the design — no repeat of Phase 2's GDAL-install concern;
+  both installed via plain `pip install` without issue here.
+
+## Phase 8 — `src/sweep.py` (illumination sweep plot) ✅ done
+
+**File:** [`src/sweep.py`](src/sweep.py)
+**Test:** [`tests/test_sweep.py`](tests/test_sweep.py) — 41/41 passing
+
+**What it does:** the demo's centrepiece plot — success rate (each trial's
+`inlier_ratio` from Phase 3's `inlier_stats`) against sun-azimuth
+difference, with a second line against sun-elevation difference. Split
+into two layers on purpose:
+- **`run_sweep(trial_fn, diffs)`** — pure orchestration. Calls
+  `trial_fn(diff) -> MatchResult` once per value, records `success_rate`
+  and `inlier_count`. No dependency on any real renderer or matcher —
+  testable today with a fake `trial_fn`, same "tests without anyone"
+  pattern as every other module in this lane.
+- **`run_illumination_sweep(azimuth_trial_fn, elevation_trial_fn, ...)`** —
+  two independent calls into `run_sweep`, one per curve.
+- **`make_dem_trial_fn(...)`** — the real wiring against Manya's
+  `render.py` and Reia's `match.py`. Renders one base image at
+  `(base_azimuth, base_elevation)` once, and returns a closure that renders
+  a second image at the perturbed angle and calls `match()` against the
+  cached base image — so a sweep of N diffs renders N+1 images, not 2N.
+- **`plot_sweep(sweep_result, output_path, metric=...)`** — draws both
+  curves with matplotlib (`Agg` backend — headless-safe, never tries to
+  open a window), `metric` selects `"success_rate"` (default) or
+  `"inlier_count"`.
+
+**A design decision worth being explicit about:** "success rate" isn't
+literally defined in the work-division doc. Interpreted as each trial's own
+`inlier_ratio` (fraction of candidate matches RANSAC kept) rather than raw
+inlier count, since it's normalized and comparable across trials with
+different total match counts — Manya's own quick premise script plotted
+raw count instead, so `plot_sweep`'s `metric=` parameter supports both,
+defaulting to the ratio.
+
+**Tests, each hand-checkable:**
+- **exact success rate per diff** — a fake `trial_fn` with known
+  (total, inlier) counts per diff, checked against hand-computed ratios
+- **empty diffs**, **single diff**, and **any iterable type** (`range`,
+  tuple, numpy array) — `list(diffs)` normalizes all of them
+- **zero-total-match trial** — `inlier_stats`' own `0/0 -> 0.0` convention
+  carries through, not `NaN`
+- **an exception in `trial_fn` propagates**, and halts at the *first*
+  diff processed, not silently continuing past a broken trial or skipping
+  to a later one — worth being precise about, since my first draft of this
+  test wrongly assumed it would fail on the second diff rather than the
+  first
+- **non-monotonic success rate is recorded as-is** — `run_sweep` doesn't
+  assume or enforce the expected "shadows get worse" trend; that's a
+  property of the real renderer+matcher, not something to bake into the
+  orchestration
+- **azimuth and elevation sweeps stay independent** — different trial
+  functions, different-length diff lists, no cross-contamination
+- **`make_dem_trial_fn`**: invalid `vary` argument rejected immediately
+  (before touching any file); azimuth perturbation wired correctly
+  (`base_azimuth + diff`, elevation held at its fixed base) and elevation
+  perturbation the mirror of that, both verified via `monkeypatch` against
+  `src.render`'s and `src.match`'s real functions (no DEM file needed —
+  see the 2026-09-04 note above for why); base image confirmed rendered
+  exactly once at construction and reused across every subsequent
+  `trial_fn(diff)` call, not re-rendered each time
+- **`plot_sweep` produces a valid PNG** opened independently by Pillow
+  (same pattern as `scripts/report.py`'s Phase 5 check), supports both
+  metrics, and handles a fully empty sweep result without crashing
+
+**Dependencies added:** `rasterio`, `matplotlib` — both real (non-test)
+dependencies this time, since `render.py` and `plot_sweep` need them in
+production, not just in tests.
+
+**Note for whoever reviews this branch:** `src/render.py` in this branch
+is Manya's file, copied in from `origin/main` to make `sweep.py`'s real
+integration path genuine rather than hypothetical — not authored here, and
+not yet committed (left for the team to decide how attribution/merging
+should work, rather than committing someone else's file under this
+branch's history unasked).
+
+**Second round, after a further review pass — one real design gap fixed,
+one genuinely important correctness concern added as a reusable utility,
+and a refactor that made the plot itself checkable, not just "a PNG
+exists":**
+- **`angular_difference(a, b)` added** — azimuth is circular (350° and 10°
+  are 20° apart, not `abs(350-10)=340`). This never actually affects
+  `run_sweep`/`make_dem_trial_fn` today, since neither ever subtracts two
+  absolute azimuths — the sweep is parametrized directly by the diff to
+  render. But it's exactly the bug someone would hit building a *future*
+  real-data variant of this sweep from two Products' recorded
+  `subsolar_azimuth_deg` values, so it's provided now rather than left to
+  be gotten wrong later. Tested for wraparound, `0°`/`360°` equivalence,
+  identical angles, opposite angles (180°), and out-of-range/negative
+  inputs.
+- **`run_sweep` now validates every diff before calling `trial_fn` at
+  all** — a real gap, not just a missing test. A `None` or `NaN` diff
+  (e.g. from a real `Product` with `subsolar_azimuth_deg = None`) would
+  previously have reached a renderer, a matcher, or matplotlib before
+  failing somewhere deep and confusing. Now raises `ValueError` naming
+  which index was bad, confirmed to fire *before* any trial runs (not
+  partway through a sweep).
+- **`plot_sweep` refactored to split out `_build_sweep_figure`**, which
+  returns the `Figure` without saving or closing it. Every earlier test
+  could only confirm "a valid PNG exists" — it couldn't have caught
+  `success_rate` and `inlier_count` swapped, or the azimuth line
+  accidentally plotting elevation's data. The new tests read the actual
+  `Line2D` x/y-data, axis labels, and legend text back off the figure —
+  the strongest class of check this file has for the plot.
+- **nonzero-total, zero-inlier case** — distinct from the earlier
+  0-total/0-inlier case: candidates were found, none survived RANSAC.
+- **all-trials-fail** — confirmed the resulting all-zero data still plots
+  without a `ZeroDivisionError` or an empty-axes crash.
+- **non-uniformly-spaced diffs** (`[0, 15, 37, 52, 90]`) — confirms nothing
+  assumes an even step.
+- **determinism** — the same deterministic `trial_fn` run twice through
+  `run_sweep` gives back-to-back identical results, proving the
+  orchestration layer itself adds no hidden randomness (whatever
+  randomness `match.py`'s own RANSAC has internally is outside this
+  module's control, and out of scope to fix here).
+- **single-point-per-line** and a **full single-diff pipeline run**
+  (`run_illumination_sweep` → `plot_sweep` with `azimuth=[0]`,
+  `elevation=[0]`) — confirms the plotting code doesn't assume more than
+  one point per line.
+- **diff=0 is an ordinary baseline case for `make_dem_trial_fn`**, not a
+  special-cased skip — same illumination as the base image, `match()`
+  still runs normally against two identical renders.
+
+This closes out every deliverable currently listed in the work-division
+doc for this lane — see the top of this file for the full phase list.

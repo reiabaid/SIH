@@ -104,10 +104,8 @@ if __name__ == "__main__":
     # We use a try-except to handle if the file doesn't exist yet on disk.
     try:
         size = 512
-        # Pixel index of 69.37S, 32.35E is roughly (row=1653, col=5290)
-        # We subtract half the size (256) to perfectly center the landing site!
-        row_start = 1397
-        col_start = 5034
+        row_start = 2000
+        col_start = 2000
         
         print(f"Loading DEM patch from {DEM_PATH}...")
         dem, spacing = load_dem_patch(DEM_PATH, row_start, col_start, size)

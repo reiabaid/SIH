@@ -65,3 +65,24 @@ MoonAnything Benchmark Survey
               report.py
                    ↓
               Results
+
+
+
+for cnet.py
+
+             YOUR MATCHING SYSTEM
+                    │
+                    ↓
+             MatchResult
+                    │
+          ┌─────────┴─────────┐
+          ↓                   ↓
+       metrics             cnet.py
+          ↓                   ↓
+       evaluate          ISIS CNET
+                              ↓
+                    ISRO photogrammetry
+
+in short:-
+"Phase 7 converts the reliable matched points from our MatchResult into an ISIS Control Network file, so that the output of our lunar image matcher can be directly integrated into the existing photogrammetry workflow without needing to install or run ISIS ourselves."
+

@@ -1,11 +1,12 @@
-numpy<2.3
-opencv-python<5
+numpy
+opencv-python
 scipy
 shapely
-pdr
-webgeocalc
+rasterio
+matplotlib
 torch
 torchvision
 lightglue @ git+https://github.com/cvg/LightGlue.git
 pytest
 pillow
+pvl
