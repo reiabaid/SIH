@@ -1,0 +1,7 @@
+numpy
+opencv-python
+scipy
+torch
+torchvision
+lightglue @ git+https://github.com/cvg/LightGlue.git
+pytest
