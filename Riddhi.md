@@ -237,10 +237,164 @@ divergence tests, not just statistical/random ones:**
   ratio `1.0`, ruling out any assumption that the function needs "enough"
   points to behave correctly
 
-**Not yet done:** Phase 4, `metrics.py`'s `coverage`.
+**Not yet done at the time:** Phase 4, `metrics.py`'s `coverage`.
 
-## Phase 4 — `metrics.py`: `coverage` — not started
+---
 
-## Phase 5 — `scripts/report.py` — not started
+## Phase 4 — `metrics.py`: `coverage(match_result, grid=8)` ✅ done
+
+**File:** [`src/metrics.py`](src/metrics.py)
+**Test:** [`tests/test_coverage.py`](tests/test_coverage.py) — 14/14 passing
+
+**What it does:** divides image A into a `grid × grid` grid (default 8×8)
+and, using **inlier points only**, returns `occupied_fraction` (fraction of
+cells containing ≥1 inlier — the statement's "uniform distribution"
+requirement made measurable) and `coefficient_of_variation` (std/mean of
+per-cell counts — low means evenly spread, high means bunched into a few
+cells).
+
+**How:** `pts_a[inlier_mask]` bucketed by `(x // cell_w, y // cell_h)`,
+clipped into `[0, grid-1]` so a point exactly on the image's far edge
+doesn't index out of range — the same off-by-one family that caused real
+bugs in Phase 2's grid sizing, guarded against here from the start rather
+than found by a failing test. `np.bincount` gives per-cell counts in one
+call. Added the same input validation as `align_pair`'s GSD check:
+`grid <= 0` raises a `ValueError` naming the bad value.
+
+**Tests, each hand-checkable:**
+- **perfectly uniform** — one point at the center of every one of the 64
+  cells (an 80×80 image, 10×10 cells) → `occupied_fraction = 1.0`,
+  `coefficient_of_variation = 0.0` exactly (every count identical) — matches
+  the team's own spec: "perfectly uniform points should score coverage 1.0"
+- **all crammed in one cell** — 64 points, all in cell (0,0) →
+  `occupied_fraction = 1/64` exactly, matching the spec's own worked
+  example ("points crammed in one corner should score about 1/64") — and
+  `coefficient_of_variation = √63`, hand-derived from the counts vector
+  `[64, 0, 0, ..., 0]` (mean 1, variance `(63² + 63)/64 = 63`)
+- **ignores outliers** — 60 outlier points spread across 60 different
+  cells (would look perfectly uniform if wrongly included) plus 4 real
+  inliers crammed into one cell → coverage reflects only the 4 inliers
+  (`occupied_fraction = 1/64`), proving the "inliers only" contract holds
+- **no inliers among many matches**, and **fully empty match result** —
+  both give `occupied_fraction = 0.0` (a well-defined "zero cells
+  occupied") and `coefficient_of_variation = NaN` (undefined — nothing to
+  measure spread over), mirroring the same NaN-for-undefined choice made in
+  `rmse`, but note `occupied_fraction` itself is *not* NaN here, unlike
+  `inlier_ratio` in Phase 3 which was defined as `0.0` for the same "empty"
+  case — documented rather than silently inconsistent
+- **boundary clipping** — a point exactly at `(w, h)`, the image's far
+  corner, floor-divides to `col=grid, row=grid` — one past the last valid
+  index for an 8×8 grid. Confirms it's clipped rather than raising or
+  silently corrupting `np.bincount`'s output
+- **custom grid size** — `grid=2` (not just the default 8) with points in
+  2 of 4 cells → `occupied_fraction = 0.5`, `coefficient_of_variation = 1.0`
+  (hand-derived: counts `[1,1,0,0]`, mean `0.5`, variance `0.25`) — proves
+  the parameter is actually respected, not hardcoded
+- **single sparse inlier** — one point in an 8×8 grid, cross-checked
+  against an independently constructed counts array rather than a
+  hardcoded number
+- **non-positive grid** (`0` or negative) — raises `ValueError` naming the
+  bad value
+
+**Second round, after a further review pass:**
+- **uniform with multiple points per cell** — same idea as "perfectly
+  uniform" above but 5 points per cell instead of 1 (320 points total) →
+  still `coefficient_of_variation = 0.0` exactly, proving the CV logic is
+  genuinely about *equal counts*, not an accident of every count happening
+  to be 1
+- **`occupied_fraction` and `coefficient_of_variation` actually diverge** —
+  10 points in one cell plus exactly 1 point in each of the other 63 cells:
+  every cell is occupied (`occupied_fraction = 1.0`, identical to the
+  perfectly-uniform case) but the distribution is clearly uneven, so
+  `coefficient_of_variation` comes out ≈0.979 (cross-checked against an
+  independently built counts array, asserted `> 0.5`). Nothing before this
+  test had these two numbers move independently — every earlier case had
+  them agree by construction, which would have hidden a bug that conflated
+  the two or computed one from the other
+- **grid=4, 8, 16 parametrized** — one point near the origin always lands
+  in cell (0,0) regardless of grid size → `occupied_fraction` exactly
+  `1/16`, `1/64`, `1/256` respectively, confirming the parameter is used
+  consistently across sizes, not just the one custom value tested earlier
+
+**Not yet done at the time:** Phase 5, `scripts/report.py`.
+
+---
+
+## Phase 5 — `scripts/report.py` ✅ done
+
+**File:** [`scripts/report.py`](scripts/report.py)
+**Test:** [`tests/test_report.py`](tests/test_report.py) — 12/12 passing
+
+**What it does:** takes a `MatchResult` (plus the two prepped images it was
+computed from) and writes `overlay.png` (the two images side by side, a
+line + two dots per match, inliers and outliers in different colours) and
+`metrics.json` (all of Phase 3 + Phase 4's numbers in one file — `rmse`,
+`inlier_stats`, `coverage`). This is the actual final deliverable those two
+phases were built toward, not a new metric of its own — `compute_metrics()`
+just calls all three and merges the dicts.
+
+**How:** each float32 0..1 grayscale image becomes uint8 BGR
+(`cv2.cvtColor`, clipped defensively against float rounding just past
+`[0,1]`); the two canvases sit side by side with a 10px gap; `cv2.line` /
+`cv2.circle` draw each correspondence, green for inliers, red for outliers.
+OpenCV's own drawing calls clip out-of-bounds coordinates automatically, so
+no manual bounds-checking was needed there.
+
+**A real interop issue caught before it shipped, not after:** `rmse` and
+`coverage` can both return `NaN` (Phase 3/4's own deliberate "nothing to
+measure" convention). Python's `json` module writes bare `NaN` by default,
+which is not valid JSON — a strict parser, including plain JS
+`JSON.parse()` (which Member 6's web viewer will use), rejects it outright.
+Added `_json_safe()` to recursively convert `NaN` → `null` before writing,
+and tested the raw file text directly for the absence of a literal `"NaN"`
+token, not just that Python could read it back (Python's own parser is
+lenient here and would have hidden the bug).
+
+**Tests, each checking something concrete:**
+- **mismatched image sizes** — a 40×50 and a 30×70 combine into an exact
+  `(40, 130, 3)` canvas — proves the function doesn't assume both images
+  are the same size
+- **no matches** — a blank canvas (no lines/dots drawn) still has the
+  *exact* expected pixel values on both sides, checked against the known
+  flat grayscale values converted to uint8 by hand
+- **inlier/outlier colour** — one inlier point and one outlier point,
+  pixel-checked at their exact drawn location against `INLIER_COLOR` /
+  `OUTLIER_COLOR`
+- **points outside image bounds** (negative coordinates, coordinates far
+  past the edge) — doesn't crash; relies on and confirms OpenCV's own
+  automatic clipping
+- **nested output directory that doesn't exist yet** — created rather than
+  raising
+- **NaN-to-null JSON** (the interop bug above) — the written file contains
+  no bare `NaN` token, and the two NaN-producing fields load back as `None`
+  while `inlier_stats`' own empty-case field stays `0.0`, per Phase 3/4's
+  documented (and different) conventions for the same "empty" input
+- **returned dict matches the written file** — the in-memory metrics
+  `write_report` returns are the same numbers found in `metrics.json` after
+  round-tripping through JSON
+- **overwrite** — writing a second report into the same directory replaces
+  the first, not appends or errors
+- **`_json_safe` on nested structures** — `NaN` inside a list and inside a
+  nested dict both get replaced, not just top-level values
+
+**Second round, after a further review pass:**
+- **inlier/outlier colour at a realistic mix** — 3 inliers and 2 outliers,
+  spread far enough apart to check each point's own drawn colour
+  individually — stronger than the original test's "both colours exist
+  somewhere," since that alone couldn't catch e.g. an inlier and an
+  outlier's colours being swapped as long as both still appeared once
+- **exact output filenames** — asserts the directory listing is exactly
+  `{"overlay.png", "metrics.json"}`, not just that each expected file
+  exists — a file-exists check alone wouldn't catch an accidental third
+  file or a typo'd name sitting alongside the correct ones
+- **PNG opened by an independent library** — `Image.open(...).verify()` via
+  Pillow (a library that had no part in writing the file, unlike re-reading
+  it with `cv2`), checking it isn't truncated/corrupted, plus that its
+  actual width/height match what was requested. Added `pillow` to
+  `requirements.txt` as a test-only dependency — this is the one check from
+  this round I'd have most wanted for a reporting script, since a file that
+  merely *exists* is a much weaker guarantee than one that *opens*
+
+**Not yet done:** Phase 6, the MoonAnything benchmark survey (`docs/benchmark.md`).
 
 ## Phase 6 — `docs/benchmark.md` (MoonAnything survey) — not started

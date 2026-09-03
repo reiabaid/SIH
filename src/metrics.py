@@ -47,3 +47,37 @@ def inlier_stats(match_result: MatchResult) -> dict:
     count = int(np.sum(match_result.inlier_mask))
     ratio = count / total if total > 0 else 0.0
     return {"inlier_count": count, "total_matches": total, "inlier_ratio": ratio}
+
+
+def coverage(match_result: MatchResult, grid: int = 8) -> dict:
+    """Divide image A into a `grid` x `grid` grid; using inlier points only,
+    count cells containing at least one match. Makes the statement's
+    "uniform distribution" requirement measurable: a matcher finding 500
+    points in one corner should score badly, and this is how.
+
+    Returns `occupied_fraction` (cells with >=1 inlier, out of grid*grid) and
+    `coefficient_of_variation` (std/mean of per-cell inlier counts — low
+    means evenly spread, high means bunched up).
+    """
+    if grid <= 0:
+        raise ValueError(f"coverage: grid must be positive (got {grid!r})")
+
+    h, w = match_result.shape_a
+    total_cells = grid * grid
+    pts = match_result.pts_a[match_result.inlier_mask]
+
+    if len(pts) == 0:
+        return {"occupied_fraction": 0.0, "coefficient_of_variation": float("nan")}
+
+    cell_h, cell_w = h / grid, w / grid
+    cols = np.clip((pts[:, 0] // cell_w).astype(int), 0, grid - 1)
+    rows = np.clip((pts[:, 1] // cell_h).astype(int), 0, grid - 1)
+    cell_indices = rows * grid + cols
+
+    counts = np.bincount(cell_indices, minlength=total_cells)
+    occupied_fraction = float(np.count_nonzero(counts) / total_cells)
+
+    mean = counts.mean()
+    cv = float(counts.std() / mean) if mean > 0 else float("nan")
+
+    return {"occupied_fraction": occupied_fraction, "coefficient_of_variation": cv}
