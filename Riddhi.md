@@ -395,6 +395,56 @@ lenient here and would have hidden the bug).
   this round I'd have most wanted for a reporting script, since a file that
   merely *exists* is a much weaker guarantee than one that *opens*
 
-**Not yet done:** Phase 6, the MoonAnything benchmark survey (`docs/benchmark.md`).
+**Not yet done at the time:** Phase 6, the MoonAnything benchmark survey.
 
-## Phase 6 — `docs/benchmark.md` (MoonAnything survey) — not started
+---
+
+## Phase 6 — `docs/benchmark.md` (MoonAnything survey) ✅ done
+
+**File:** [`docs/benchmark.md`](docs/benchmark.md)
+**No tests** — this phase is a written survey, not code; nothing here to
+run pytest against.
+
+**What it does:** answers the three things the build-plan doc asked for —
+what subsets of MoonAnything exist, their format, and which we can
+actually use — by fetching the real GitHub repo and Zenodo record rather
+than trusting the one-line description in our own planning doc.
+
+**The one finding that actually matters:** the build-plan doc describes
+MoonAnything as "130k+ rendered lunar samples... with known ground-truth
+correspondences." The real GitHub README says, verbatim, that the Zenodo
+release "currently contains only a *sample* of the MoonAnything dataset"
+and that "the full dataset will be released progressively." The 130k+
+figure describes the full (not-yet-released) dataset from the paper, not
+what's actually downloadable today. Worth knowing before anyone plans a
+demo around it.
+
+**What's actually there:** two sub-datasets, 22.4 GB combined (`LunarPhoto.zip`
+11.0 GB, `StereoGeo.zip` 11.4 GB), CC BY 4.0 licensed.
+- **LunarPhoto** — a 128×128px DEM patch + a real LRO NAC image, both
+  cropped to the same extent, plus 18 synthetic renders per sample (9 SPICE
+  sun angles × 2 BRDF models). The key fact: every render is pixel-aligned
+  to the same DEM patch, so the ground truth between any two illumination
+  variants is the **identity transform** — no engineering needed to use it
+  for testing `match.py`/`metrics.py`'s illumination robustness in
+  isolation (`rmse(result, gt_transform=np.eye(3))` should be ~0 for a good
+  matcher). It can't validate `align_pair`, though — no scale/viewpoint
+  variation within a sample, so our own synthetic 4×-downsample tests
+  remain the only ground truth for that until real CH2/LRO pairs exist.
+  Some file formats within it (DEM/BRDF/normal/depth/LOS maps) aren't
+  documented anywhere I could find — noted as a real gap rather than
+  guessed at.
+- **StereoGeo** — real stereo pairs (`im_00000.jpg` / `im_00001.jpg`,
+  consecutive even/odd) with genuine parallax, matching `.npz` camera
+  poses (K, cam2world) and `.exr` float32 depth maps, 3 illumination
+  variants per stereo geometry. Stronger test of `match.py`'s matcher than
+  our planar-homography-only synthetic pairs (real 3D structure, not just
+  a warp) — but the correspondence ground truth isn't handed to us as
+  point pairs; it has to be derived from depth + camera pose, a real if
+  small script.
+
+**Recommendation written into the doc:** don't block on downloading either
+11 GB zip before the hackathon (nothing in Phases 1–5 needed it, and
+venue wifi is assumed absent per the team's own planning note); if time
+allows, prioritize LunarPhoto over StereoGeo since it needs zero extra
+engineering to use.
