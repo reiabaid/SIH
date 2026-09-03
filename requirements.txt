@@ -2,6 +2,8 @@ numpy<2.3
 opencv-python<5
 scipy
 shapely
+pdr
+webgeocalc
 torch
 torchvision
 lightglue @ git+https://github.com/cvg/LightGlue.git
