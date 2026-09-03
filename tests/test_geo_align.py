@@ -11,12 +11,14 @@ from src.types import Product
 def _textured_field(size, seed):
     """Blobby noise field with enough structure for a correlation check to be
     meaningful — not meant to look like a real crater, just non-flat.
+    `size` is either an int (square) or an (h, w) tuple.
     """
+    h, w = (size, size) if isinstance(size, int) else size
     rng = np.random.default_rng(seed)
-    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32)
-    img = 0.5 + 0.05 * rng.standard_normal((size, size)).astype(np.float32)
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    img = 0.5 + 0.05 * rng.standard_normal((h, w)).astype(np.float32)
     for _ in range(30):
-        cx, cy = rng.uniform(0, size, size=2)
+        cx, cy = rng.uniform(0, w), rng.uniform(0, h)
         r = rng.uniform(4, 16)
         dist = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2)
         img += 0.4 * np.exp(-((dist - r) ** 2) / (2 * (r * 0.25) ** 2))
@@ -219,6 +221,64 @@ def test_align_pair_preserves_a_known_gradient_direction():
     assert np.all(np.diff(row) >= -1e-3), "gradient should stay non-decreasing left to right"
     assert row[0] == pytest.approx(0.0, abs=0.05)
     assert row[-1] == pytest.approx(1.0, abs=0.05)
+
+
+def test_meters_per_degree_reflects_longitude_compression_at_target_latitude():
+    """Real search box (2026-09-03 update): target moved to lat -74.4..-73.1,
+    lon 42.4..44.0E (was the equatorial-ish Chandrayaan-3 site). At -73.7 deg,
+    a degree of longitude covers cos(73.7 deg) =~ 0.28x the ground distance a
+    degree of latitude does -- this is the ratio align_pair's grid-sizing
+    depends on to not distort the image at this latitude.
+    """
+    target_lat = -73.7
+    m_per_deg_lat, m_per_deg_lon = _meters_per_degree(target_lat)
+
+    assert m_per_deg_lon < m_per_deg_lat  # longitude degrees are shorter this far south
+    ratio = m_per_deg_lon / m_per_deg_lat
+    assert ratio == pytest.approx(np.cos(np.deg2rad(target_lat)), rel=1e-6)
+    assert ratio == pytest.approx(0.28, abs=0.01)
+
+
+def test_align_pair_at_the_actual_target_area_does_not_distort_the_grid():
+    """Same real search box as above. Runs align_pair's full pipeline (corner
+    fit, overlap, grid sizing, warp) at the real target latitude instead of
+    the near-equatorial coordinates every earlier test used, to prove the
+    cos(lat) correction actually holds together end to end, not just in
+    isolation. The array shape is derived from the real box and a chosen GSD
+    (not picked arbitrarily square), the same self-consistent pattern as the
+    non-square-images test above.
+    """
+    lat0, lat1 = -74.4, -73.1
+    lon0, lon1 = 42.4, 44.0
+    center_lat = (lat0 + lat1) / 2.0
+    m_per_deg_lat, m_per_deg_lon = _meters_per_degree(center_lat)
+
+    gsd = 300.0  # metres/pixel -- coarse on purpose, keeps the test fast
+    deg_per_px_lat = gsd / m_per_deg_lat
+    deg_per_px_lon = gsd / m_per_deg_lon
+    h = int(round((lat1 - lat0) / deg_per_px_lat)) + 1
+    w = int(round((lon1 - lon0) / deg_per_px_lon)) + 1
+
+    img = _textured_field((h, w), seed=51)
+    a = _product_for_square_deg(img, lat0, lat1, lon0, lon1, gsd, "ch2_actual")
+    b = _product_for_square_deg(img.copy(), lat0, lat1, lon0, lon1, gsd, "lro_actual")
+
+    aligned_a, aligned_b = align_pair(a, b)
+
+    assert np.all(np.isfinite(aligned_a.array))
+    assert aligned_a.array.shape == aligned_b.array.shape == img.shape
+
+    corr = np.corrcoef(aligned_a.array.ravel(), img.ravel())[0, 1]
+    assert corr > 0.99, f"expected near-identical resampling at target latitude, got {corr:.3f}"
+
+    # the real box is 1.3 deg of latitude by 1.6 deg of longitude -- similar-looking
+    # ranges -- but at -73.7 deg a degree of longitude is physically much shorter,
+    # so the true ground footprint is markedly taller than it is wide. If the
+    # cos(lat) correction were missing (lon treated like lat), the grid would come
+    # out roughly square/wide instead.
+    assert img.shape[0] > 2 * img.shape[1], (
+        f"expected a visibly non-square footprint at this latitude, got {img.shape}"
+    )
 
 
 def test_align_pair_rejects_non_positive_gsd():

@@ -9,6 +9,18 @@ future me) can see what's done and why without re-reading the whole plan.
 Frozen contract this lane builds against: `src/types.py` — `Product` and
 `MatchResult` dataclasses. Do not change their shape without telling the team.
 
+**2026-09-03 — target area changed.** The search target moved from the
+Chandrayaan-3 landing site (69.37°S, 32.35°E) to where Mehak's actual CH2
+downloads sit: lat -74.4° to -73.1°, lon 42.4° to 44.0°E (center ~-73.7°,
+43.2°). `TARGET_AREA.md` is referenced as the full writeup but doesn't exist
+in this repo yet — that's Mehak/Manya's file to add, not written here.
+Checked what this means for this lane: **no code changes needed** in
+`geo.py` — `_meters_per_degree`'s `cos(lat)` correction and
+`footprint_overlap`'s ratio-based math are already latitude-general — but
+added tests at the real coordinates to prove it, since everything before
+this was only tested near the equator. See the "actual target area" tests
+under Phases 1 and 2 below.
+
 ---
 
 ## Phase 1 — `footprint_overlap(a, b) -> float` ✅ done
@@ -28,7 +40,8 @@ cross itself. Intersect the two polygons, divide by `a`'s area.
   the tile/strip sizes this project works at; would break down over a whole
   hemisphere.
 - Doesn't handle the antimeridian (longitude wraparound at 0°/360°). Not an
-  issue for a single Chandrayaan-3 landing-site area of interest.
+  issue for a single target area of interest (currently lon 42°-44°E, nowhere
+  near the 0°/360° boundary — see the 2026-09-03 target-area note above).
 
 **Why the tests are trustworthy:** every footprint is a synthetic rectangle
 built from lat/lon bounds I chose myself, so every expected answer is
@@ -53,6 +66,11 @@ hand-computed, not eyeballed:
 - **corner-ordering validity** — asserts `_corners_to_polygon` produces a
   valid, non-self-intersecting polygon with the expected area, making the
   `ul → ur → lr → ll` winding-order assumption explicit rather than implicit
+- **actual target area** (added 2026-09-03) — real box (lat -74.4°..-73.1°,
+  lon 42.4°..44.0°E), two sub-boxes offset by 0.4° of latitude; overlap
+  fraction hand-computed as `0.9/1.3` (the lon range is identical for both
+  so it cancels out of the ratio) — confirms the ratio math still holds at
+  real, non-equatorial coordinates
 
 **Dependency added:** `shapely`, added to `requirements.txt`.
 
@@ -142,9 +160,84 @@ identity case. Fixed by using `N-1` consistently on both sides.
   the bad value, instead of silently dividing by zero inside the grid-sizing
   math
 
-**Not yet done:** Phase 3, `metrics.py`'s `rmse` + `inlier_stats`.
+**Target-area validation (added 2026-09-03):** two more tests at the real
+search box (lat -74.4°..-73.1°, lon 42.4°..44.0°E, center -73.7°) —
+`_meters_per_degree(-73.7)` gives a longitude-to-latitude metres-per-degree
+ratio of ~0.28 (matches `cos(73.7°)` exactly), and a full `align_pair`
+identity run at that latitude confirms the output grid comes out visibly
+taller than wide (height > 2× width) — the real box is 1.3° of latitude by
+1.6° of longitude, similar-looking ranges, but physically the longitude
+span is compressed to about a third of the latitude span at this latitude.
+If the `cos(lat)` correction were wired wrong, this would come out
+roughly square instead. No code changes were needed — the existing
+`_meters_per_degree` already generalizes — this just proves it at the
+coordinates that actually matter now.
 
-## Phase 3 — `metrics.py`: `rmse` + `inlier_stats` — not started
+---
+
+## Phase 3 — `metrics.py`: `rmse` + `inlier_stats` ✅ done
+
+**File:** [`src/metrics.py`](src/metrics.py)
+**Test:** [`tests/test_metrics.py`](tests/test_metrics.py) — 14/14 passing
+
+**What it does:** `rmse(match_result, gt_transform=None)` returns
+`{"rmse_fitted": ..., "rmse_ground_truth": ... or None}` — reprojection
+error of inliers under the match's own fitted transform, and (only when a
+ground-truth homography is supplied, e.g. the synthetic case) error against
+that instead. `inlier_stats(match_result)` returns
+`{"inlier_count", "total_matches", "inlier_ratio"}`.
+
+**How:** both read straight off `MatchResult` — no imagery, no matcher,
+just arrays of points — so every test fabricates its own points with a
+chosen homography and, for the noise test, a chosen noise std, exactly like
+`tests/test_match.py`'s existing ground-truth-RMSE helper (reused the same
+reprojection formula rather than inventing a different one).
+
+**Tests, each hand-checkable:**
+- **perfect matches** — points mapped by `H` with no noise, evaluated
+  against `H` itself → RMSE ≈ 0
+- **known injected noise** — 400 points, Gaussian noise of std `σ=0.3`
+  added to `pts_b`. For 2D error with independent per-axis noise,
+  `E[error²] = 2σ²`, so the *expected* RMSE is `σ√2 ≈ 0.424`, not `σ`
+  itself — asserted at 15% relative tolerance over 400 samples
+- **outliers excluded** — half the points corrupted by a `+1000px` offset
+  but marked `False` in `inlier_mask` → RMSE stays ≈ 0, proving outliers
+  are actually excluded, not just down-weighted
+- **no ground truth supplied** → `rmse_ground_truth` is `None`, `rmse_fitted`
+  still computes normally
+- **empty match result** → both RMSE values are `NaN`, not `0.0` — a
+  deliberate choice, since `0.0` would misleadingly read as "matched
+  perfectly" rather than "nothing to evaluate"
+- **all inliers False among real matches** → `NaN`, not a division error
+- **inlier_stats**: hand-counted 7/10 → ratio `0.7`; all-inliers → `1.0`;
+  no-inliers → `0.0`; empty match result → ratio `0.0` (a deliberate
+  convention — distinct from `rmse`'s NaN-on-empty choice, since "zero
+  matches survived" is a meaningful, well-defined ratio, unlike a
+  reprojection error with nothing to reproject)
+
+**Second round, after a further review pass — exact-arithmetic and
+divergence tests, not just statistical/random ones:**
+- **hand-computed perfect translation** — four corner points `(0,0)`,
+  `(10,0)`, `(0,10)`, `(10,10)` shifted by exactly `(+5, +2)`, fitted
+  transform is that exact shift → RMSE `0.0`, checkable with no library at
+  all
+- **hand-computed per-point errors** — four points with deliberately chosen
+  errors of `1px, 2px, 0px, 0px` against the identity transform → RMSE
+  `sqrt((1²+2²+0²+0²)/4) = sqrt(1.25) ≈ 1.11803`, pinning down the exact
+  formula rather than just asserting `rmse > 0`
+- **`rmse_fitted` diverges from `rmse_ground_truth`** — the *true*
+  correspondence follows a `(+5,+10)` translation exactly (`gt_transform`),
+  but the *fitted* transform stored on the `MatchResult` is `(+6,+10)`, a
+  1px bias (simulating an imperfect RANSAC fit). `rmse_ground_truth` comes
+  out `0.0` (matches how the points were actually generated);
+  `rmse_fitted` comes out exactly `1.0` (the bias, on every point) — the
+  first test that actually exercises the two return values disagreeing,
+  rather than happening to be equal
+- **single-match `inlier_stats`** — one match, marked inlier → count `1`,
+  ratio `1.0`, ruling out any assumption that the function needs "enough"
+  points to behave correctly
+
+**Not yet done:** Phase 4, `metrics.py`'s `coverage`.
 
 ## Phase 4 — `metrics.py`: `coverage` — not started
 
