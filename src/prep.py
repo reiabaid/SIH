@@ -1,6 +1,7 @@
 # src/prep.py — illumination-robust representation, tiling for large rasters
 
 import numpy as np
+import cv2
 from scipy.ndimage import gaussian_filter
 
 
@@ -34,6 +35,25 @@ def local_contrast_norm(arr: np.ndarray, sigma: float = 15.0, eps: float = 1e-6)
     local_var = gaussian_filter(high * high, sigma=sigma)
     local_std = np.sqrt(np.maximum(local_var, 0.0)) + eps
     return (high / local_std).astype(np.float32)
+
+
+def gradient_orientation_mod_pi(arr: np.ndarray, ksize: int = 3):
+    """Per-pixel gradient orientation, folded to [0, pi), plus its magnitude.
+
+    When the sun moves, a slope that was bright-on-the-left becomes bright-on-the-
+    right — the gradient *direction* at that edge reverses by exactly 180 degrees.
+    A descriptor built on full 0-360 degree direction (like plain SIFT's) sees a
+    completely different feature. Folding the angle modulo pi collapses direction
+    into orientation — which way the edge runs, ignoring which side is lit — so
+    both lightings map to the same value. This is the "rung 1" representation.
+    """
+    a = arr.astype(np.float32)
+    gx = cv2.Sobel(a, cv2.CV_32F, 1, 0, ksize=ksize)
+    gy = cv2.Sobel(a, cv2.CV_32F, 0, 1, ksize=ksize)
+    theta = np.arctan2(gy, gx)          # -pi .. pi
+    theta_mod = np.mod(theta, np.pi)    # 0 .. pi, illumination-polarity invariant
+    magnitude = np.sqrt(gx * gx + gy * gy)
+    return theta_mod, magnitude
 
 
 def tile(arr: np.ndarray, size: int, overlap: int) -> "list[tuple[np.ndarray, tuple[int, int]]]":
