@@ -1,6 +1,7 @@
 numpy
 opencv-python
 scipy
+shapely
 torch
 torchvision
 lightglue @ git+https://github.com/cvg/LightGlue.git
