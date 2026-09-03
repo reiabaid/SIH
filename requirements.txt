@@ -1,5 +1,5 @@
-numpy
-opencv-python
+numpy<2.3
+opencv-python<5
 scipy
 torch
 torchvision
