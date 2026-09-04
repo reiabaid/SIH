@@ -1,22 +1,26 @@
 @import "tailwindcss";
 
+/* Light / beige theme -- warm, restrained, scientific-software palette.
+   Same principles as the dark theme it replaces (flat surfaces, 1px
+   borders, accent color reserved for active/important state), just
+   inverted to a light background. */
 :root {
-  --bg-dark: #0b0f17;
-  --bg-panel: #131a26;
-  --bg-card: #182232;
-  --bg-card-hover: #1e2c40;
-  --border-color: #24344d;
-  --border-glow: #00f2fe44;
-  
-  --primary-cyan: #00f2fe;
-  --primary-blue: #00a8ff;
-  --accent-amber: #ffb703;
-  --accent-green: #00e676;
-  --accent-red: #ff5252;
-  
-  --text-main: #f0f4f8;
-  --text-muted: #8b9bb4;
-  --text-dim: #5c6c84;
+  --bg-dark: #0a0a0a;
+  --bg-panel: #141414;
+  --bg-card: #ffffff;
+  --bg-card-hover: #1c1c1c;
+  --border-color: #2a2a2a;
+  --border-glow: #22a9c444;
+
+  --primary-cyan: #22a9c4;
+  --primary-blue: #3b82f6;
+  --accent-amber: #f59e0b;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+
+  --text-main: #e8e8e6;
+  --text-muted: #9a9a94;
+  --text-dim: #6e6e68;
 }
 
 * {
@@ -30,8 +34,8 @@ html, body, #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0b0f17 !important;
-  color: #f0f4f8 !important;
+  background-color: #0a0a0a !important;
+  color: #e8e8e6 !important;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
@@ -42,39 +46,39 @@ html, body, #root {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0f17;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #24344d;
+  background: #2a2a2a;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00a8ff;
+  background: #3b82f6;
 }
 
-/* Glass & Glow Utilities */
+/* Panel & accent utilities -- kept flat and restrained rather than glowing/
+   glassy, per the scientific-software visual direction: solid surface, a
+   1px border for definition, no backdrop blur. */
 .glass-panel {
-  background: rgba(19, 26, 38, 0.95) !important;
-  backdrop-filter: blur(12px);
-  border: 1px solid #24344d !important;
-  border-radius: 12px;
+  background: #141414 !important;
+  border: 1px solid #2a2a2a !important;
+  border-radius: 8px;
 }
 
+/* Crisp accent, not a glow -- used sparingly on key words/values only. */
 .glow-text-cyan {
-  text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+  color: #22a9c4;
 }
 
 .glow-btn-cyan {
-  background: linear-gradient(135deg, #00f2fe 0%, #00a8ff 100%) !important;
-  color: #0b0f17 !important;
-  font-weight: 700 !important;
+  background: #22a9c4 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
   border: none !important;
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4) !important;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease;
 }
 .glow-btn-cyan:hover {
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.7) !important;
-  transform: translateY(-1px);
+  background: #3fc4dd !important;
 }
 
 /* Keyframe Fade In */

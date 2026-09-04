@@ -10,10 +10,10 @@ import Screen04TerrainReport from './screens/Screen04TerrainReport';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(0); // 0: Landing, 1: Select, 2: Review, 3: Evidence, 4: Terrain
-  
+
   const [selectedProductA, setSelectedProductA] = useState(null);
   const [selectedProductB, setSelectedProductB] = useState(null);
-  const [selectedRung, setSelectedRung] = useState('rung1');
+  const [selectedRung, setSelectedRung] = useState(1);
   const [completedJobId, setCompletedJobId] = useState(null);
 
   const handleRunDemo = () => {
@@ -21,7 +21,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col font-sans select-none overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-slate-100 flex flex-col font-sans select-none overflow-x-hidden">
       {/* Top Mission Control Header */}
       <Header currentScreen={currentScreen} onRunDemo={handleRunDemo} />
 
@@ -37,18 +37,19 @@ export default function App() {
           )}
 
           {currentScreen === 1 && (
-            <Screen01SelectPair 
+            <Screen01SelectPair
                 onRunMatch={(productA, productB, rung) => {
                     setSelectedProductA(productA);
                     setSelectedProductB(productB);
                     setSelectedRung(rung);
+                    setCompletedJobId(null);
                     setCurrentScreen(2);
-                }} 
+                }}
             />
           )}
 
           {currentScreen === 2 && (
-            <Screen02MatchReview 
+            <Screen02MatchReview
               selectedProductA={selectedProductA}
               selectedProductB={selectedProductB}
               selectedRung={selectedRung}
@@ -56,13 +57,13 @@ export default function App() {
               onAcceptMatch={(jobId) => {
                   setCompletedJobId(jobId);
                   setCurrentScreen(3);
-              }} 
+              }}
               onBack={() => setCurrentScreen(1)}
             />
           )}
 
           {currentScreen === 3 && (
-            <Screen03Evidence 
+            <Screen03Evidence
               jobId={completedJobId}
               selectedProductA={selectedProductA}
               selectedProductB={selectedProductB}
@@ -72,7 +73,7 @@ export default function App() {
           )}
 
           {currentScreen === 4 && (
-            <Screen04TerrainReport 
+            <Screen04TerrainReport
               jobId={completedJobId}
               selectedProductA={selectedProductA}
               selectedProductB={selectedProductB}
