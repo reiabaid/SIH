@@ -288,7 +288,7 @@ def test_make_dem_trial_fn_zero_diff_is_the_baseline_case(monkeypatch):
         lambda dem, spacing, azimuth_deg, elevation_deg: (calls.append((azimuth_deg, elevation_deg)), np.zeros((32, 32), dtype=np.uint8))[1],
     )
     match_calls = []
-    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift": (match_calls.append((a, b)), _match_result(50, 50))[1])
+    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift", **k: (match_calls.append((a, b)), _match_result(50, 50))[1])
 
     trial_fn = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=30.0, base_elevation=45.0, vary="azimuth")
     result = trial_fn(0.0)
@@ -307,7 +307,7 @@ def test_make_dem_trial_fn_wires_elevation_perturbation_correctly(monkeypatch):
         "src.render.render_hillshade",
         lambda dem, spacing, azimuth_deg, elevation_deg: (calls.append((azimuth_deg, elevation_deg)), np.zeros((64, 64), dtype=np.uint8))[1],
     )
-    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift": _match_result(10, 5))
+    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift", **k: _match_result(10, 5))
 
     trial_fn = make_dem_trial_fn("fake.tiff", 0, 0, 64, base_azimuth=0.0, base_elevation=30.0, vary="elevation")
     calls.clear()  # only care about calls made by trial_fn itself, not the base-image render
@@ -329,7 +329,7 @@ def test_make_dem_trial_fn_only_renders_the_base_image_once(monkeypatch):
         return np.zeros((32, 32), dtype=np.uint8)
 
     monkeypatch.setattr("src.render.render_hillshade", fake_render_hillshade)
-    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift": _match_result(10, 5))
+    monkeypatch.setattr("src.match.match", lambda a, b, matcher="sift", **k: _match_result(10, 5))
 
     trial_fn = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=10.0, base_elevation=20.0, vary="azimuth")
     assert len(render_calls) == 1  # just the base image
@@ -420,11 +420,12 @@ def test_full_pipeline_with_a_single_diff_each_end_to_end():
 # ---- plot correctness: inspect the actual artists, not just "a file exists" --
 
 def test_plot_sweep_axes_labels_and_legend_are_correct():
-    fig = _build_sweep_figure(_fake_sweep_result())
+    fig = _build_sweep_figure(_fake_sweep_result(), metric="success_rate")
     ax = fig.axes[0]
 
     assert "difference" in ax.get_xlabel().lower()
     assert "success rate" in ax.get_ylabel().lower()
+
 
     _, labels = ax.get_legend_handles_labels()
     assert any("azimuth" in label.lower() for label in labels)
@@ -465,3 +466,304 @@ def test_plot_sweep_inlier_count_metric_plots_counts_not_ratios():
     fig = _build_sweep_figure(sweep_result, metric="inlier_count")
     azimuth_line = fig.axes[0].lines[0]
     np.testing.assert_array_equal(azimuth_line.get_ydata(), sweep_result["azimuth"]["inlier_count"])
+
+
+# ---- Phase 9 Win Plot & Rung Parameter Tests -----------------------------------
+
+def test_make_dem_trial_fn_rejects_invalid_rung_parameter():
+    with pytest.raises(ValueError, match="rung"):
+        make_dem_trial_fn("fake.tiff", 0, 0, 64, base_azimuth=0.0, base_elevation=30.0, vary="azimuth", matcher="sift", rung=99)
+
+
+def test_make_dem_trial_fn_threads_rung_parameter_to_match(monkeypatch):
+    match_calls = []
+
+    monkeypatch.setattr("src.render.load_dem_patch", lambda *a, **k: (np.zeros((32, 32), dtype=np.float32), 100.0))
+    monkeypatch.setattr("src.render.render_hillshade", lambda dem, spacing, az, el: np.zeros((32, 32), dtype=np.uint8))
+
+    def fake_match(a, b, matcher="sift", rung=0):
+        match_calls.append((matcher, rung))
+        return _match_result(20, 15)
+
+    monkeypatch.setattr("src.match.match", fake_match)
+
+    trial_fn = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=0.0, base_elevation=30.0, vary="azimuth", matcher="sift", rung=1)
+    result = trial_fn(15.0)
+
+    assert len(match_calls) == 1
+    assert match_calls[0] == ("sift", 1)
+    assert isinstance(result, MatchResult)
+
+
+def test_plot_win_sweep_generates_valid_png_and_plots_inlier_counts(tmp_path):
+    from src.sweep import plot_win_sweep, _build_win_plot_figure
+
+    multi_results = {
+        "SIFT (Rung 0)": {"diffs": [0, 30, 60], "inlier_count": [100, 20, 2]},
+        "Mod-X (Rung 1)": {"diffs": [0, 30, 60], "inlier_count": [100, 95, 90]},
+        "LightGlue": {"diffs": [0, 30, 60], "inlier_count": [100, 98, 95]},
+    }
+
+    out_path = tmp_path / "win_plot.png"
+    plot_win_sweep(multi_results, str(out_path), metric="inlier_count")
+
+    assert out_path.exists()
+    with Image.open(out_path) as img:
+        img.verify()
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+    assert len(ax.lines) == 3
+    assert ax.get_ylabel() == "Inlier Match Count"
+    np.testing.assert_array_equal(ax.lines[0].get_ydata(), [100, 20, 2])
+    np.testing.assert_array_equal(ax.lines[1].get_ydata(), [100, 95, 90])
+
+
+# ---- Recommended Additional Phase 9 Edge-Case Tests (1 to 15) -----------------
+
+def test_1_rung_0_really_selects_sift(monkeypatch):
+    """Test 1: Verify rung=0 passes matcher='sift' and rung=0 into match()."""
+    match_calls = []
+
+    monkeypatch.setattr("src.render.load_dem_patch", lambda *a, **k: (np.zeros((32, 32), dtype=np.float32), 100.0))
+    monkeypatch.setattr("src.render.render_hillshade", lambda dem, spacing, az, el: np.zeros((32, 32), dtype=np.uint8))
+
+    def fake_match(a, b, matcher="sift", rung=0):
+        match_calls.append((matcher, rung))
+        return _match_result(30, 25)
+
+    monkeypatch.setattr("src.match.match", fake_match)
+
+    trial_fn = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=0.0, base_elevation=30.0, vary="azimuth", matcher="sift", rung=0)
+    trial_fn(0.0)
+
+    assert len(match_calls) == 1
+    assert match_calls[0] == ("sift", 0)
+
+
+def test_2_rung_1_really_selects_mod_x_mod_pi(monkeypatch):
+    """Test 2: Verify rung=1 passes matcher='sift' and rung=1 into match() and is distinct from rung=0."""
+    match_calls = []
+
+    monkeypatch.setattr("src.render.load_dem_patch", lambda *a, **k: (np.zeros((32, 32), dtype=np.float32), 100.0))
+    monkeypatch.setattr("src.render.render_hillshade", lambda dem, spacing, az, el: np.zeros((32, 32), dtype=np.uint8))
+
+    def fake_match(a, b, matcher="sift", rung=0):
+        match_calls.append((matcher, rung))
+        return _match_result(30, 25)
+
+    monkeypatch.setattr("src.match.match", fake_match)
+
+    trial_fn_0 = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=0.0, base_elevation=30.0, vary="azimuth", matcher="sift", rung=0)
+    trial_fn_1 = make_dem_trial_fn("fake.tiff", 0, 0, 32, base_azimuth=0.0, base_elevation=30.0, vary="azimuth", matcher="sift", rung=1)
+
+    trial_fn_0(10.0)
+    trial_fn_1(10.0)
+
+    assert len(match_calls) == 2
+    assert match_calls[0] == ("sift", 0)
+    assert match_calls[1] == ("sift", 1)
+    assert match_calls[0] != match_calls[1]
+
+
+def test_3_all_three_methods_appear_in_final_plot():
+    """Test 3: Verify SIFT, Mod-X, and LightGlue all produce distinct curves in the win plot."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT (Rung 0)": {"diffs": [0, 30, 60], "inlier_count": [100, 20, 2]},
+        "Mod-X (Rung 1)": {"diffs": [0, 30, 60], "inlier_count": [100, 95, 90]},
+        "LightGlue": {"diffs": [0, 30, 60], "inlier_count": [100, 98, 95]},
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+
+    assert len(ax.lines) == 3
+    _, labels = ax.get_legend_handles_labels()
+    assert "SIFT (Rung 0)" in labels
+    assert "Mod-X (Rung 1)" in labels
+    assert "LightGlue" in labels
+
+
+def test_4_missing_or_empty_sweep_results():
+    """Test 4: Verify plot generator handles empty/missing method sweep gracefully without crashing."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT (Rung 0)": {"diffs": [0, 30], "inlier_count": [100, 20]},
+        "Mod-X (Rung 1)": [],  # empty list
+        "LightGlue": {"diffs": [], "inlier_count": []},  # empty dict lists
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+
+    assert len(ax.lines) == 1  # Only SIFT is plotted
+    _, labels = ax.get_legend_handles_labels()
+    assert labels == ["SIFT (Rung 0)"]
+
+
+def test_5_different_numbers_of_points_per_method():
+    """Test 5: Verify plot handles different array lengths across methods."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT": {"diffs": [0, 15, 30, 60, 90, 120, 150, 180], "inlier_count": [100, 80, 50, 20, 10, 5, 2, 0]},
+        "Mod-X": {"diffs": [0, 30, 60, 90, 120, 180], "inlier_count": [100, 95, 90, 85, 80, 75]},
+        "LightGlue": {"diffs": [0, 15, 30, 60, 90, 120, 150, 180], "inlier_count": [100, 98, 96, 94, 92, 90, 88, 86]},
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+
+    assert len(ax.lines) == 3
+    assert len(ax.lines[0].get_xdata()) == 8
+    assert len(ax.lines[1].get_xdata()) == 6
+    assert len(ax.lines[2].get_xdata()) == 8
+
+
+def test_6_zero_inliers_produces_valid_result_and_plot():
+    """Test 6: Verify 0 inliers at diff=180 deg yields inlier_count=0, success_rate=0.0 (not NaN)."""
+    result = run_sweep(lambda diff: _match_result(50, 0 if diff == 180 else 10), [0, 180])
+
+    assert result["inlier_count"] == [10, 0]
+    assert result["success_rate"] == pytest.approx([0.2, 0.0])
+    assert not np.isnan(result["success_rate"][1])
+
+
+def test_7_all_methods_produce_zero_inliers():
+    """Test 7: Verify plot generates cleanly when all methods report 0 inliers across all trials."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT": {"diffs": [0, 90, 180], "inlier_count": [0, 0, 0]},
+        "Mod-X": {"diffs": [0, 90, 180], "inlier_count": [0, 0, 0]},
+        "LightGlue": {"diffs": [0, 90, 180], "inlier_count": [0, 0, 0]},
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+    assert len(ax.lines) == 3
+    for line in ax.lines:
+        np.testing.assert_array_equal(line.get_ydata(), [0, 0, 0])
+
+
+def test_8_negative_or_invalid_inlier_counts_raise_value_error():
+    """Test 8: Verify negative inlier count input raises clear ValueError."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT": {"diffs": [0, 30], "inlier_count": [-5, 10]},
+    }
+
+    with pytest.raises(ValueError, match="negative/invalid"):
+        _build_win_plot_figure(multi_results, metric="inlier_count")
+
+
+def test_9_azimuth_values_are_correctly_ordered():
+    """Test 9: Verify unordered diff input [180, 30, 90, 0, 60] is sorted monotonically."""
+    known = {0: 100, 30: 80, 60: 60, 90: 40, 180: 10}
+
+    def trial_fn(diff):
+        return _match_result(100, known[diff])
+
+    result = run_sweep(trial_fn, [180, 30, 90, 0, 60])
+
+    assert result["diffs"] == [0, 30, 60, 90, 180]
+    assert result["inlier_count"] == [100, 80, 60, 40, 10]
+
+
+def test_10_duplicate_azimuth_values():
+    """Test 10: Verify duplicate azimuth values [0, 15, 15, 30] run predictably as separate trials."""
+    calls = []
+
+    def trial_fn(diff):
+        calls.append(diff)
+        return _match_result(100, 50)
+
+    result = run_sweep(trial_fn, [0, 15, 15, 30])
+
+    assert result["diffs"] == [0, 15, 15, 30]
+    assert len(result["inlier_count"]) == 4
+    assert calls == [0, 15, 15, 30]
+
+
+def test_11_reproducibility():
+    """Test 11: Verify running run_sweep twice with identical input yields identical output."""
+    def trial_fn(diff):
+        return _match_result(100, max(0, int(100 - diff * 0.5)))
+
+    diffs = [0, 15, 30, 60, 90, 120, 150, 180]
+    run1 = run_sweep(trial_fn, diffs)
+    run2 = run_sweep(trial_fn, diffs)
+
+    assert run1 == run2
+    assert run1["inlier_count"] == run2["inlier_count"]
+
+
+def test_12_plot_is_actually_using_inlier_count():
+    """Test 12: Verify win plot uses inlier_count (5 vs 400), not inlier_ratio (1.0 vs 0.8)."""
+    from src.sweep import _build_win_plot_figure
+
+    # Method A: 5 total, 5 inliers -> ratio 1.0, count 5
+    # Method B: 500 total, 400 inliers -> ratio 0.8, count 400
+    multi_results = {
+        "Method A": {"diffs": [0], "inlier_count": [5], "success_rate": [1.0]},
+        "Method B": {"diffs": [0], "inlier_count": [400], "success_rate": [0.8]},
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+
+    np.testing.assert_array_equal(ax.lines[0].get_ydata(), [5])
+    np.testing.assert_array_equal(ax.lines[1].get_ydata(), [400])
+    assert ax.get_ylabel() == "Inlier Match Count"
+
+
+def test_13_azimuth_vs_elevation_experimental_degradation():
+    """Test 13: Synthetic fixture verifying sun-azimuth rotation degrades performance steeper than sun-elevation change."""
+    # Azimuth change changes shadow geometry rapidly
+    def az_trial(diff):
+        return _match_result(100, max(0, int(100 - diff * 0.8)))
+
+    # Elevation change only dims/brightens shadows mildly
+    def el_trial(diff):
+        return _match_result(100, max(0, int(100 - diff * 0.1)))
+
+    sweep = run_illumination_sweep(az_trial, el_trial, [0, 30, 60, 90], [0, 30, 60, 90])
+
+    az_counts = sweep["azimuth"]["inlier_count"]
+    el_counts = sweep["elevation"]["inlier_count"]
+
+    # Azimuth degradation is steeper
+    assert az_counts[0] == el_counts[0] == 100
+    assert az_counts[-1] < el_counts[-1]
+    assert (az_counts[0] - az_counts[-1]) > (el_counts[0] - el_counts[-1])
+
+
+def test_14_plot_with_single_method():
+    """Test 14: Verify win plot code works seamlessly when passed a single method."""
+    from src.sweep import _build_win_plot_figure
+
+    multi_results = {
+        "SIFT Only": {"diffs": [0, 30, 60], "inlier_count": [100, 20, 2]},
+    }
+
+    fig = _build_win_plot_figure(multi_results, metric="inlier_count")
+    ax = fig.axes[0]
+    assert len(ax.lines) == 1
+    np.testing.assert_array_equal(ax.lines[0].get_ydata(), [100, 20, 2])
+
+
+def test_15_unusual_azimuth_ranges():
+    """Test 15: Verify sweep handles single point [0] and full circular range [0..360]."""
+    result_single = run_sweep(lambda d: _match_result(50, 50), [0])
+    assert result_single["diffs"] == [0]
+
+    circular_diffs = list(range(0, 361, 45))  # [0, 45, 90, 135, 180, 225, 270, 315, 360]
+    result_circular = run_sweep(lambda d: _match_result(100, max(0, int(100 - abs(180 - d)))), circular_diffs)
+    assert result_circular["diffs"] == circular_diffs
+    assert len(result_circular["inlier_count"]) == 9
+
+

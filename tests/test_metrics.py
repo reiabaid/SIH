@@ -47,7 +47,7 @@ def test_rmse_of_perfect_matches_is_near_zero():
     mr = _match_result(pts_a, pts_b, np.ones(200, dtype=bool), transform=H)
 
     result = rmse(mr, gt_transform=H)
-    assert result["rmse_fitted"] == pytest.approx(0.0, abs=1e-3)
+    assert result["reprojection_residual"] == pytest.approx(0.0, abs=1e-3)
     assert result["rmse_ground_truth"] == pytest.approx(0.0, abs=1e-3)
 
 
@@ -63,7 +63,7 @@ def test_rmse_perfect_translation_of_four_corners_by_hand():
     mr = _match_result(pts_a, pts_b, np.ones(4, dtype=bool), transform)
 
     result = rmse(mr)
-    assert result["rmse_fitted"] == pytest.approx(0.0, abs=1e-5)
+    assert result["reprojection_residual"] == pytest.approx(0.0, abs=1e-5)
 
 
 def test_rmse_known_per_point_pixel_errors_computed_by_hand():
@@ -80,7 +80,7 @@ def test_rmse_known_per_point_pixel_errors_computed_by_hand():
 
     result = rmse(mr)
     expected = np.sqrt((1 ** 2 + 2 ** 2 + 0 ** 2 + 0 ** 2) / 4)
-    assert result["rmse_fitted"] == pytest.approx(expected, abs=1e-5)
+    assert result["reprojection_residual"] == pytest.approx(expected, abs=1e-5)
 
 
 def test_rmse_ground_truth_diverges_from_a_biased_fitted_transform():
@@ -89,7 +89,7 @@ def test_rmse_ground_truth_diverges_from_a_biased_fitted_transform():
     but the *fitted* transform stored on the MatchResult is slightly wrong,
     (+6, +10) -- as if RANSAC's fit carried a 1px bias. rmse_ground_truth
     must come out 0 (it matches how pts_b was actually generated);
-    rmse_fitted must come out exactly 1.0 (the x-axis bias, on every point).
+    reprojection_residual must come out exactly 1.0 (the x-axis bias, on every point).
     """
     pts_a = np.array([[0, 0], [10, 0], [0, 10], [10, 10]], dtype=np.float32)
     gt_transform = np.array([[1, 0, 5], [0, 1, 10], [0, 0, 1]], dtype=np.float64)
@@ -101,7 +101,7 @@ def test_rmse_ground_truth_diverges_from_a_biased_fitted_transform():
 
     result = rmse(mr, gt_transform=gt_transform)
     assert result["rmse_ground_truth"] == pytest.approx(0.0, abs=1e-5)
-    assert result["rmse_fitted"] == pytest.approx(1.0, abs=1e-5)
+    assert result["reprojection_residual"] == pytest.approx(1.0, abs=1e-5)
 
 
 def test_rmse_reflects_known_injected_noise():
@@ -120,7 +120,7 @@ def test_rmse_reflects_known_injected_noise():
 
     result = rmse(mr, gt_transform=H)
     expected = sigma * np.sqrt(2)
-    assert result["rmse_fitted"] == pytest.approx(expected, rel=0.15)
+    assert result["reprojection_residual"] == pytest.approx(expected, rel=0.15)
     assert result["rmse_ground_truth"] == pytest.approx(expected, rel=0.15)
 
 
@@ -138,7 +138,7 @@ def test_rmse_ignores_outliers_outside_the_inlier_mask():
     mr = _match_result(pts_a, pts_b_corrupted, inlier_mask, transform=H)
 
     result = rmse(mr, gt_transform=H)
-    assert result["rmse_fitted"] == pytest.approx(0.0, abs=1e-3)
+    assert result["reprojection_residual"] == pytest.approx(0.0, abs=1e-3)
 
 
 def test_rmse_ground_truth_is_none_when_not_supplied():
@@ -151,7 +151,7 @@ def test_rmse_ground_truth_is_none_when_not_supplied():
 
     result = rmse(mr)
     assert result["rmse_ground_truth"] is None
-    assert result["rmse_fitted"] == pytest.approx(0.0, abs=1e-3)
+    assert result["reprojection_residual"] == pytest.approx(0.0, abs=1e-3)
 
 
 def test_rmse_of_empty_match_result_is_nan_not_zero():
@@ -159,7 +159,7 @@ def test_rmse_of_empty_match_result_is_nan_not_zero():
     mr = _match_result(empty, empty, np.zeros(0, dtype=bool), transform=np.eye(3))
 
     result = rmse(mr, gt_transform=np.eye(3))
-    assert np.isnan(result["rmse_fitted"])
+    assert np.isnan(result["reprojection_residual"])
     assert np.isnan(result["rmse_ground_truth"])
 
 
@@ -171,7 +171,7 @@ def test_rmse_with_no_inliers_among_many_matches_is_nan():
     mr = _match_result(pts_a, pts_b, np.zeros(30, dtype=bool), transform=H)  # all outliers
 
     result = rmse(mr)
-    assert np.isnan(result["rmse_fitted"])
+    assert np.isnan(result["reprojection_residual"])
 
 
 # ---- inlier_stats ------------------------------------------------------------

@@ -173,7 +173,7 @@ def test_write_report_json_has_no_bare_nan_tokens_for_an_empty_match_result(tmp_
     assert "NaN" not in raw_text
 
     loaded = json.loads(raw_text)  # must not raise
-    assert loaded["rmse_fitted"] is None
+    assert loaded["reprojection_residual"] is None
     assert loaded["coefficient_of_variation"] is None
     assert loaded["inlier_ratio"] == 0.0  # inlier_stats' own empty convention is 0.0, not NaN
 
@@ -189,7 +189,7 @@ def test_write_report_returned_metrics_match_the_written_file(tmp_path):
 
     loaded = json.loads((output_dir / "metrics.json").read_text())
 
-    assert loaded["rmse_fitted"] == pytest.approx(returned["rmse_fitted"])
+    assert loaded["reprojection_residual"] == pytest.approx(returned["reprojection_residual"])
     assert loaded["inlier_count"] == returned["inlier_count"]
     assert loaded["occupied_fraction"] == pytest.approx(returned["occupied_fraction"])
 

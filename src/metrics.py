@@ -24,7 +24,7 @@ def _reprojection_rmse(pts_a: np.ndarray, pts_b: np.ndarray, transform: np.ndarr
 
 
 def rmse(match_result: MatchResult, gt_transform: "np.ndarray | None" = None) -> dict:
-    """Reprojection error of inliers under the fitted transform (`rmse_fitted`),
+    """Reprojection error of inliers under the fitted transform (`reprojection_residual`),
     and — when a ground-truth homography is supplied, e.g. for a synthetic
     pair with a known answer — the error against that ground truth instead
     (`rmse_ground_truth`, `None` when no ground truth is given).
@@ -34,11 +34,12 @@ def rmse(match_result: MatchResult, gt_transform: "np.ndarray | None" = None) ->
     pts_b = match_result.pts_b[inlier_mask]
 
     return {
-        "rmse_fitted": _reprojection_rmse(pts_a, pts_b, match_result.transform),
         "rmse_ground_truth": (
             _reprojection_rmse(pts_a, pts_b, gt_transform) if gt_transform is not None else None
         ),
+        "reprojection_residual": _reprojection_rmse(pts_a, pts_b, match_result.transform),
     }
+
 
 
 def inlier_stats(match_result: MatchResult) -> dict:

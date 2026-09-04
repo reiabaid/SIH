@@ -56,6 +56,28 @@ def test_match_rmse_subpixel_on_synthetic_pair(matcher):
     assert rmse < 1.0, f"RMSE against ground truth was {rmse:.3f} px, expected < 1.0"
 
 
+def test_lightglue_matcher_finds_real_correspondences():
+    """Regression test for a normalization bug found 2026-09-04: match()'s own
+    contract hands _match_lightglue a 0..1 float image, but LightGlue's
+    numpy_image_to_torch unconditionally divides by 255 again internally --
+    silently crushing every image to near-black (max ~0.004) and making
+    SuperPoint find zero keypoints, always, regardless of image content.
+    This test would have caught it immediately; nothing before this
+    exercised matcher="lightglue" at all (only "sift" was parametrized
+    above), which is exactly how the bug went unnoticed.
+    """
+    img = _synthetic_crater_field(size=256, seed=4)
+    warped, H_true = make_synthetic_pair(
+        img, seed=13, rotation_deg=5.0, scale_range=(0.97, 1.03), translation_frac=0.02
+    )
+
+    result = match(img, warped, matcher="lightglue")
+
+    assert result.inlier_mask.sum() >= 8, "too few inliers -- did the normalization bug come back?"
+    rmse = _true_homography_rmse(result.pts_a, result.pts_b, result.inlier_mask, H_true)
+    assert rmse < 1.0, f"lightglue RMSE against ground truth was {rmse:.3f} px, expected < 1.0"
+
+
 def test_match_handles_no_overlap_gracefully():
     a = np.zeros((64, 64), dtype=np.float32)
     b = np.ones((64, 64), dtype=np.float32)
