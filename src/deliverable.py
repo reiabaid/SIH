@@ -27,30 +27,52 @@ def _pixel_to_geo(product: Product, points: np.ndarray) -> np.ndarray:
 
 
 def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
-    try:
-        from osgeo import gdal, osr
-    except ImportError as exc:
-        raise RuntimeError("GDAL is required to write the registered GeoTIFF") from exc
-
     height, width = array.shape
-    driver = gdal.GetDriverByName("GTiff")
-    dataset = driver.Create(path, width, height, 1, gdal.GDT_Float32,
-                            options=["COMPRESS=LZW"])
-    if dataset is None:
-        raise RuntimeError(f"GDAL could not create {path}")
-
     ul_lat, ul_lon = product.corners["ul"]
     ur_lat, ur_lon = product.corners["ur"]
     ll_lat, ll_lon = product.corners["ll"]
     pixel_lon = (ur_lon - ul_lon) / max(width - 1, 1)
     pixel_lat = (ll_lat - ul_lat) / max(height - 1, 1)
-    dataset.SetGeoTransform((ul_lon, pixel_lon, 0.0, ul_lat, 0.0, pixel_lat))
-    spatial_ref = osr.SpatialReference()
-    spatial_ref.ImportFromEPSG(4326)
-    dataset.SetProjection(spatial_ref.ExportToWkt())
-    dataset.GetRasterBand(1).WriteArray(array.astype(np.float32))
-    dataset.FlushCache()
-    dataset = None
+
+    try:
+        from osgeo import gdal, osr
+        driver = gdal.GetDriverByName("GTiff")
+        dataset = driver.Create(path, width, height, 1, gdal.GDT_Float32,
+                                options=["COMPRESS=LZW"])
+        if dataset is None:
+            raise RuntimeError(f"GDAL could not create {path}")
+
+        dataset.SetGeoTransform((ul_lon, pixel_lon, 0.0, ul_lat, 0.0, pixel_lat))
+        spatial_ref = osr.SpatialReference()
+        spatial_ref.ImportFromEPSG(4326)
+        dataset.SetProjection(spatial_ref.ExportToWkt())
+        dataset.GetRasterBand(1).WriteArray(array.astype(np.float32))
+        dataset.FlushCache()
+        dataset = None
+        return
+    except ImportError:
+        pass
+
+    try:
+        import rasterio
+        from rasterio.transform import from_origin
+        transform = from_origin(ul_lon, ul_lat, pixel_lon, abs(pixel_lat))
+        with rasterio.open(
+            path,
+            "w",
+            driver="GTiff",
+            height=height,
+            width=width,
+            count=1,
+            dtype=np.float32,
+            crs="EPSG:4326",
+            transform=transform,
+            compress="lzw",
+        ) as dst:
+            dst.write(array.astype(np.float32), 1)
+        return
+    except ImportError as exc:
+        raise RuntimeError("Neither GDAL nor rasterio is available to write GeoTIFF") from exc
 
 
 def write_match_points(path: str, match_result: MatchResult, product_a: Product,
