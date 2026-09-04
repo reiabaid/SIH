@@ -205,7 +205,45 @@ Every module in `src/` is unit-tested against hand-checkable synthetic data
   from the original handbook, explicitly called out as the one item requiring
   the whole team, not just Manya).
 
-### Members 5 & 6 — API/job store, viewer/3D scene — not checked (explicitly excluded from this review)
+### Members 5 & 6 — API/job store, viewer/3D scene
+
+**Member 5 (API):** `GET /products`, `POST /register`, `GET /jobs/{id}`,
+`GET /jobs/{id}/artefacts/{filename}`, SQLite job store, startup warm-up —
+matches the handbook spec, correctly avoided the "don't" list (no Celery,
+Docker, Postgres).
+
+**Found and fixed this session:** the API read `demo/real_pair_result/summary.json`
+for its demo metrics, expecting flat keys (`rmse_fitted_px`, `inliers`,
+`coverage_occupied_fraction`) — but that file's schema changed today as part
+of the real-pair investigation, so every job was silently returning
+`rmse=None, inliers=None, coverage=None` (no crash, just empty data). Root
+cause: the handbook's planned `demo/fixture_result.json` (a stable fixture
+decoupled from the real-pair investigation) was never created, so the API
+ended up coupled to a file that was expected to keep changing. Fixed:
+created `demo/fixture_result.json` sourced from
+`demo/synthetic_deliverable/metrics.json` (a real, reproducible, trustworthy
+run — 473 inliers, 0.92px residual, `trivial_fit=False`), pointed
+`src/api.py` at it, added a `trivial_fit` column/field so the API surfaces
+that honesty check too. Smoke-tested end-to-end
+(`register` → `jobs/{id}` → non-null real metrics) — confirmed working.
+
+**Member 6 (viewer):** all 5 screens exist (`Screen00Landing` through
+`Screen04TerrainReport`), matching the interface spec. Still running entirely
+on `frontend/src/data/mockLunarData.js` — no calls to Member 5's API found
+anywhere in the frontend code yet; expected at this stage per the handbook's
+"build on fixture, swap at the end" plan, but that swap hasn't happened.
+`Screen04TerrainReport.jsx`'s sun-drag scene is currently a 2D canvas
+(`getContext('2d')`) with hand-computed shadow math, not the real lit
+Three.js heightmap the handbook describes — `three` is installed in
+`package.json` but not actually used yet for this.
+
+**Deliberately not touched this session:** the API↔frontend wiring and the
+real Three.js terrain scene are both real feature work inside Member 6's
+actively-developed frontend code (git history shows recent, ongoing commits
+there). Making unrequested changes there risks conflicting with in-progress
+work in a codebase area outside this session's established lane. If you want
+these done, it should either be a direct ask to Member 6, or an explicit
+go-ahead to touch `frontend/` here.
 
 ## 4. Known risks / things to double check before presenting
 
@@ -230,14 +268,25 @@ Every module in `src/` is unit-tested against hand-checkable synthetic data
 
 1. ~~Decide and lock the headline framing~~ — **done:** deck already leads
    with LightGlue, confirmed accurate.
-2. Manya: `git pull`, re-run `python -m scripts.gen_win_plot` and
-   `python -m scripts.gen_coverage_plot` with the real DEM, re-commit.
-3. ~~Assemble a Deliverable 2 package~~ — **done this session:**
-   `demo/synthetic_deliverable/` (473 inliers, 0.92px residual,
-   `trivial_fit=False`, valid control network). Mehak should point Slide 6
-   at this instead of the empty real-pair placeholder, and can still pursue
-   a genuine real-pair package separately once `align_pair`'s geometric
-   model is improved.
-4. Correct or remove the stale benchmark table in
-   `ARCHITECTURE_AND_SOLUTION.md`.
-5. Check in with Manya on rehearsal timing (item 6, whole-team task).
+2. ~~Regenerate win plot / coverage plot from real DEM~~ — **done:** Manya
+   re-ran with the fix, real DEM data now in `demo/win_plot.png`, title
+   corrected. Fixed a merge-artifact bug in Slide 6 while verifying this
+   (stale placeholder + orphaned checklist HTML) — see her lane above.
+3. ~~Assemble a Deliverable 2 package~~ — **done:** `demo/synthetic_deliverable/`
+   (473 inliers, 0.92px residual, `trivial_fit=False`, valid control network).
+4. ~~Correct the stale benchmark table~~ — **done:** `ARCHITECTURE_AND_SOLUTION.md`
+   now matches real measured numbers.
+5. ~~Fix Member 5's API~~ — **done:** was silently returning null metrics
+   (coupled to a file whose schema changed mid-session); created the
+   `demo/fixture_result.json` the handbook always intended, decoupled from
+   the real-pair investigation, smoke-tested end-to-end.
+6. **Not done, and not something to rush:** `align_pair`'s corner-fit-drift
+   fix touches `Product`'s frozen data contract (`src/types.py` says "do not
+   change without telling the team") — a real geometric-model change needs
+   team buy-in first, not a unilateral patch.
+7. **Not done, deliberately:** Member 6's API↔frontend wiring and the real
+   Three.js terrain scene are both live, in-progress work in `frontend/` —
+   left untouched to avoid conflicting with ongoing commits there. Needs an
+   explicit ask if you want it done from here.
+8. **Not possible from here:** ISIS `jigsaw` validation (no ISIS install
+   available) and rehearsals (needs the actual team, not code).

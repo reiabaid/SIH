@@ -1,0 +1,16 @@
+{
+  "_note": "Stable fixture for Member 5 (API) and Member 6 (viewer) to build against, per the original team handbook. Deliberately decoupled from demo/real_pair_result/ -- that file's schema changes as the real-pair investigation continues, and Member 5's API broke silently earlier today when it did. This fixture is sourced from demo/synthetic_deliverable/metrics.json, a real, reproducible, trustworthy pipeline run (not fabricated numbers) -- see PROJECT_STATUS.md.",
+  "product_a": "synthetic_a",
+  "product_b": "synthetic_b",
+  "matcher": "lightglue",
+  "rmse_fitted_px": 0.916488234667663,
+  "inliers": 473,
+  "total_matches": 667,
+  "inlier_ratio": 0.7091454272863568,
+  "coverage_occupied_fraction": 0.9375,
+  "coverage_cv": 0.7110103480849445,
+  "unique_inlier_locations": 473,
+  "trivial_fit": false,
+  "well_determined": true,
+  "artefact_dir": "demo/synthetic_deliverable"
+}

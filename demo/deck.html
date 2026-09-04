@@ -724,18 +724,9 @@
 
     <div class="two-col" style="margin-top:20px;flex:1;min-height:0;">
       <div style="display:flex;flex-direction:column;gap:16px;min-height:0;">
-        <div class="placeholder-box" style="flex:1;">
-          <div class="ph-icon">🛰️</div>
-          <div class="ph-label">PLACEHOLDER — Reia's real-run output pending</div>
-          <div class="ph-note">
-            This slide will show:<br>
-            <strong style="color:var(--text);">Registered CH-2 × LRO overlay</strong> (red/green alignment)<br>
-            Match-point scatter on the registered raster<br>
-            Metrics: RMSE, inlier count, grid coverage<br><br>
-            Swap in <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/overlay_rgb.png</code><br>
-            and fill the metric cards from <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/metrics.json</code><br>
-            once Reia's coordinate inversion + end-to-end run lands.
-          </div>
+        <div class="placeholder-box" style="flex:1; border: 2px solid var(--border); background: var(--panel);">
+          <img src="demo/aligned_overlay_full_small.png" style="width:100%;height:100%;object-fit:cover; border-radius: 8px;" alt="Registered Overlay (Small)">
+          <div style="font-size:12px;color:var(--sub);margin-top:8px;">Real CH-2 × LRO overlay preview — visibly good alignment near one end of the strip, drifting elsewhere (see Slide 8)</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px;">
@@ -744,6 +735,9 @@
           <p>The real CH2 (d32) × LRO NAC (M1499112398LE) pair resulted in <code>trivial_fit=True</code> for classical matchers. Both SIFT and mod-π reduced to ≤4 unique inlier locations.</p>
           <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red);">Inliers: 8 (4 unique locations) · Coverage: 6.25%</div>
         </div>
+        <div class="card">
+          <h3>What the deliverable contains</h3>
+          <p style="font-size:11px;margin-bottom:2px;">Format demonstrated end-to-end on a synthetic pair (<code style="color:var(--blue);font-size:11px;">demo/synthetic_deliverable/</code> — 473 inliers, 0.92px residual, verified trustworthy) while the real-pair geometry issue above is resolved.</p>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:13px;">
             <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">registered_a_to_b.tif</code> — GeoTIFF warped into reference frame</span></div>
             <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">match_points.csv</code> — human-readable tie-points with geo-coords</span></div>

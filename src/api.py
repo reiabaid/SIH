@@ -30,6 +30,7 @@ class JobResponse(BaseModel):
     rmse: Optional[float]
     inliers: Optional[int]
     coverage: Optional[float]
+    trivial_fit: Optional[bool]
     created_at: str
     artefact_dir: Optional[str]
 
@@ -50,6 +51,7 @@ def init_db():
             rmse REAL,
             inliers INTEGER,
             coverage REAL,
+            trivial_fit INTEGER,
             created_at TEXT,
             artefact_dir TEXT
         )
@@ -81,13 +83,18 @@ def get_products():
 async def process_job(job_id: str, product_a: str, product_b: str, rung: int):
     # Simulate processing time
     await asyncio.sleep(2)
-    
-    # Read fixture result from demo/real_pair_result/summary.json
-    fixture_path = Path("demo/real_pair_result/summary.json")
+
+    # Stable fixture per the team handbook -- deliberately NOT
+    # demo/real_pair_result/summary.json, whose schema changes as the real
+    # CH2xLRO pair investigation continues (it broke this endpoint silently
+    # once already). Swap this for a real pipeline.run_pipeline() call once
+    # the frontend is wired up and ready to move off the fixture.
+    fixture_path = Path("demo/fixture_result.json")
     rmse = None
     inliers = None
     coverage = None
-    artefact_dir = "demo/real_pair_result"
+    trivial_fit = None
+    artefact_dir = "demo/synthetic_deliverable"
 
     if fixture_path.exists():
         try:
@@ -96,15 +103,18 @@ async def process_job(job_id: str, product_a: str, product_b: str, rung: int):
             rmse = data.get("rmse_fitted_px")
             inliers = data.get("inliers")
             coverage = data.get("coverage_occupied_fraction")
+            trivial_fit = data.get("trivial_fit")
+            artefact_dir = data.get("artefact_dir", artefact_dir)
         except Exception as e:
             print(f"Failed to read fixture: {e}")
 
     conn = get_db_connection()
     conn.execute('''
         UPDATE jobs
-        SET status = 'completed', rmse = ?, inliers = ?, coverage = ?, artefact_dir = ?
+        SET status = 'completed', rmse = ?, inliers = ?, coverage = ?,
+            trivial_fit = ?, artefact_dir = ?
         WHERE id = ?
-    ''', (rmse, inliers, coverage, artefact_dir, job_id))
+    ''', (rmse, inliers, coverage, trivial_fit, artefact_dir, job_id))
     conn.commit()
     conn.close()
 
