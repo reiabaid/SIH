@@ -724,9 +724,18 @@
 
     <div class="two-col" style="margin-top:20px;flex:1;min-height:0;">
       <div style="display:flex;flex-direction:column;gap:16px;min-height:0;">
-        <div class="placeholder-box" style="flex:1; border: 2px solid var(--border); background: var(--panel);">
-          <img src="demo/aligned_overlay_full_small.png" style="width:100%;height:100%;object-fit:cover; border-radius: 8px;" alt="Registered Overlay (Small)">
-          <div style="font-size:12px;color:var(--sub);margin-top:8px;">Real CH-2 × LRO overlay preview</div>
+        <div class="placeholder-box" style="flex:1;">
+          <div class="ph-icon">🛰️</div>
+          <div class="ph-label">PLACEHOLDER — Reia's real-run output pending</div>
+          <div class="ph-note">
+            This slide will show:<br>
+            <strong style="color:var(--text);">Registered CH-2 × LRO overlay</strong> (red/green alignment)<br>
+            Match-point scatter on the registered raster<br>
+            Metrics: RMSE, inlier count, grid coverage<br><br>
+            Swap in <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/overlay_rgb.png</code><br>
+            and fill the metric cards from <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/metrics.json</code><br>
+            once Reia's coordinate inversion + end-to-end run lands.
+          </div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px;">
@@ -833,7 +842,7 @@
   <div class="slide" id="slide-8">
     <div class="slide-num">Slide <span>08</span> / 08 · Where it still breaks</div>
     <div class="eyebrow">Honest limitations</div>
-    <h1>Four things we would not want a judge to discover.</h1>
+    <h1>Five things we would not want a judge to discover.</h1>
     <p>Naming your own limits in a technical room reads as competence. Hiding them reads as naivety.</p>
 
     <div style="margin-top:24px;flex:1;overflow:auto;">
@@ -841,14 +850,21 @@
         <div class="icon">🔬</div>
         <div class="text">
           <h4>DEM resolution vs OHRC resolution</h4>
-          <p>The premise plot and win plot were generated on NASA SLDEM2015 at 240 m/px. Chandrayaan-2 OHRC sees terrain at 0.25 m/px — about 1,000× finer. Shadow inversion is scale-invariant physics, so the finding almost certainly transfers, but we have not shown it at OHRC resolution. The real end-to-end run is the defence.</p>
+          <p>The premise plot and win plot were generated on NASA SLDEM2015 at 240 m/px. Chandrayaan-2 OHRC sees terrain at 0.25 m/px — about 1,000× finer. Shadow inversion is scale-invariant physics, so the finding almost certainly transfers, but a real CH-2 × LRO run has not yet produced a validated registration to confirm it (see below) — this remains a real, open gap, not one we're claiming closed.</p>
         </div>
       </div>
       <div class="limit-item">
         <div class="icon">🔲</div>
         <div class="text">
-          <h4>Tiling on repetitive terrain</h4>
-          <p>An OHRC strip is ~54,860 × 12,000 px. Tiling is required. On craters that look alike (repetitive terrain), matching across tiles can produce confident false positives ~1,000 px away from the true position. The fix (coarse phase-correlation pre-alignment, then windowed tile search) is understood but not yet implemented in the production pipeline.</p>
+          <h4>Tiling on repetitive terrain — fixed</h4>
+          <p>An OHRC strip is ~54,860 × 12,000 px, so tiling is required. On craters that look alike, matching each tile independently and trusting its own RANSAC fit produced confident false positives ~30-100px off ground truth. Fixed: every tile's raw candidate matches are pooled and one global MAGSAC homography is fit across the whole image (<code>match.match_tiled</code>), so a wrong-but-locally-consistent tile becomes a minority outlier instead of a confident wrong answer. Verified against a deliberately adversarial repeating-crater field and wired into the production pipeline.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="icon">📐</div>
+        <div class="text">
+          <h4>Real CH-2 × LRO registration: not yet achieved on the available pair</h4>
+          <p>The pipeline runs correctly end-to-end on real data (real SPICE geometry, real footprint overlap, tiled matching), but on the one real overlapping pair available (~26.5% overlap), neither SIFT nor mod-π produced a trustworthy fit — a safety check we built (<code>metrics.fit_reliability</code>) correctly flagged the result as a trivial minimal-sample fit rather than real correspondence. Diagnosed cause, confirmed visually with a checkerboard overlay: <code>geo.align_pair</code> fits one global 4-corner perspective transform, which is accurate near one end of this long, narrow, curved-orbit strip and drifts elsewhere. The real fix — a multi-control-point or piecewise geometric model — is scoped but not implemented.</p>
         </div>
       </div>
       <div class="limit-item">
@@ -871,7 +887,7 @@
     <div style="margin-top:20px;display:flex;gap:16px;align-items:center;">
       <div style="flex:1;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);margin-bottom:4px;">Future work</div>
-        <div style="font-size:13px;color:var(--sub);">Tiling fix · IIRS reader · real end-to-end CH-2 × LRO bundle · ISIS jigsaw validation · elevation-vs-azimuth sweep test</div>
+        <div style="font-size:13px;color:var(--sub);">Multi-point geometric model for align_pair (fix corner-fit drift on long strips) · IIRS reader · validated real-data CH-2 × LRO registration · ISIS jigsaw validation</div>
       </div>
       <div style="text-align:center;">
         <div style="font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">SIH26166 · ISRO</div>
