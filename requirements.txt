@@ -10,3 +10,5 @@ lightglue @ git+https://github.com/cvg/LightGlue.git
 pytest
 pillow
 pvl
+fastapi
+uvicorn
