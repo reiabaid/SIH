@@ -236,8 +236,13 @@ def _match_lightglue(a: np.ndarray, b: np.ndarray) -> MatchResult:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     extractor, matcher = _get_lightglue_models(device)
 
-    img_a = numpy_image_to_torch(a).to(device)
-    img_b = numpy_image_to_torch(b).to(device)
+    # numpy_image_to_torch unconditionally divides by 255 -- it expects a raw
+    # 0..255-scale image, not match()'s own 0..1 contract. Passing `a`/`b`
+    # straight through double-normalizes them to ~0.004 max, which SuperPoint
+    # sees as an all-black image and finds zero keypoints on. Scale back up
+    # first so the library's own /255 lands on the correct final range.
+    img_a = numpy_image_to_torch(a * 255.0).to(device)
+    img_b = numpy_image_to_torch(b * 255.0).to(device)
 
     with torch.no_grad():
         feats_a = extractor.extract(img_a.unsqueeze(0))

@@ -721,5 +721,175 @@ exists":**
   special-cased skip — same illumination as the base image, `match()`
   still runs normally against two identical renders.
 
-This closes out every deliverable currently listed in the work-division
-doc for this lane — see the top of this file for the full phase list.
+This closed out every deliverable in the *prep-day* work-division doc.
+
+---
+
+## 2026-09-04 — the hackathon-day handbook: "Evidence — every number and plot in the deck"
+
+A new doc ("LunarMatch Handbook") reframed this lane for the hackathon day
+itself: five concrete deliverables. Checked substance, not just file
+existence and green tests, per the standing rule in [[feedback_edge_case_testing]]
+— and three of the five looked done but weren't. What follows is what was
+actually wrong and how it was fixed.
+
+### 1. The win plot — `demo/win_plot.png`
+
+**Two real bugs found, not just missing tests.**
+
+**Bug A — the synthetic terrain was too smooth for SIFT to find anything.**
+`scripts/generate_win_plot.py`'s original `generate_synthetic_crater()` was
+a single radially-symmetric bowl — rotationally uniform, essentially no
+local texture. Rendered through `render_hillshade`, SIFT found **zero**
+keypoints even at a 0° self-match. Fixed by adding `make_synthetic_dem()`
+to `src/sweep.py`: many small overlapping crater bowls at random positions
+(same construction as `tests/test_match.py`'s `_synthetic_crater_field`,
+but as *height* rather than pre-rendered intensity, since a flat texture
+has no elevation for a renderer to shade differently under different sun
+angles). Tuned `rim_height=20.0`, `spacing=1.0` empirically — verified
+directly before trusting it: 205 real SIFT inliers at a 0° self-match,
+correctly collapsing as azimuth diverges.
+
+**Bug B — a real, previously-undetected bug in `src/match.py`'s LightGlue
+path**, not mine, but blocking the win plot (and any real use of
+`matcher="lightglue"` at all). `_match_lightglue` passed `match()`'s own
+0..1-normalized image straight into LightGlue's `numpy_image_to_torch`,
+which unconditionally divides by 255 again — silently crushing every image
+to max ≈0.004, which SuperPoint sees as solid black and finds zero
+keypoints on, always, regardless of image content. This is why
+`test_match.py` only ever parametrized `matcher="sift"` — LightGlue was
+never actually installed or exercised, so the bug was invisible. Fixed with
+one line (`numpy_image_to_torch(a * 255.0)`), and added
+`test_lightglue_matcher_finds_real_correspondences` to
+`tests/test_match.py` so this can't silently regress again. Confirmed the
+fix directly: LightGlue went from 0 matches at every azimuth to 1869
+inliers at a 0° self-match, correctly collapsing to single digits by
+120-150°.
+
+**The `LightGlue` package itself wasn't installed in this environment** —
+`torch` was, but not `lightglue`. Installed it; a first attempt corrupted
+the `torch`/`torchvision` install via a Windows file-lock during an
+in-place upgrade, which was then repaired (`pip install torchvision`)
+before retrying `lightglue` with `--no-deps`. Confirmed a real forward pass
+runs (weights downloaded, ~50MB, cached under `~/.cache/torch/hub`).
+
+**`scripts/generate_win_plot.py` rewritten**: no more hardcoded LightGlue
+fallback array pretending to be real data. `_load_terrain()` uses the real
+DEM if present, else `make_synthetic_dem()` — either way, every number
+comes from an actual `render_hillshade` + `match()` + `run_sweep` call, and
+the console output says which terrain source was used.
+
+**The honest result, not a manufactured one:** the regenerated
+`demo/win_plot.png` shows LightGlue separating dramatically from both
+classical SIFT variants (1869 → 18 inliers across the sweep) — a real,
+substantive finding. It does **not** show a clean SIFT-vs-Mod-X (rung 0 vs
+rung 1) separation under this smooth Lambertian hillshade model, which has
+no actual shadow-casting (just a continuous dot-product falloff, not the
+discontinuous polarity flip a real shadow boundary produces). Checked this
+wasn't a fluke of one seed — reproducible across four different DEM seeds.
+The existing `test_rung1_beats_rung0_under_illumination_flip` in
+`test_match.py` (a hard 180° intensity inversion) still correctly shows
+rung 1's advantage — that's a cleaner, more extreme test of the polarity
+flip than gradual hillshade rotation provides. **Worth telling the team
+directly:** don't build the deck's narrative around "Mod-X visibly beats
+SIFT in the win plot" unless it's regenerated against a real DEM (which may
+have actual shadow-casting) — right now that specific claim isn't
+supported by the synthetic-terrain run.
+
+### 2. Final metrics table — `demo/final_metrics.json`
+
+**The file on disk was 100% fabricated**, not computed. `scripts/generate_final_metrics.py`
+caught `(FileNotFoundError, Exception)` — redundant, since `Exception`
+already covers `FileNotFoundError` — around the real pipeline call, and
+silently substituted a hand-typed placeholder dict whenever the DEM was
+missing (which it is, in this repo). Nothing in the JSON itself flagged
+this; only a `print()` did, which is exactly the kind of thing that goes
+unnoticed running a script on presentation day.
+
+**Fixed the same way as the win plot**: `_load_terrain()` shared logic (real
+DEM if present, else `make_synthetic_dem()` — never a hardcoded fallback
+dict), narrowed the exception to `(FileNotFoundError, ValueError)` (matching
+exactly what `load_dem_patch` documents that it raises), and added a
+top-level `"terrain_source"` field to the output JSON so a real vs.
+synthetic run is distinguishable by anyone reading the file later, not just
+whoever happened to see the console output when it ran.
+
+**`tests/test_final_metrics.py` rewritten.** The original test asserted the
+exact fabricated numbers (142, 105, 204...) as if they were correct — which
+only proved the fabrication happened as designed, the exact opposite of a
+meaningful test. Replaced with: structural checks that only hold for real
+computed output (non-negative counts, ratios in [0,1], every method
+evaluated at every requested azimuth), a `terrain_source` check, a
+determinism check (same seed run twice gives identical numbers), and a
+regression lock on the LightGlue fix above (`LightGlue inliers > SIFT
+inliers at 0°` — if the normalization bug ever comes back, this test and
+`test_match.py`'s both catch it).
+
+### 3 & 4. The two missing tests
+
+**Both existed, both passed, and both were tautological or mislabeled.**
+
+- `tests/test_sweep_extended.py`'s two tests hardcoded the exact conclusion
+  into a fake `trial_fn` (`inliers = 100 - diff*0.9` for azimuth vs.
+  `100 - diff*0.15` for elevation) and then asserted that same hardcoded
+  number came back out of `run_sweep`. That only proves `run_sweep`'s
+  plumbing works — already covered elsewhere — not anything about real
+  illumination sensitivity, the actual scientific claim.
+  **Rewritten** to use `make_synthetic_dem` + real `render_hillshade` + real
+  `match()`. Empirically verified before writing the assertions (not
+  assumed): at a 30° difference, real SIFT collapsed to 11 inliers under
+  azimuth rotation vs. 35 under an equivalent elevation change, from an
+  identical 205-inlier baseline — confirmed reproducible with a second,
+  different seed/baseline before trusting it in the test.
+
+- `tests/test_tiling.py` had two genuinely good `grid_balance_keypoints`
+  tests and one mislabeled one (`test_grid_balance_prevents_spatial_clustering_degeneracy`
+  didn't call `grid_balance_keypoints` at all — it just re-tested
+  `coverage()` on hand-placed points, already covered exhaustively by
+  `test_coverage.py`). None of the three tested actual **tiling**
+  (`prep.py`'s `tile()`/`untile_points()`), which is what "repetitive
+  terrain" in the original spec meant.
+  **Replaced the mislabeled test** with a real one: built a deliberately
+  repetitive crater field (same shape stamped at a regular 48px grid —
+  more adversarial than any real terrain), tiled both images, ran the real
+  matcher per tile. Investigated honestly first, found individual tiles
+  *can* lock onto an internally-consistent but wrong homography on terrain
+  this repetitive (30-100px reprojection error within a single "successful"
+  tile) — a real hazard, not a test artifact. But the project's own
+  documented architecture is "tile it, match tiles, **pool** the
+  correspondences," not trust each tile's own separate fit — pooling every
+  tile's raw candidates into one global RANSAC recovers sub-pixel accuracy
+  (0.27px mean, verified directly) because the wild per-tile matches become
+  a minority of outliers once pooled with the majority of correct ones from
+  other tiles. That pooled-and-correct behavior is what the new test
+  actually asserts. Added a focused `untile_points` coordinate-mapping unit
+  test alongside it.
+
+### Full picture
+
+**166 passed, 1 skipped (`test_io_lro.py`, needs a real LRO file this repo
+doesn't have — expected), 0 failed.** Confirmed with two independent full
+runs after the fixes above landed (the first full run mid-session still
+showed one failure, from a determinism test compared before its own fix —
+i.e. a stale run, not a real regression; reran clean afterward). Several of
+these tests are now genuinely slow (`lightglue` on CPU takes ~9-14s per
+call; the full suite takes ~5 minutes, mostly `test_final_metrics.py` and
+`test_match.py`'s LightGlue tests) — a real trade-off for testing the real
+pipeline instead of instant fakes, worth knowing before running this suite
+routinely rather than once per meaningful change.
+
+**Files touched this pass:** `src/sweep.py` (added `make_synthetic_dem`),
+`src/match.py` (the LightGlue normalization fix — not my file, but a real
+bug blocking this lane's own work), `scripts/generate_win_plot.py` and
+`scripts/generate_final_metrics.py` (rewritten, no fabrication),
+`tests/test_match.py`, `tests/test_final_metrics.py`,
+`tests/test_sweep_extended.py`, `tests/test_tiling.py` (all rewritten or
+extended). `demo/win_plot.png` and `demo/final_metrics.json` regenerated
+for real.
+
+**Environment note:** `lightglue` wasn't installed in this environment
+(only `torch` was). Installing it triggered a Windows file-lock error
+mid-upgrade that briefly broke the `torch`/`torchvision` install
+(`pip install torchvision` repaired it); `lightglue` then installed cleanly
+with `--no-deps`. Worth knowing if anyone else hits the same corrupted-env
+symptom on Windows.

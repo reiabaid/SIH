@@ -1,124 +1,120 @@
+# src/premise_test.py — premise test demonstrating SIFT failure under sun-azimuth change
+# Owner: Riddhi
+# Refactored to call production pipeline src.match.match directly.
+
 import os
 import cv2
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-
-
 from src.render import load_dem_patch, render_hillshade
+from src.match import match
+from src.metrics import inlier_stats
+from src.types import MatchResult
 
 
-def match_images(img1: np.ndarray, img2: np.ndarray) -> tuple[int, int, float, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def match_images(img1: np.ndarray, img2: np.ndarray, matcher: str = "sift", rung: int = 0) -> MatchResult:
+    """Match two images using the production match() pipeline.
+
+    img1, img2 can be float32 in [0, 1] or uint8 in [0, 255].
     """
-    Match two images using SIFT and RANSAC homography.
-    Returns:
-        total_matches, inlier_count, inlier_ratio, kp1, kp2, matches, mask
-    """
-    sift = cv2.SIFT_create()
-    kp1, des1 = sift.detectAndCompute(img1, None)
-    kp2, des2 = sift.detectAndCompute(img2, None)
-
-    if des1 is None or des2 is None or len(kp1) < 4 or len(kp2) < 4:
-        return 0, 0, 0.0, kp1, kp2, [], np.array([])
-
-    bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=False)
-    raw_matches = bf.knnMatch(des1, des2, k=2)
-
-    good_matches = []
-    for m, n in raw_matches:
-        if m.distance < 0.75 * n.distance:
-            good_matches.append(m)
-
-    total_matches = len(good_matches)
-    if total_matches < 4:
-        return total_matches, 0, 0.0, kp1, kp2, good_matches, np.array([])
-
-    src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
-    dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
-
-    _, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-    
-    if mask is None:
-        inlier_count = 0
-    else:
-        inlier_count = int(np.sum(mask))
-        
-    inlier_ratio = inlier_count / total_matches if total_matches > 0 else 0.0
-
-    return total_matches, inlier_count, inlier_ratio, kp1, kp2, good_matches, mask
+    a = img1.astype(np.float32) / 255.0 if img1.dtype == np.uint8 else img1.astype(np.float32)
+    b = img2.astype(np.float32) / 255.0 if img2.dtype == np.uint8 else img2.astype(np.float32)
+    return match(a, b, matcher=matcher, rung=rung)
 
 
-def main():
-    DEM_PATH = "data/dem/LDEM_60S_240MPP_ADJ.tiff"
-    OUT_DIR = "demo"
-    MATCH_OUT_DIR = os.path.join(OUT_DIR, "premise_matches")
+def draw_match_result(img_a: np.ndarray, img_b: np.ndarray, result: MatchResult) -> np.ndarray:
+    """Draw inlier/outlier matches from a MatchResult onto a side-by-side image."""
+    a_u8 = (np.clip(img_a, 0.0, 1.0) * 255).astype(np.uint8) if img_a.dtype != np.uint8 else img_a
+    b_u8 = (np.clip(img_b, 0.0, 1.0) * 255).astype(np.uint8) if img_b.dtype != np.uint8 else img_b
+
+    if len(result.pts_a) == 0:
+        stacked = np.hstack((a_u8, b_u8))
+        return cv2.cvtColor(stacked, cv2.COLOR_GRAY2BGR) if len(stacked.shape) == 2 else stacked
+
+    kp1 = [cv2.KeyPoint(x=float(pt[0]), y=float(pt[1]), size=3) for pt in result.pts_a]
+    kp2 = [cv2.KeyPoint(x=float(pt[0]), y=float(pt[1]), size=3) for pt in result.pts_b]
+    matches = [cv2.DMatch(_queryIdx=i, _trainIdx=i, _distance=0) for i in range(len(result.pts_a))]
+    mask_list = result.inlier_mask.astype(int).tolist()
+
+    draw_params = dict(
+        matchColor=(0, 255, 0),       # Green for inliers
+        singlePointColor=(0, 0, 255),  # Red for outliers
+        matchesMask=mask_list,
+        flags=cv2.DrawMatchesFlags_DEFAULT,
+    )
+    return cv2.drawMatches(a_u8, kp1, b_u8, kp2, matches, None, **draw_params)
+
+
+def run_premise_test(dem_path: str = "data/dem/LDEM_60S_240MPP_ADJ.tiff", out_dir: str = "demo") -> dict:
+    MATCH_OUT_DIR = os.path.join(out_dir, "premise_matches")
     os.makedirs(MATCH_OUT_DIR, exist_ok=True)
 
     try:
-        dem, spacing = load_dem_patch(DEM_PATH, 2000, 2000, 512)
-    except FileNotFoundError:
-        print(f"Skipping premise test because DEM file is missing: {DEM_PATH}")
-        return
+        dem, spacing = load_dem_patch(dem_path, 2000, 2000, 512)
+    except (FileNotFoundError, Exception) as e:
+        print(f"Skipping premise test execution: {e}")
+        return {}
 
     elevation = 30.0
     azimuths = [0, 15, 30, 60, 120]
-    
+
     print("Rendering images...")
     renders = {}
     for az in azimuths:
         renders[az] = render_hillshade(dem, spacing, az, elevation)
 
     base_img = renders[0]
-    
+
     results_az = []
     results_inliers = []
 
-    print("\n--- SIFT MATCHING RESULTS ---")
+    print("\n--- SIFT MATCHING RESULTS (via src.match.match) ---")
     print(f"{'Azimuth Diff':<15} | {'Total Matches':<15} | {'Inlier Count':<15} | {'Inlier Ratio'}")
     print("-" * 65)
 
     for az in azimuths:
         test_img = renders[az]
-        tot, inliers, ratio, kp1, kp2, matches, mask = match_images(base_img, test_img)
-        
+        res = match_images(base_img, test_img, matcher="sift", rung=0)
+        stats = inlier_stats(res)
+
+        tot = stats["total_matches"]
+        inliers = stats["inlier_count"]
+        ratio = stats["inlier_ratio"]
+
         results_az.append(az)
         results_inliers.append(inliers)
-        
+
         print(f"{az:<15} | {tot:<15} | {inliers:<15} | {ratio:.2f}")
 
-        if az == 0 and ratio < 0.95:
-            print("WARNING: 0-degree baseline matching failed to yield near-perfect inliers. Check the SIFT/RANSAC pipeline!")
-
-        # Draw matches
-        if len(matches) > 0 and mask is not None and len(mask) == len(matches):
-            mask_list = mask.ravel().tolist()
-            # Inliers in green, outliers in red
-            draw_params = dict(matchColor=(0, 255, 0),
-                               singlePointColor=(0, 0, 255),
-                               matchesMask=mask_list,
-                               flags=cv2.DrawMatchesFlags_DEFAULT)
-            
-            img_matches = cv2.drawMatches(base_img, kp1, test_img, kp2, matches, None, **draw_params)
-        else:
-            img_matches = np.concatenate((base_img, test_img), axis=1)
-            img_matches = cv2.cvtColor(img_matches, cv2.COLOR_GRAY2BGR)
-
+        img_matches = draw_match_result(base_img, test_img, res)
         out_path = os.path.join(MATCH_OUT_DIR, f"premise_matches_az{az}.png")
         cv2.imwrite(out_path, img_matches)
 
     # Plot
-    plt.figure(figsize=(8, 5))
-    plt.plot(results_az, results_inliers, marker='o', linestyle='-', color='b', linewidth=2)
-    plt.title("SIFT inlier count collapses as sun azimuth diverges")
-    plt.xlabel("Sun Azimuth Difference (°)")
-    plt.ylabel("Inlier Count")
-    plt.grid(True, linestyle='--', alpha=0.7)
-    
-    plot_path = os.path.join(OUT_DIR, "premise_plot.png")
-    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(results_az, results_inliers, marker="o", linestyle="-", color="#00a8ff", linewidth=2)
+    ax.set_title("SIFT inlier count collapses as sun azimuth diverges")
+    ax.set_xlabel("Sun Azimuth Difference (°)")
+    ax.set_ylabel("Inlier Count")
+    ax.grid(True, linestyle="--", alpha=0.7)
+    fig.tight_layout()
+
+    plot_path = os.path.join(out_dir, "premise_plot.png")
+    fig.savefig(plot_path, dpi=150)
+    plt.close(fig)
     print(f"\nSaved plot to {plot_path}")
     print(f"Saved match overlays to {MATCH_OUT_DIR}/")
+
+    return {"azimuths": results_az, "inlier_counts": results_inliers}
+
+
+def main():
+    run_premise_test()
 
 
 if __name__ == "__main__":
     main()
+

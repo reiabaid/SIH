@@ -86,3 +86,28 @@ for cnet.py
 in short:-
 "Phase 7 converts the reliable matched points from our MatchResult into an ISIS Control Network file, so that the output of our lunar image matcher can be directly integrated into the existing photogrammetry workflow without needing to install or run ISIS ourselves."
 
+How Phase 8 connects everything you've built
+
+             Lunar Images
+                  ↓
+             align_pair()
+                  ↓
+               match()
+                  ↓
+             MatchResult
+                  ↓
+        ┌─────────┴─────────┐
+        ↓                   ↓
+     metrics             cnet.py
+        ↓                   ↓
+ RMSE / coverage       ISIS CNET
+        ↓
+     sweep.py
+        ↓
+ illumination experiment
+        ↓
+   final comparison plot
+
+In-short
+
+sweep.py systematically changes Sun azimuth/elevation and shows how success changes

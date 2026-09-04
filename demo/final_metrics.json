@@ -1,0 +1,131 @@
+{
+  "terrain_source": "synthetic_dem",
+  "methods": {
+    "SIFT (Rung 0)": {
+      "az_0deg": {
+        "total_matches": 205,
+        "inlier_count": 205,
+        "inlier_ratio": 1.0,
+        "reprojection_residual": 0.5284,
+        "rmse_ground_truth": 0.5284,
+        "occupied_fraction": 0.8281,
+        "coefficient_of_variation": 0.8589,
+        "runtime_s": 0.0599
+      },
+      "az_30deg": {
+        "total_matches": 20,
+        "inlier_count": 11,
+        "inlier_ratio": 0.55,
+        "reprojection_residual": 0.7724,
+        "rmse_ground_truth": 1.4059,
+        "occupied_fraction": 0.1562,
+        "coefficient_of_variation": 2.4241,
+        "runtime_s": 0.0527
+      },
+      "az_90deg": {
+        "total_matches": 15,
+        "inlier_count": 6,
+        "inlier_ratio": 0.4,
+        "reprojection_residual": 0.4026,
+        "rmse_ground_truth": 174.0051,
+        "occupied_fraction": 0.0625,
+        "coefficient_of_variation": 4.0961,
+        "runtime_s": 0.0417
+      },
+      "az_180deg": {
+        "total_matches": 15,
+        "inlier_count": 5,
+        "inlier_ratio": 0.3333,
+        "reprojection_residual": 0.0003,
+        "rmse_ground_truth": 147.9571,
+        "occupied_fraction": 0.0625,
+        "coefficient_of_variation": 4.1134,
+        "runtime_s": 0.039
+      }
+    },
+    "Mod-X (Rung 1)": {
+      "az_0deg": {
+        "total_matches": 125,
+        "inlier_count": 125,
+        "inlier_ratio": 1.0,
+        "reprojection_residual": 0.5105,
+        "rmse_ground_truth": 0.5105,
+        "occupied_fraction": 0.7812,
+        "coefficient_of_variation": 0.7861,
+        "runtime_s": 0.5068
+      },
+      "az_30deg": {
+        "total_matches": 19,
+        "inlier_count": 10,
+        "inlier_ratio": 0.5263,
+        "reprojection_residual": 0.8783,
+        "rmse_ground_truth": 1.3912,
+        "occupied_fraction": 0.1094,
+        "coefficient_of_variation": 3.6166,
+        "runtime_s": 0.5862
+      },
+      "az_90deg": {
+        "total_matches": 0,
+        "inlier_count": 0,
+        "inlier_ratio": 0.0,
+        "reprojection_residual": null,
+        "rmse_ground_truth": null,
+        "occupied_fraction": 0.0,
+        "coefficient_of_variation": null,
+        "runtime_s": 0.5121
+      },
+      "az_180deg": {
+        "total_matches": 18,
+        "inlier_count": 12,
+        "inlier_ratio": 0.6667,
+        "reprojection_residual": 0.925,
+        "rmse_ground_truth": 1.7236,
+        "occupied_fraction": 0.1094,
+        "coefficient_of_variation": 3.383,
+        "runtime_s": 0.6007
+      }
+    },
+    "LightGlue": {
+      "az_0deg": {
+        "total_matches": 1869,
+        "inlier_count": 1869,
+        "inlier_ratio": 1.0,
+        "reprojection_residual": 0.4457,
+        "rmse_ground_truth": 0.4457,
+        "occupied_fraction": 0.9375,
+        "coefficient_of_variation": 0.5821,
+        "runtime_s": 13.47
+      },
+      "az_30deg": {
+        "total_matches": 906,
+        "inlier_count": 892,
+        "inlier_ratio": 0.9845,
+        "reprojection_residual": 0.6528,
+        "rmse_ground_truth": 0.6588,
+        "occupied_fraction": 0.9062,
+        "coefficient_of_variation": 0.6519,
+        "runtime_s": 8.9918
+      },
+      "az_90deg": {
+        "total_matches": 71,
+        "inlier_count": 38,
+        "inlier_ratio": 0.5352,
+        "reprojection_residual": 0.9608,
+        "rmse_ground_truth": 1.1272,
+        "occupied_fraction": 0.3125,
+        "coefficient_of_variation": 2.1203,
+        "runtime_s": 9.1439
+      },
+      "az_180deg": {
+        "total_matches": 39,
+        "inlier_count": 18,
+        "inlier_ratio": 0.4615,
+        "reprojection_residual": 1.0489,
+        "rmse_ground_truth": 8.3115,
+        "occupied_fraction": 0.1562,
+        "coefficient_of_variation": 2.8437,
+        "runtime_s": 9.0398
+      }
+    }
+  }
+}
