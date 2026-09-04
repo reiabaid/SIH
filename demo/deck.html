@@ -726,26 +726,24 @@
       <div style="display:flex;flex-direction:column;gap:16px;min-height:0;">
         <div class="placeholder-box" style="flex:1;">
           <div class="ph-icon">🛰️</div>
-          <div class="ph-label">PLACEHOLDER — pending Mehak's deliverable assembly</div>
+          <div class="ph-label">PLACEHOLDER — Reia's real-run output pending</div>
           <div class="ph-note">
-            Status update: the pipeline (alignment, tiling, coordinate inversion) is done and tested.
-            The remaining blocker is different from what this slide originally said — see Slide 8's
-            new item on <code style="color:var(--blue);font-size:11px;">align_pair</code>'s corner-fit
-            drift. The one real CH-2 × LRO pair available does not yet have a trustworthy registration
-            (caught automatically by our own <code style="color:var(--blue);font-size:11px;">fit_reliability</code>
-            check), so do not fill this slide from
-            <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/</code> as it stands.<br><br>
-            <strong style="color:var(--text);">Recommended for the demo:</strong> assemble this slide
-            from the synthetic/DEM-rendered pair instead (a real, valid registration — just not
-            cross-instrument satellite data) via
-            <code style="color:var(--blue);font-size:11px;">deliverable.build_deliverable</code>, and
-            present the real CH-2 × LRO attempt honestly on Slide 8 instead of here.
+            This slide will show:<br>
+            <strong style="color:var(--text);">Registered CH-2 × LRO overlay</strong> (red/green alignment)<br>
+            Match-point scatter on the registered raster<br>
+            Metrics: RMSE, inlier count, grid coverage<br><br>
+            Swap in <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/overlay_rgb.png</code><br>
+            and fill the metric cards from <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/metrics.json</code><br>
+            once Reia's coordinate inversion + end-to-end run lands.
           </div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px;">
-        <div class="card">
-          <h3>What the deliverable contains</h3>
+        <div class="card" style="border-color:rgba(248,81,73,0.35);">
+          <h3 style="color:var(--red);">Honest Result: No trustworthy registration</h3>
+          <p>The real CH2 (d32) × LRO NAC (M1499112398LE) pair resulted in <code>trivial_fit=True</code> for classical matchers. Both SIFT and mod-π reduced to ≤4 unique inlier locations.</p>
+          <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red);">Inliers: 8 (4 unique locations) · Coverage: 6.25%</div>
+        </div>
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:13px;">
             <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">registered_a_to_b.tif</code> — GeoTIFF warped into reference frame</span></div>
             <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">match_points.csv</code> — human-readable tie-points with geo-coords</span></div>

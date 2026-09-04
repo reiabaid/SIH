@@ -206,12 +206,11 @@ The frontend (**LunarMatch**) is organized as a 5-screen interactive mission das
 
 | Metric | Rung 0 (SIFT Baseline) | Rung 1 (Mod-X Edge-Phase) | Rung 2 (LightGlue) |
 | :--- | :--- | :--- | :--- |
-| **Matches at $0^\circ$ Sun Azimuth $\Delta$** | $\sim 1,520$ | $\sim 1,480$ | $\sim 1,850$ |
-| **Matches at $30^\circ$ Sun Azimuth $\Delta$** | $320$ ($-78\%$) | $1,240$ ($-16\%$) | $1,610$ ($-12\%$) |
-| **Matches at $120^\circ-180^\circ$ Sun Azimuth $\Delta$** | **4 (Complete Collapse)** | **910 (Stable)** | **1,340 (High Stability)** |
-| **Registration RMSE** | $2.41\text{ px}$ (Unstable) | **$0.372\text{ px}$ (Sub-pixel)** | **$0.315\text{ px}$ (Sub-pixel)** |
-| **Spatial Grid Coverage ($8 \times 8$)** | $24 / 64$ cells (Clustered) | **$61 / 64$ cells (Uniform)** | **$63 / 64$ cells (Uniform)** |
-| **Spatial Distribution CV** | $0.84$ (Non-uniform) | **$0.20$ (Uniform)** | **$0.18$ (Uniform)** |
+| **Matches at $0^\circ$ Sun Azimuth $\Delta$** | $1,578$ | $1,167$ | $1,790$ |
+| **Matches at $30^\circ$ Sun Azimuth $\Delta$** | $38$ ($-97\%$) | $14$ ($-99\%$) | $951$ ($-47\%$) |
+| **Matches at $60^\circ$ Sun Azimuth $\Delta$** | **4 (Complete Collapse)** | **0 (Complete Collapse)** | **666 (High Stability)** |
+| **Matches at $180^\circ$ Sun Azimuth $\Delta$** | **4 (Complete Collapse)** | **907 (Symmetric Recovery)** | **1,071 (High Stability)** |
+| **Registration RMSE** | Unstable | **$0.37\text{ px}$ (Sub-pixel)** | **$<0.5\text{ px}$ (Sub-pixel)** |
 | **ISIS Photogrammetry Compatibility** | ❌ Failed | **✅ Native `.net` PVL Export** | **✅ Native `.net` PVL Export** |
 
 ---
