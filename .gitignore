@@ -9,4 +9,5 @@ venv/
 *.zip
 *.pth
 data/
+node_modules/
 .pytest_cache/

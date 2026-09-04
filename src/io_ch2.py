@@ -161,6 +161,13 @@ def load_product(xml_path: str) -> Product:
     img_path = _find_img_path(xml_path)
 
     # --- read the array ---
+    # Prefer osgeo.gdal directly if installed; fall back to rasterio, which
+    # bundles its own GDAL build (PDS4 driver included) and doesn't need the
+    # separate osgeo package — osgeo's wheel requires a C++ build toolchain
+    # on Windows, which isn't something to assume is available.
+    array = None
+    read_errors = []
+
     if _HAVE_GDAL:
         try:
             ds = gdal.Open(xml_path)  # GDAL's PDS4 driver reads via the label
@@ -170,13 +177,20 @@ def load_product(xml_path: str) -> Product:
                 )
             array = ds.ReadAsArray()
         except Exception as e:
-            raise LabelParseError(
-                f"GDAL failed to read product for label {xml_path}: {e}"
-            ) from e
-    else:
+            read_errors.append(f"gdal: {e}")
+
+    if array is None:
+        try:
+            import rasterio
+            with rasterio.open(xml_path) as ds:
+                array = ds.read(1) if ds.count == 1 else ds.read()
+        except Exception as e:
+            read_errors.append(f"rasterio: {e}")
+
+    if array is None:
         raise LabelParseError(
-            "GDAL (osgeo) is not installed — install it to read PDS4 products. "
-            "Try: conda install -c conda-forge gdal"
+            f"{xml_path}: could not be read by GDAL or rasterio. "
+            f"Errors: {'; '.join(read_errors) if read_errors else 'neither is installed'}"
         )
 
     if array is None or array.size == 0:
