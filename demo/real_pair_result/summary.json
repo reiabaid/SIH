@@ -1,22 +1,38 @@
 {
-  "ch2_product": "urn:isro:isda:ch2_cho.ohr:data_calibrated:ch2_ohr_ncp_20200229t0739312111_d_img_d18",
-  "lro_product": "M1519299970LE",
-  "ch2_gsd_m": 0.22977000623605362,
+  "ch2_product": "urn:isro:isda:ch2_cho.ohr:data_calibrated:ch2_ohr_ncp_20200229t0938004033_d_img_d32",
+  "lro_product": "M1499112398LE",
+  "ch2_gsd_m": 0.2302230600054759,
   "lro_gsd_m": 1.0005431519967982,
-  "aligned_common_gsd_m": 1.0005431519967982,
-  "aligned_shape": [
-    17131,
-    1489
-  ],
-  "footprint_overlap_ch2_vs_lro": 0.17478942386611096,
-  "footprint_overlap_lro_vs_ch2": 0.1907993257757926,
-  "matcher": "sift-rung0",
-  "matches": 10,
-  "inliers": 4,
-  "inlier_ratio": 0.4,
-  "rmse_fitted_px": 0.2120241156083155,
-  "coverage_occupied_fraction": 0.0625,
-  "coverage_cv": 3.872983346207417,
-  "runtime_s": 10.174153327941895,
-  "note": "First real end-to-end run on genuine CH2 x LRO pixel data (not synthetic). Result is weak (4 inliers) and rung 1 (mod-pi) found zero matches on this same pair. Diagnosed cause: LRO NAC corners are SPICE-derived via a nadir-pointing approximation (io_lro.py docstring: errors <0.5 deg near poles), not measured geometry. align_pair trusts these corners exactly when building the common grid, so a real position error there can leave the two aligned arrays showing the same general terrain without being pixel-registered. Phase-correlation coarse pre-alignment was attempted as a fix (3 window sizes) and did not find a consistent offset (response 0.01-0.03, shift estimates disagreed by hundreds of pixels across window choices) -- ruled out a simple global translation as the explanation. Root cause not fully resolved; documented as a known limitation rather than presented as a validated accurate registration."
+  "lro_geometry_source": "naif_webgeocalc",
+  "note": "Real end-to-end run through the fixed pipeline (align_pair wired in, tiled matching with global-pool RANSAC, coordinate inversion back to each product's own original pixel frame). webgeocalc installed and NAIF SPICE geometry resolved successfully for the LRO product -- the earlier weak result (4 inliers) was diagnosed against a (0,0) sentinel corner fallback, not real geometry.",
+  "runs": {
+    "sift-rung0": {
+      "matcher": "sift-rung0-tiled",
+      "wall_time_s": 37.87386512756348,
+      "rmse_ground_truth": null,
+      "reprojection_residual": 0.006618965205276451,
+      "inlier_count": 8,
+      "total_matches": 364,
+      "inlier_ratio": 0.02197802197802198,
+      "occupied_fraction": 0.0625,
+      "coefficient_of_variation": 4.123105625617661,
+      "unique_inlier_locations": 4,
+      "trivial_fit": true,
+      "well_determined": false
+    },
+    "sift-rung1": {
+      "matcher": "sift-rung1-tiled",
+      "wall_time_s": 201.41315627098083,
+      "rmse_ground_truth": null,
+      "reprojection_residual": NaN,
+      "inlier_count": 0,
+      "total_matches": 0,
+      "inlier_ratio": 0.0,
+      "occupied_fraction": 0.0,
+      "coefficient_of_variation": NaN,
+      "unique_inlier_locations": 0,
+      "trivial_fit": true,
+      "well_determined": false
+    }
+  }
 }

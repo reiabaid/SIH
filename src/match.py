@@ -5,7 +5,10 @@ import numpy as np
 import cv2
 
 from src.types import MatchResult
-from src.prep import gradient_orientation_mod_pi
+from src.prep import gradient_orientation_mod_pi, tile, untile_points
+
+TILE_SIZE = 1024   # side length in px; large rasters (OHRC strips run ~55000x12000)
+TILE_OVERLAP = 128  # must exceed the largest expected inter-image shift at tile scale
 
 GRID_SIZE = 8
 MAX_KEYPOINTS_PER_CELL = 40
@@ -329,3 +332,63 @@ def match(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0) ->
         return _match_lightglue(a, b)
     else:
         raise ValueError(f"unknown matcher: {matcher!r}")
+
+
+def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0,
+                 tile_size: int = TILE_SIZE, overlap: int = TILE_OVERLAP) -> MatchResult:
+    """Tile-then-pool-then-globally-refit matching for rasters too large to hand
+    match() whole (an OHRC strip is ~55000x12000px).
+
+    Matching each tile independently and trusting its own per-tile RANSAC fit is
+    unsafe on repetitive terrain: a crater tile can lock onto an internally
+    consistent but wrong homography one crater-period away from the truth, and
+    that tile's own inlier check has no way to catch it (verified in
+    tests/test_tiling.py -- individual tiles saw 30-100px error against ground
+    truth despite passing their own RANSAC).
+
+    The fix is not per-tile trust, it's pooling: every tile's raw candidate
+    matches (both its "inliers" and "outliers" -- the per-tile RANSAC split is
+    discarded, not propagated) are collected into one set, and a single global
+    MAGSAC homography is fit across the whole image. A tile that locked onto
+    the wrong period is now a small minority among the genuinely-correct
+    correspondences pooled from every other tile, so it becomes a global
+    outlier instead of a locally-confident wrong answer. This is the same
+    mechanism tests/test_tiling.py validates directly against ground truth.
+    """
+    t0 = time.time()
+    tiles_a = tile(a, tile_size, overlap)
+    tiles_b = tile(b, tile_size, overlap)
+
+    pool_a, pool_b, pool_scores = [], [], []
+    for (ta, offset_a), (tb, offset_b) in zip(tiles_a, tiles_b):
+        result = match(ta, tb, matcher=matcher, rung=rung)
+        if len(result.pts_a) == 0:
+            continue
+        pool_a.append(untile_points(result.pts_a, offset_a))
+        pool_b.append(untile_points(result.pts_b, offset_b))
+        pool_scores.append(result.scores)
+
+    matcher_name = f"{matcher}-rung{rung}-tiled" if matcher == "sift" else f"{matcher}-tiled"
+    if not pool_a:
+        return _empty_result(a, b, matcher_name, time.time() - t0)
+
+    pts_a = np.vstack(pool_a).astype(np.float32)
+    pts_b = np.vstack(pool_b).astype(np.float32)
+    scores = np.concatenate(pool_scores).astype(np.float32)
+
+    if len(pts_a) < 4:
+        return _empty_result(a, b, matcher_name, time.time() - t0)
+
+    transform, ransac_mask = cv2.findHomography(
+        pts_a, pts_b, cv2.USAC_MAGSAC, RANSAC_REPROJ_THRESHOLD
+    )
+    if transform is None:
+        return _empty_result(a, b, matcher_name, time.time() - t0)
+
+    inlier_mask = ransac_mask.ravel().astype(bool)
+    return MatchResult(
+        pts_a=pts_a, pts_b=pts_b, scores=scores, inlier_mask=inlier_mask,
+        transform=transform.astype(np.float64), matcher=matcher_name,
+        shape_a=tuple(a.shape[:2]), shape_b=tuple(b.shape[:2]),
+        runtime_s=time.time() - t0,
+    )

@@ -1,0 +1,7649 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71887969970703,
+            -73.44734191894531
+          ],
+          [
+            42.82025909423828,
+            -73.42837524414062
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 0,
+        "inlier": false,
+        "score": -0.3814319670200348
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72440719604492,
+            -73.43106842041016
+          ],
+          [
+            42.8009033203125,
+            -73.45637512207031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 1,
+        "inlier": false,
+        "score": -0.1845715343952179
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73381423950195,
+            -73.44371032714844
+          ],
+          [
+            42.75825500488281,
+            -73.45021057128906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 2,
+        "inlier": false,
+        "score": -0.167069673538208
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7720832824707,
+            -73.43576049804688
+          ],
+          [
+            42.793697357177734,
+            -73.42861938476562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 3,
+        "inlier": false,
+        "score": -0.5624752640724182
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78896713256836,
+            -73.44691467285156
+          ],
+          [
+            42.75123596191406,
+            -73.44483947753906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 4,
+        "inlier": false,
+        "score": -0.38943615555763245
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78016662597656,
+            -73.45655822753906
+          ],
+          [
+            42.78845977783203,
+            -73.43487548828125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 5,
+        "inlier": false,
+        "score": -0.06588423997163773
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.779396057128906,
+            -73.45571899414062
+          ],
+          [
+            42.78870391845703,
+            -73.4523696899414
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 6,
+        "inlier": false,
+        "score": -0.5659517049789429
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80006790161133,
+            -73.44359588623047
+          ],
+          [
+            42.81745529174805,
+            -73.43012237548828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 7,
+        "inlier": false,
+        "score": -0.2642112374305725
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80574417114258,
+            -73.43373107910156
+          ],
+          [
+            42.78160858154297,
+            -73.45317840576172
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 8,
+        "inlier": false,
+        "score": -0.5552933216094971
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.817909240722656,
+            -73.45262145996094
+          ],
+          [
+            42.74103927612305,
+            -73.43123626708984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 9,
+        "inlier": false,
+        "score": -0.18601076304912567
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.812599182128906,
+            -73.455810546875
+          ],
+          [
+            42.727630615234375,
+            -73.4377670288086
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 10,
+        "inlier": false,
+        "score": 7.301614868282513e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.820526123046875,
+            -73.45584106445312
+          ],
+          [
+            42.84405517578125,
+            -73.42882537841797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 11,
+        "inlier": false,
+        "score": 0.40181559324264526
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83193588256836,
+            -73.4464111328125
+          ],
+          [
+            42.92034912109375,
+            -73.42634582519531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 12,
+        "inlier": false,
+        "score": 0.030234331265091896
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85942840576172,
+            -73.4267807006836
+          ],
+          [
+            42.88460159301758,
+            -73.45065307617188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 13,
+        "inlier": false,
+        "score": -0.035869866609573364
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8677978515625,
+            -73.42655944824219
+          ],
+          [
+            42.821048736572266,
+            -73.45449829101562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 14,
+        "inlier": false,
+        "score": 0.09292898327112198
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86983108520508,
+            -73.42731475830078
+          ],
+          [
+            42.85183334350586,
+            -73.4500732421875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 15,
+        "inlier": false,
+        "score": 0.2782634198665619
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87179183959961,
+            -73.4396743774414
+          ],
+          [
+            42.884559631347656,
+            -73.45065307617188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 16,
+        "inlier": false,
+        "score": 0.13387417793273926
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8831672668457,
+            -73.44781494140625
+          ],
+          [
+            42.839744567871094,
+            -73.44564056396484
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 17,
+        "inlier": false,
+        "score": 0.29105016589164734
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88897705078125,
+            -73.44718933105469
+          ],
+          [
+            42.859066009521484,
+            -73.4581527709961
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 18,
+        "inlier": false,
+        "score": 0.05912771075963974
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8895149230957,
+            -73.43028259277344
+          ],
+          [
+            42.85692596435547,
+            -73.44529724121094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 19,
+        "inlier": false,
+        "score": 0.15729239583015442
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8808479309082,
+            -73.4396743774414
+          ],
+          [
+            42.9158935546875,
+            -73.45523834228516
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 20,
+        "inlier": false,
+        "score": 0.3275217115879059
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.881526947021484,
+            -73.44432830810547
+          ],
+          [
+            42.8940315246582,
+            -73.43663024902344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 21,
+        "inlier": false,
+        "score": 0.20153135061264038
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88839340209961,
+            -73.42567443847656
+          ],
+          [
+            42.91667175292969,
+            -73.45710754394531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 22,
+        "inlier": false,
+        "score": 0.3402082920074463
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88014602661133,
+            -73.42797088623047
+          ],
+          [
+            42.9085693359375,
+            -73.43600463867188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 23,
+        "inlier": false,
+        "score": 0.07729371637105942
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88370895385742,
+            -73.45060729980469
+          ],
+          [
+            42.865325927734375,
+            -73.44122314453125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 24,
+        "inlier": false,
+        "score": -0.011737631633877754
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88185501098633,
+            -73.4341049194336
+          ],
+          [
+            42.855796813964844,
+            -73.44063568115234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 25,
+        "inlier": false,
+        "score": 0.08498963713645935
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.894554138183594,
+            -73.44768524169922
+          ],
+          [
+            42.874481201171875,
+            -73.45516967773438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 26,
+        "inlier": false,
+        "score": 0.14765827357769012
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89912033081055,
+            -73.453125
+          ],
+          [
+            42.81715393066406,
+            -73.43241119384766
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 27,
+        "inlier": false,
+        "score": -0.1154521107673645
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.92534255981445,
+            -73.445556640625
+          ],
+          [
+            42.86845016479492,
+            -73.44847106933594
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 28,
+        "inlier": false,
+        "score": 4.985567514381728e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72060012817383,
+            -73.4840087890625
+          ],
+          [
+            42.83463668823242,
+            -73.46122741699219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 29,
+        "inlier": false,
+        "score": -0.2608893811702728
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.749671936035156,
+            -73.45568084716797
+          ],
+          [
+            42.76736831665039,
+            -73.47859191894531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 30,
+        "inlier": false,
+        "score": -0.23921819031238556
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75971603393555,
+            -73.46932983398438
+          ],
+          [
+            42.81013488769531,
+            -73.46388244628906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 31,
+        "inlier": false,
+        "score": -0.20429621636867523
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75045394897461,
+            -73.47697448730469
+          ],
+          [
+            42.73490905761719,
+            -73.4603271484375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 32,
+        "inlier": false,
+        "score": -0.4617229998111725
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75098419189453,
+            -73.48221588134766
+          ],
+          [
+            42.82804489135742,
+            -73.47561645507812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 33,
+        "inlier": false,
+        "score": 0.5383303165435791
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75306701660156,
+            -73.47529602050781
+          ],
+          [
+            42.83037185668945,
+            -73.4815673828125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 34,
+        "inlier": false,
+        "score": -0.7524096965789795
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77119827270508,
+            -73.47588348388672
+          ],
+          [
+            42.77103805541992,
+            -73.4786148071289
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 35,
+        "inlier": false,
+        "score": -0.4589414894580841
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76408386230469,
+            -73.4869155883789
+          ],
+          [
+            42.81894302368164,
+            -73.47833251953125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 36,
+        "inlier": false,
+        "score": -0.24578218162059784
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.761959075927734,
+            -73.47506713867188
+          ],
+          [
+            42.72426986694336,
+            -73.48067474365234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 37,
+        "inlier": false,
+        "score": -0.427091121673584
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.787288665771484,
+            -73.45890045166016
+          ],
+          [
+            42.803123474121094,
+            -73.47229766845703
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 38,
+        "inlier": false,
+        "score": -0.05123651772737503
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.789764404296875,
+            -73.48284912109375
+          ],
+          [
+            42.73579406738281,
+            -73.47660827636719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 39,
+        "inlier": false,
+        "score": -0.11177290230989456
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7985725402832,
+            -73.4716796875
+          ],
+          [
+            42.74390411376953,
+            -73.46366882324219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 40,
+        "inlier": false,
+        "score": -0.25026699900627136
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79560470581055,
+            -73.46868133544922
+          ],
+          [
+            42.7256965637207,
+            -73.45460510253906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 41,
+        "inlier": false,
+        "score": -0.5021253824234009
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79826736450195,
+            -73.47602081298828
+          ],
+          [
+            42.732303619384766,
+            -73.4779052734375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 42,
+        "inlier": false,
+        "score": -0.5617320537567139
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.795745849609375,
+            -73.48426055908203
+          ],
+          [
+            42.75817108154297,
+            -73.4808349609375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 43,
+        "inlier": false,
+        "score": -0.45281219482421875
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8201789855957,
+            -73.46731567382812
+          ],
+          [
+            42.769981384277344,
+            -73.47428894042969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 44,
+        "inlier": false,
+        "score": -0.29712387919425964
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.819725036621094,
+            -73.46539306640625
+          ],
+          [
+            42.81897735595703,
+            -73.47834777832031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 45,
+        "inlier": false,
+        "score": 7.997946749327411e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82231521606445,
+            -73.46124267578125
+          ],
+          [
+            42.92726135253906,
+            -73.46343231201172
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 46,
+        "inlier": false,
+        "score": 0.16101673245429993
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.819725036621094,
+            -73.46539306640625
+          ],
+          [
+            42.81897735595703,
+            -73.47834777832031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 47,
+        "inlier": false,
+        "score": 0.4359739124774933
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82707977294922,
+            -73.4843521118164
+          ],
+          [
+            42.835060119628906,
+            -73.46146392822266
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 48,
+        "inlier": false,
+        "score": 0.12292766571044922
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.828556060791016,
+            -73.487548828125
+          ],
+          [
+            42.89675521850586,
+            -73.45698547363281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 49,
+        "inlier": false,
+        "score": -0.08664911240339279
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84284591674805,
+            -73.45573425292969
+          ],
+          [
+            42.86506652832031,
+            -73.46289825439453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 50,
+        "inlier": false,
+        "score": 0.22265757620334625
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84126281738281,
+            -73.45574188232422
+          ],
+          [
+            42.822998046875,
+            -73.46107482910156
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 51,
+        "inlier": false,
+        "score": 0.3525262475013733
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.841331481933594,
+            -73.46257781982422
+          ],
+          [
+            42.8465461730957,
+            -73.47732543945312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 52,
+        "inlier": false,
+        "score": 0.1099495068192482
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.841331481933594,
+            -73.46257781982422
+          ],
+          [
+            42.8465461730957,
+            -73.47732543945312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 53,
+        "inlier": false,
+        "score": 0.13986606895923615
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84699630737305,
+            -73.48121643066406
+          ],
+          [
+            42.84281539916992,
+            -73.47996520996094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 54,
+        "inlier": false,
+        "score": 0.15404805541038513
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87022018432617,
+            -73.47132873535156
+          ],
+          [
+            42.85011672973633,
+            -73.45829772949219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 55,
+        "inlier": false,
+        "score": 0.2348875105381012
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.862648010253906,
+            -73.4812240600586
+          ],
+          [
+            42.89701843261719,
+            -73.47795867919922
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 56,
+        "inlier": false,
+        "score": 0.33618494868278503
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86872100830078,
+            -73.46768951416016
+          ],
+          [
+            42.8512077331543,
+            -73.47101593017578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 57,
+        "inlier": false,
+        "score": 0.20184935629367828
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86732864379883,
+            -73.47074890136719
+          ],
+          [
+            42.8270263671875,
+            -73.4764175415039
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 58,
+        "inlier": false,
+        "score": 0.4779246747493744
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88890075683594,
+            -73.45774841308594
+          ],
+          [
+            42.8270149230957,
+            -73.47643280029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 59,
+        "inlier": false,
+        "score": 0.3344704508781433
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88890075683594,
+            -73.45774841308594
+          ],
+          [
+            42.89527893066406,
+            -73.48595428466797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 60,
+        "inlier": false,
+        "score": 0.2704913020133972
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89069747924805,
+            -73.48023986816406
+          ],
+          [
+            42.90044021606445,
+            -73.47777557373047
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 61,
+        "inlier": false,
+        "score": 0.2339438796043396
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89529800415039,
+            -73.46280670166016
+          ],
+          [
+            42.897979736328125,
+            -73.4737319946289
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 62,
+        "inlier": false,
+        "score": 0.06791319698095322
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.90745544433594,
+            -73.48651885986328
+          ],
+          [
+            42.85685348510742,
+            -73.45795440673828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 63,
+        "inlier": false,
+        "score": 0.13162508606910706
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.91716766357422,
+            -73.48388671875
+          ],
+          [
+            42.92617416381836,
+            -73.4657211303711
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 64,
+        "inlier": false,
+        "score": 0.04501940310001373
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.909263610839844,
+            -73.47599792480469
+          ],
+          [
+            42.8648796081543,
+            -73.47723388671875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 65,
+        "inlier": false,
+        "score": 4.511058193656936e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72571563720703,
+            -73.5152816772461
+          ],
+          [
+            42.835418701171875,
+            -73.50999450683594
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 66,
+        "inlier": false,
+        "score": -0.2550513744354248
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74489212036133,
+            -73.4903564453125
+          ],
+          [
+            42.758522033691406,
+            -73.49172973632812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 67,
+        "inlier": false,
+        "score": -0.042326949536800385
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.738162994384766,
+            -73.48928833007812
+          ],
+          [
+            42.75518798828125,
+            -73.49928283691406
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 68,
+        "inlier": false,
+        "score": -0.49961763620376587
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74271011352539,
+            -73.4841079711914
+          ],
+          [
+            42.74219512939453,
+            -73.50819396972656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 69,
+        "inlier": false,
+        "score": -0.010558819398283958
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73940658569336,
+            -73.49249267578125
+          ],
+          [
+            42.83557891845703,
+            -73.49713897705078
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 70,
+        "inlier": false,
+        "score": -0.29295530915260315
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75187301635742,
+            -73.49797058105469
+          ],
+          [
+            42.7663688659668,
+            -73.48888397216797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 71,
+        "inlier": false,
+        "score": -0.30574700236320496
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75670623779297,
+            -73.49410247802734
+          ],
+          [
+            42.7641716003418,
+            -73.50045013427734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 72,
+        "inlier": false,
+        "score": 0.4259503483772278
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76544952392578,
+            -73.48828125
+          ],
+          [
+            42.7288932800293,
+            -73.51470947265625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 73,
+        "inlier": false,
+        "score": -0.19456526637077332
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7786865234375,
+            -73.49057006835938
+          ],
+          [
+            42.760990142822266,
+            -73.4896469116211
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 74,
+        "inlier": false,
+        "score": -0.7867090106010437
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78681945800781,
+            -73.5007553100586
+          ],
+          [
+            42.75028991699219,
+            -73.4944076538086
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 75,
+        "inlier": false,
+        "score": -0.058771681040525436
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78175735473633,
+            -73.48662567138672
+          ],
+          [
+            42.78802490234375,
+            -73.50617980957031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 76,
+        "inlier": false,
+        "score": -0.38440173864364624
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.800235748291016,
+            -73.50569915771484
+          ],
+          [
+            42.74223327636719,
+            -73.50818634033203
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 77,
+        "inlier": false,
+        "score": -0.012372677214443684
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.815799713134766,
+            -73.49085235595703
+          ],
+          [
+            42.77920150756836,
+            -73.50059509277344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 78,
+        "inlier": false,
+        "score": -0.5349422097206116
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81650161743164,
+            -73.49305725097656
+          ],
+          [
+            42.73078918457031,
+            -73.51310729980469
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 79,
+        "inlier": false,
+        "score": -0.5014661550521851
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83549499511719,
+            -73.51240539550781
+          ],
+          [
+            42.78370666503906,
+            -73.49417114257812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 80,
+        "inlier": false,
+        "score": -0.14925915002822876
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83554458618164,
+            -73.497802734375
+          ],
+          [
+            42.745094299316406,
+            -73.5051040649414
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 81,
+        "inlier": false,
+        "score": 6.609202074514542e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82968521118164,
+            -73.51611328125
+          ],
+          [
+            42.836570739746094,
+            -73.51264190673828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 82,
+        "inlier": false,
+        "score": -0.18911013007164001
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84175109863281,
+            -73.50367736816406
+          ],
+          [
+            42.861942291259766,
+            -73.51689147949219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 83,
+        "inlier": false,
+        "score": 0.1344706118106842
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83802795410156,
+            -73.49105072021484
+          ],
+          [
+            42.873756408691406,
+            -73.50399780273438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 84,
+        "inlier": false,
+        "score": 0.20258156955242157
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84343338012695,
+            -73.49021911621094
+          ],
+          [
+            42.91272735595703,
+            -73.48925018310547
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 85,
+        "inlier": false,
+        "score": 0.09202513843774796
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.848548889160156,
+            -73.50467681884766
+          ],
+          [
+            42.8369026184082,
+            -73.51705932617188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 86,
+        "inlier": false,
+        "score": 0.07711969316005707
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.855743408203125,
+            -73.4922103881836
+          ],
+          [
+            42.86216735839844,
+            -73.51528930664062
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 87,
+        "inlier": false,
+        "score": 0.038099005818367004
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.883201599121094,
+            -73.51710510253906
+          ],
+          [
+            42.935203552246094,
+            -73.49005889892578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 88,
+        "inlier": false,
+        "score": -0.05606634542346001
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88080596923828,
+            -73.50065612792969
+          ],
+          [
+            42.84914016723633,
+            -73.50224304199219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 89,
+        "inlier": false,
+        "score": 0.07642381638288498
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89339828491211,
+            -73.49908447265625
+          ],
+          [
+            42.89820861816406,
+            -73.48609924316406
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 90,
+        "inlier": false,
+        "score": 0.15227408707141876
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.91388702392578,
+            -73.50424194335938
+          ],
+          [
+            42.844200134277344,
+            -73.49739837646484
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 91,
+        "inlier": false,
+        "score": 5.285094584195349e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.827880859375,
+            -73.54022216796875
+          ],
+          [
+            42.861942291259766,
+            -73.51689147949219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 92,
+        "inlier": false,
+        "score": 0.4357183277606964
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84141540527344,
+            -73.52265930175781
+          ],
+          [
+            42.9222526550293,
+            -73.54420471191406
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 93,
+        "inlier": false,
+        "score": 0.13694587349891663
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83381652832031,
+            -73.53385162353516
+          ],
+          [
+            42.86624526977539,
+            -73.53145599365234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 94,
+        "inlier": false,
+        "score": 0.1476089060306549
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85971450805664,
+            -73.52072143554688
+          ],
+          [
+            42.864864349365234,
+            -73.53858947753906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 95,
+        "inlier": false,
+        "score": 0.2348809689283371
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.874717712402344,
+            -73.53499603271484
+          ],
+          [
+            42.925289154052734,
+            -73.54379272460938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 96,
+        "inlier": false,
+        "score": -0.1395850032567978
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.869415283203125,
+            -73.5416030883789
+          ],
+          [
+            42.823219299316406,
+            -73.52374267578125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 97,
+        "inlier": false,
+        "score": 0.3817142844200134
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87968444824219,
+            -73.52499389648438
+          ],
+          [
+            42.86472702026367,
+            -73.51612854003906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 98,
+        "inlier": false,
+        "score": -0.14264258742332458
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89631652832031,
+            -73.53577423095703
+          ],
+          [
+            42.8271598815918,
+            -73.53994750976562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 99,
+        "inlier": false,
+        "score": 0.23677228391170502
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.896583557128906,
+            -73.54426574707031
+          ],
+          [
+            42.86435317993164,
+            -73.52378845214844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 100,
+        "inlier": false,
+        "score": 0.09801267832517624
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.90705108642578,
+            -73.51799774169922
+          ],
+          [
+            42.824920654296875,
+            -73.53279113769531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 101,
+        "inlier": false,
+        "score": 4.75210981676355e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73127746582031,
+            -73.57058715820312
+          ],
+          [
+            42.78824996948242,
+            -73.56526184082031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 102,
+        "inlier": false,
+        "score": -0.0708298534154892
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72991180419922,
+            -73.56805419921875
+          ],
+          [
+            42.728477478027344,
+            -73.55796813964844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 103,
+        "inlier": false,
+        "score": 0.11228635907173157
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.724884033203125,
+            -73.55384063720703
+          ],
+          [
+            42.74677276611328,
+            -73.55049896240234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 104,
+        "inlier": false,
+        "score": 0.20651650428771973
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.734130859375,
+            -73.5694580078125
+          ],
+          [
+            42.74991989135742,
+            -73.55521392822266
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 105,
+        "inlier": false,
+        "score": 0.059075042605400085
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74341583251953,
+            -73.56877899169922
+          ],
+          [
+            42.738922119140625,
+            -73.550048828125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 106,
+        "inlier": false,
+        "score": -0.10656366497278214
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74528503417969,
+            -73.56379699707031
+          ],
+          [
+            42.746639251708984,
+            -73.57149505615234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 107,
+        "inlier": false,
+        "score": -0.013607637956738472
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.739315032958984,
+            -73.56063842773438
+          ],
+          [
+            42.75663757324219,
+            -73.55937194824219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 108,
+        "inlier": false,
+        "score": -0.19207750260829926
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73319625854492,
+            -73.54536437988281
+          ],
+          [
+            42.80252456665039,
+            -73.55027770996094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 109,
+        "inlier": false,
+        "score": -0.11532235145568848
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76324462890625,
+            -73.56358337402344
+          ],
+          [
+            42.747474670410156,
+            -73.55084991455078
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 110,
+        "inlier": false,
+        "score": 0.18684189021587372
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76223373413086,
+            -73.55894470214844
+          ],
+          [
+            42.791622161865234,
+            -73.57420349121094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 111,
+        "inlier": false,
+        "score": -0.23959486186504364
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.764251708984375,
+            -73.55815124511719
+          ],
+          [
+            42.82181930541992,
+            -73.55876922607422
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 112,
+        "inlier": false,
+        "score": -0.14329658448696136
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78525161743164,
+            -73.56344604492188
+          ],
+          [
+            42.83058547973633,
+            -73.57240295410156
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 113,
+        "inlier": false,
+        "score": -0.05335856229066849
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.788177490234375,
+            -73.54785919189453
+          ],
+          [
+            42.72622299194336,
+            -73.56688690185547
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 114,
+        "inlier": false,
+        "score": -0.18304434418678284
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7813720703125,
+            -73.54808044433594
+          ],
+          [
+            42.76422119140625,
+            -73.55226135253906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 115,
+        "inlier": false,
+        "score": -0.1334514319896698
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7813720703125,
+            -73.54808044433594
+          ],
+          [
+            42.76422119140625,
+            -73.55226135253906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 116,
+        "inlier": false,
+        "score": -0.11293589323759079
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78572463989258,
+            -73.57292175292969
+          ],
+          [
+            42.765655517578125,
+            -73.556884765625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 117,
+        "inlier": false,
+        "score": -0.29631340503692627
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.782039642333984,
+            -73.55841064453125
+          ],
+          [
+            42.72616195678711,
+            -73.56687927246094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 118,
+        "inlier": false,
+        "score": -0.14282813668251038
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.803768157958984,
+            -73.56643676757812
+          ],
+          [
+            42.7980842590332,
+            -73.57049560546875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 119,
+        "inlier": false,
+        "score": -0.04828058183193207
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.818939208984375,
+            -73.57019805908203
+          ],
+          [
+            42.793758392333984,
+            -73.5580825805664
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 120,
+        "inlier": false,
+        "score": 6.07681682751604e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82453536987305,
+            -73.54558563232422
+          ],
+          [
+            42.91307067871094,
+            -73.55142974853516
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 121,
+        "inlier": false,
+        "score": 0.035143669694662094
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82453536987305,
+            -73.54558563232422
+          ],
+          [
+            42.91307067871094,
+            -73.55142974853516
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 122,
+        "inlier": false,
+        "score": 0.10796429961919785
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81922912597656,
+            -73.54792785644531
+          ],
+          [
+            42.85289001464844,
+            -73.55135345458984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 123,
+        "inlier": false,
+        "score": 0.07067331671714783
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.826194763183594,
+            -73.54867553710938
+          ],
+          [
+            42.841575622558594,
+            -73.54580688476562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 124,
+        "inlier": false,
+        "score": -0.0649014413356781
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.836727142333984,
+            -73.54572296142578
+          ],
+          [
+            42.90750503540039,
+            -73.55264282226562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 125,
+        "inlier": false,
+        "score": 0.10479736328125
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84400177001953,
+            -73.56531524658203
+          ],
+          [
+            42.8208122253418,
+            -73.56844329833984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 126,
+        "inlier": false,
+        "score": 0.12647521495819092
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.838863372802734,
+            -73.57035827636719
+          ],
+          [
+            42.928340911865234,
+            -73.57061767578125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 127,
+        "inlier": false,
+        "score": -0.1972215622663498
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8361701965332,
+            -73.57640838623047
+          ],
+          [
+            42.91959762573242,
+            -73.54772186279297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 128,
+        "inlier": false,
+        "score": 0.007127782795578241
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84397506713867,
+            -73.56083679199219
+          ],
+          [
+            42.88492202758789,
+            -73.57422637939453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 129,
+        "inlier": false,
+        "score": -0.1244782954454422
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.849456787109375,
+            -73.55052947998047
+          ],
+          [
+            42.84086227416992,
+            -73.56155395507812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 130,
+        "inlier": false,
+        "score": -0.38083338737487793
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86675262451172,
+            -73.56852722167969
+          ],
+          [
+            42.84725570678711,
+            -73.54785919189453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 131,
+        "inlier": false,
+        "score": -0.03879469633102417
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87205123901367,
+            -73.56768035888672
+          ],
+          [
+            42.863426208496094,
+            -73.54447937011719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 132,
+        "inlier": false,
+        "score": 0.021166108548641205
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88679122924805,
+            -73.56230163574219
+          ],
+          [
+            42.82716369628906,
+            -73.5435791015625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 133,
+        "inlier": false,
+        "score": 0.05280941724777222
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88746643066406,
+            -73.54547882080078
+          ],
+          [
+            42.91871643066406,
+            -73.572998046875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 134,
+        "inlier": false,
+        "score": -0.3648874759674072
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88166427612305,
+            -73.5660629272461
+          ],
+          [
+            42.85289001464844,
+            -73.55135345458984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 135,
+        "inlier": false,
+        "score": 0.28277915716171265
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.877952575683594,
+            -73.55509948730469
+          ],
+          [
+            42.91339874267578,
+            -73.5481948852539
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 136,
+        "inlier": false,
+        "score": 6.04287730965325e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.724937438964844,
+            -73.58058166503906
+          ],
+          [
+            42.784427642822266,
+            -73.60507202148438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 137,
+        "inlier": false,
+        "score": -0.18030409514904022
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.717002868652344,
+            -73.59786224365234
+          ],
+          [
+            42.80500411987305,
+            -73.58739471435547
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 138,
+        "inlier": false,
+        "score": 0.21160994470119476
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71936798095703,
+            -73.59156799316406
+          ],
+          [
+            42.81752014160156,
+            -73.60243225097656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 139,
+        "inlier": false,
+        "score": -0.33384624123573303
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.735355377197266,
+            -73.60043334960938
+          ],
+          [
+            42.77668762207031,
+            -73.5946044921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 140,
+        "inlier": true,
+        "score": 0.5990269184112549
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.735355377197266,
+            -73.60043334960938
+          ],
+          [
+            42.77668762207031,
+            -73.5946044921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 141,
+        "inlier": true,
+        "score": 0.41508740186691284
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.735355377197266,
+            -73.60043334960938
+          ],
+          [
+            42.77668762207031,
+            -73.5946044921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 142,
+        "inlier": true,
+        "score": 0.4805603623390198
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73259735107422,
+            -73.58528900146484
+          ],
+          [
+            42.76811218261719,
+            -73.59524536132812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 143,
+        "inlier": false,
+        "score": -0.07795251905918121
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.736610412597656,
+            -73.5834732055664
+          ],
+          [
+            42.825923919677734,
+            -73.59171295166016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 144,
+        "inlier": false,
+        "score": -0.15751565992832184
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.797786712646484,
+            -73.57325744628906
+          ],
+          [
+            42.7535285949707,
+            -73.6014175415039
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 145,
+        "inlier": false,
+        "score": -0.20367731153964996
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79172134399414,
+            -73.5809326171875
+          ],
+          [
+            42.83502960205078,
+            -73.57716369628906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 146,
+        "inlier": false,
+        "score": -0.3979966342449188
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81366729736328,
+            -73.58246612548828
+          ],
+          [
+            42.729122161865234,
+            -73.57852935791016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 147,
+        "inlier": false,
+        "score": 0.2651192545890808
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8086051940918,
+            -73.58055877685547
+          ],
+          [
+            42.832130432128906,
+            -73.58051300048828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 148,
+        "inlier": false,
+        "score": 6.438904964767289e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.820350646972656,
+            -73.58002471923828
+          ],
+          [
+            42.88141632080078,
+            -73.60307312011719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 149,
+        "inlier": false,
+        "score": 0.12874463200569153
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.840126037597656,
+            -73.58090209960938
+          ],
+          [
+            42.851348876953125,
+            -73.57897186279297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 150,
+        "inlier": false,
+        "score": -0.3200328052043915
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83841323852539,
+            -73.58518981933594
+          ],
+          [
+            42.84098815917969,
+            -73.58354949951172
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 151,
+        "inlier": false,
+        "score": -0.5443322658538818
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85322189331055,
+            -73.59088134765625
+          ],
+          [
+            42.91103744506836,
+            -73.595703125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 152,
+        "inlier": false,
+        "score": -0.18984656035900116
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.853187561035156,
+            -73.58258819580078
+          ],
+          [
+            42.9315185546875,
+            -73.58113861083984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 153,
+        "inlier": false,
+        "score": -0.2129528522491455
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.851348876953125,
+            -73.5734634399414
+          ],
+          [
+            42.86155700683594,
+            -73.59993743896484
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 154,
+        "inlier": false,
+        "score": 0.2500174343585968
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86087417602539,
+            -73.59522247314453
+          ],
+          [
+            42.83205032348633,
+            -73.58052825927734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 155,
+        "inlier": false,
+        "score": 0.12968041002750397
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.860572814941406,
+            -73.59515380859375
+          ],
+          [
+            42.84452438354492,
+            -73.58077239990234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 156,
+        "inlier": false,
+        "score": -0.26484808325767517
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85356521606445,
+            -73.60322570800781
+          ],
+          [
+            42.91938781738281,
+            -73.59998321533203
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 157,
+        "inlier": false,
+        "score": 0.2224295288324356
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85356521606445,
+            -73.60322570800781
+          ],
+          [
+            42.90387725830078,
+            -73.57465362548828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 158,
+        "inlier": false,
+        "score": 0.1666736751794815
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85628128051758,
+            -73.60166931152344
+          ],
+          [
+            42.8226432800293,
+            -73.60321044921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 159,
+        "inlier": false,
+        "score": -0.06883978843688965
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85628890991211,
+            -73.58741760253906
+          ],
+          [
+            42.848876953125,
+            -73.60417175292969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 160,
+        "inlier": false,
+        "score": -0.2307562530040741
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86372375488281,
+            -73.60442352294922
+          ],
+          [
+            42.85810852050781,
+            -73.58687591552734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 161,
+        "inlier": false,
+        "score": -0.10621359944343567
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.880943298339844,
+            -73.5941162109375
+          ],
+          [
+            42.85981750488281,
+            -73.5828628540039
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 162,
+        "inlier": false,
+        "score": -0.15876853466033936
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8840446472168,
+            -73.59458923339844
+          ],
+          [
+            42.82435989379883,
+            -73.57453155517578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 163,
+        "inlier": false,
+        "score": -0.021502917632460594
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.88282775878906,
+            -73.58074188232422
+          ],
+          [
+            42.93400192260742,
+            -73.60093688964844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 164,
+        "inlier": false,
+        "score": -0.24067743122577667
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.89350891113281,
+            -73.57887268066406
+          ],
+          [
+            42.89054489135742,
+            -73.5842514038086
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 165,
+        "inlier": false,
+        "score": 6.156097853704523e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72866439819336,
+            -73.61526489257812
+          ],
+          [
+            42.764434814453125,
+            -73.6068344116211
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 166,
+        "inlier": false,
+        "score": -0.6185210347175598
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73002243041992,
+            -73.62570190429688
+          ],
+          [
+            42.765193939208984,
+            -73.62847900390625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 167,
+        "inlier": false,
+        "score": -0.15919612348079681
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73107147216797,
+            -73.6312255859375
+          ],
+          [
+            42.74632263183594,
+            -73.60750579833984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 168,
+        "inlier": false,
+        "score": -0.42771217226982117
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72962188720703,
+            -73.60758209228516
+          ],
+          [
+            42.76573181152344,
+            -73.63195037841797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 169,
+        "inlier": false,
+        "score": 0.028235364705324173
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7182502746582,
+            -73.61310577392578
+          ],
+          [
+            42.742061614990234,
+            -73.61661529541016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 170,
+        "inlier": false,
+        "score": -0.3755250573158264
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73975372314453,
+            -73.61542510986328
+          ],
+          [
+            42.74632263183594,
+            -73.60750579833984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 171,
+        "inlier": false,
+        "score": -0.5983875393867493
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.751590728759766,
+            -73.63013458251953
+          ],
+          [
+            42.75718688964844,
+            -73.62114715576172
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 172,
+        "inlier": false,
+        "score": -0.04410623013973236
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76496505737305,
+            -73.62902069091797
+          ],
+          [
+            42.793663024902344,
+            -73.6286849975586
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 173,
+        "inlier": false,
+        "score": -0.5410848259925842
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77095031738281,
+            -73.60945892333984
+          ],
+          [
+            42.8154411315918,
+            -73.61969757080078
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 174,
+        "inlier": false,
+        "score": -0.19652734696865082
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.788780212402344,
+            -73.61835479736328
+          ],
+          [
+            42.797428131103516,
+            -73.61016082763672
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 175,
+        "inlier": false,
+        "score": -0.19029954075813293
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78035354614258,
+            -73.62433624267578
+          ],
+          [
+            42.74632263183594,
+            -73.60750579833984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 176,
+        "inlier": false,
+        "score": -0.5824521780014038
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79846954345703,
+            -73.61345672607422
+          ],
+          [
+            42.726261138916016,
+            -73.61772155761719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 177,
+        "inlier": false,
+        "score": -0.9153804779052734
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81150436401367,
+            -73.63197326660156
+          ],
+          [
+            42.72622299194336,
+            -73.63374328613281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 178,
+        "inlier": false,
+        "score": 0.26131466031074524
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.806922912597656,
+            -73.60686492919922
+          ],
+          [
+            42.80977249145508,
+            -73.63416290283203
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 179,
+        "inlier": false,
+        "score": -0.3181299567222595
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83573913574219,
+            -73.61762237548828
+          ],
+          [
+            42.765193939208984,
+            -73.62847900390625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 180,
+        "inlier": false,
+        "score": -0.06127478554844856
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83573913574219,
+            -73.61762237548828
+          ],
+          [
+            42.765193939208984,
+            -73.62847900390625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 181,
+        "inlier": false,
+        "score": 6.794398377252264e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.827552795410156,
+            -73.62200927734375
+          ],
+          [
+            42.933616638183594,
+            -73.6338119506836
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 182,
+        "inlier": true,
+        "score": 0.16164954006671906
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.827552795410156,
+            -73.62200927734375
+          ],
+          [
+            42.933616638183594,
+            -73.6338119506836
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 183,
+        "inlier": true,
+        "score": 0.14108964800834656
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84425735473633,
+            -73.61150360107422
+          ],
+          [
+            42.835845947265625,
+            -73.61299133300781
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 184,
+        "inlier": false,
+        "score": 0.29683351516723633
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84735107421875,
+            -73.60794067382812
+          ],
+          [
+            42.82868194580078,
+            -73.63086700439453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 185,
+        "inlier": false,
+        "score": 0.1537298858165741
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85866165161133,
+            -73.62493133544922
+          ],
+          [
+            42.895606994628906,
+            -73.60347747802734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 186,
+        "inlier": false,
+        "score": -0.11244446039199829
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85580062866211,
+            -73.63447570800781
+          ],
+          [
+            42.902435302734375,
+            -73.60819244384766
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 187,
+        "inlier": false,
+        "score": -0.06063421443104744
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85086441040039,
+            -73.6048812866211
+          ],
+          [
+            42.91066360473633,
+            -73.6098861694336
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 188,
+        "inlier": false,
+        "score": 0.1580110490322113
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.856693267822266,
+            -73.61991119384766
+          ],
+          [
+            42.91944122314453,
+            -73.60448455810547
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 189,
+        "inlier": false,
+        "score": 0.4011746942996979
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84840774536133,
+            -73.61161804199219
+          ],
+          [
+            42.84348678588867,
+            -73.6142807006836
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 190,
+        "inlier": false,
+        "score": 0.1901777684688568
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85095977783203,
+            -73.61154174804688
+          ],
+          [
+            42.82868194580078,
+            -73.63086700439453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 191,
+        "inlier": false,
+        "score": 0.25605300068855286
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87168502807617,
+            -73.62553405761719
+          ],
+          [
+            42.89802169799805,
+            -73.6346664428711
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 192,
+        "inlier": false,
+        "score": 0.04300933703780174
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.865352630615234,
+            -73.62022399902344
+          ],
+          [
+            42.82410430908203,
+            -73.63389587402344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 193,
+        "inlier": false,
+        "score": 0.21555958688259125
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8779411315918,
+            -73.63516235351562
+          ],
+          [
+            42.862892150878906,
+            -73.61315155029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 194,
+        "inlier": false,
+        "score": -0.043247610330581665
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87916946411133,
+            -73.6128158569336
+          ],
+          [
+            42.90007400512695,
+            -73.60397338867188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 195,
+        "inlier": false,
+        "score": 0.17504404485225677
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.880062103271484,
+            -73.62747192382812
+          ],
+          [
+            42.862892150878906,
+            -73.61315155029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 196,
+        "inlier": false,
+        "score": 5.089806354163784e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72433853149414,
+            -73.64761352539062
+          ],
+          [
+            42.719844818115234,
+            -73.63397979736328
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 197,
+        "inlier": false,
+        "score": -0.42340755462646484
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.720726013183594,
+            -73.6387710571289
+          ],
+          [
+            42.80345916748047,
+            -73.65765380859375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 198,
+        "inlier": false,
+        "score": -0.30804628133773804
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72946548461914,
+            -73.6318588256836
+          ],
+          [
+            42.793182373046875,
+            -73.64511108398438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 199,
+        "inlier": false,
+        "score": -0.41262179613113403
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73916244506836,
+            -73.65442657470703
+          ],
+          [
+            42.772647857666016,
+            -73.63434600830078
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 200,
+        "inlier": false,
+        "score": -0.4123154878616333
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74295425415039,
+            -73.6555404663086
+          ],
+          [
+            42.82230758666992,
+            -73.6331787109375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 201,
+        "inlier": false,
+        "score": -0.22137536108493805
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73234176635742,
+            -73.63922882080078
+          ],
+          [
+            42.73112869262695,
+            -73.64450073242188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 202,
+        "inlier": false,
+        "score": 0.19057276844978333
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76016616821289,
+            -73.65306091308594
+          ],
+          [
+            42.7302360534668,
+            -73.64146423339844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 203,
+        "inlier": false,
+        "score": -0.04622121527791023
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75629425048828,
+            -73.63823699951172
+          ],
+          [
+            42.728912353515625,
+            -73.64724731445312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 204,
+        "inlier": false,
+        "score": -0.05661153048276901
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76041793823242,
+            -73.63813781738281
+          ],
+          [
+            42.79988098144531,
+            -73.65215301513672
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 205,
+        "inlier": false,
+        "score": 0.07823444157838821
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75035858154297,
+            -73.64872741699219
+          ],
+          [
+            42.74022674560547,
+            -73.64505004882812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 206,
+        "inlier": false,
+        "score": -0.15242519974708557
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.759735107421875,
+            -73.6488265991211
+          ],
+          [
+            42.7795524597168,
+            -73.66277313232422
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 207,
+        "inlier": false,
+        "score": 0.22038695216178894
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77583312988281,
+            -73.654541015625
+          ],
+          [
+            42.76837158203125,
+            -73.6551284790039
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 208,
+        "inlier": false,
+        "score": -0.3184898793697357
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.764373779296875,
+            -73.65994262695312
+          ],
+          [
+            42.83018493652344,
+            -73.65516662597656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 209,
+        "inlier": false,
+        "score": -0.3105577826499939
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77668762207031,
+            -73.64543151855469
+          ],
+          [
+            42.78666687011719,
+            -73.66201782226562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 210,
+        "inlier": false,
+        "score": -0.3452252149581909
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80207824707031,
+            -73.6338882446289
+          ],
+          [
+            42.71906280517578,
+            -73.64743041992188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 211,
+        "inlier": false,
+        "score": -0.2747442424297333
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79545974731445,
+            -73.64019012451172
+          ],
+          [
+            42.793087005615234,
+            -73.63569641113281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 212,
+        "inlier": false,
+        "score": -0.17888961732387543
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81150436401367,
+            -73.63197326660156
+          ],
+          [
+            42.72622299194336,
+            -73.63374328613281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 213,
+        "inlier": false,
+        "score": 0.2848772704601288
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83109664916992,
+            -73.64942169189453
+          ],
+          [
+            42.771209716796875,
+            -73.6524658203125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 214,
+        "inlier": false,
+        "score": -0.07777426391839981
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82682418823242,
+            -73.65555572509766
+          ],
+          [
+            42.78383255004883,
+            -73.64634704589844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 215,
+        "inlier": false,
+        "score": 6.577671740615187e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.826515197753906,
+            -73.63831329345703
+          ],
+          [
+            42.9023323059082,
+            -73.66452026367188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 216,
+        "inlier": false,
+        "score": 0.42259517312049866
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83073043823242,
+            -73.66351318359375
+          ],
+          [
+            42.858970642089844,
+            -73.64347076416016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 217,
+        "inlier": false,
+        "score": 0.268311470746994
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.821414947509766,
+            -73.64192962646484
+          ],
+          [
+            42.878936767578125,
+            -73.63793182373047
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 218,
+        "inlier": false,
+        "score": 0.3671184778213501
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84674835205078,
+            -73.66291809082031
+          ],
+          [
+            42.876014709472656,
+            -73.6539535522461
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 219,
+        "inlier": false,
+        "score": 0.07227212190628052
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85258102416992,
+            -73.65190124511719
+          ],
+          [
+            42.87788772583008,
+            -73.65921020507812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 220,
+        "inlier": false,
+        "score": 0.24614252150058746
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86628341674805,
+            -73.63211059570312
+          ],
+          [
+            42.8752555847168,
+            -73.65167236328125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 221,
+        "inlier": false,
+        "score": -0.19355879724025726
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86307907104492,
+            -73.65013122558594
+          ],
+          [
+            42.87468719482422,
+            -73.66316223144531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 222,
+        "inlier": false,
+        "score": 0.37261494994163513
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.87064743041992,
+            -73.65118408203125
+          ],
+          [
+            42.89565658569336,
+            -73.6649169921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 223,
+        "inlier": false,
+        "score": 0.09812873601913452
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8667106628418,
+            -73.63980865478516
+          ],
+          [
+            42.93485641479492,
+            -73.63360595703125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 224,
+        "inlier": false,
+        "score": 0.24816805124282837
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.863525390625,
+            -73.64607238769531
+          ],
+          [
+            42.93071365356445,
+            -73.66425323486328
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 225,
+        "inlier": false,
+        "score": 4.8622883497273506e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7247314453125,
+            -73.68966674804688
+          ],
+          [
+            42.82828140258789,
+            -73.67853546142578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 226,
+        "inlier": false,
+        "score": 0.0938635766506195
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71812057495117,
+            -73.66595458984375
+          ],
+          [
+            42.812320709228516,
+            -73.66631317138672
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 227,
+        "inlier": false,
+        "score": -0.025075295940041542
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71812057495117,
+            -73.69270324707031
+          ],
+          [
+            42.80681610107422,
+            -73.68589782714844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 228,
+        "inlier": false,
+        "score": 0.17618024349212646
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.745361328125,
+            -73.68069458007812
+          ],
+          [
+            42.81928253173828,
+            -73.6676254272461
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 229,
+        "inlier": false,
+        "score": 0.2064327597618103
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7388916015625,
+            -73.6720199584961
+          ],
+          [
+            42.807376861572266,
+            -73.6621322631836
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 230,
+        "inlier": false,
+        "score": -0.13320255279541016
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74950408935547,
+            -73.69269561767578
+          ],
+          [
+            42.82154083251953,
+            -73.66919708251953
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 231,
+        "inlier": false,
+        "score": 0.22115148603916168
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74949645996094,
+            -73.69270324707031
+          ],
+          [
+            42.82154083251953,
+            -73.66919708251953
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 232,
+        "inlier": false,
+        "score": 0.18665358424186707
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.757537841796875,
+            -73.68798828125
+          ],
+          [
+            42.730777740478516,
+            -73.69053649902344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 233,
+        "inlier": false,
+        "score": -0.04189644753932953
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74835968017578,
+            -73.67528533935547
+          ],
+          [
+            42.777095794677734,
+            -73.67589569091797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 234,
+        "inlier": false,
+        "score": 0.21132519841194153
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76921081542969,
+            -73.67088317871094
+          ],
+          [
+            42.766807556152344,
+            -73.68894958496094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 235,
+        "inlier": false,
+        "score": 0.27640268206596375
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76541519165039,
+            -73.66883087158203
+          ],
+          [
+            42.72754669189453,
+            -73.66185760498047
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 236,
+        "inlier": false,
+        "score": -0.14972856640815735
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77644348144531,
+            -73.6789779663086
+          ],
+          [
+            42.80994415283203,
+            -73.68352508544922
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 237,
+        "inlier": true,
+        "score": -0.1716488152742386
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78201675415039,
+            -73.68228912353516
+          ],
+          [
+            42.72499465942383,
+            -73.68748474121094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 238,
+        "inlier": false,
+        "score": 0.018035810440778732
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77937698364258,
+            -73.6651840209961
+          ],
+          [
+            42.8077278137207,
+            -73.67404174804688
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 239,
+        "inlier": false,
+        "score": 0.21729394793510437
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79066467285156,
+            -73.66581726074219
+          ],
+          [
+            42.8303108215332,
+            -73.68681335449219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 240,
+        "inlier": false,
+        "score": 0.11965541541576385
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.796810150146484,
+            -73.69384002685547
+          ],
+          [
+            42.769535064697266,
+            -73.69344329833984
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 241,
+        "inlier": false,
+        "score": -0.12610431015491486
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7951774597168,
+            -73.67877197265625
+          ],
+          [
+            42.776676177978516,
+            -73.69111633300781
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 242,
+        "inlier": false,
+        "score": 0.16855080425739288
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.8272705078125,
+            -73.69418334960938
+          ],
+          [
+            42.730674743652344,
+            -73.68697357177734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 243,
+        "inlier": false,
+        "score": 0.039594970643520355
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.833335876464844,
+            -73.66887664794922
+          ],
+          [
+            42.730384826660156,
+            -73.68209075927734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 244,
+        "inlier": false,
+        "score": 5.1400550482583185e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81721496582031,
+            -73.67073822021484
+          ],
+          [
+            42.892513275146484,
+            -73.67618560791016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 245,
+        "inlier": false,
+        "score": 0.07539911568164825
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81711196899414,
+            -73.67437744140625
+          ],
+          [
+            42.83843994140625,
+            -73.67649841308594
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 246,
+        "inlier": false,
+        "score": -0.3542512059211731
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83443832397461,
+            -73.68146514892578
+          ],
+          [
+            42.93415832519531,
+            -73.67052459716797
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 247,
+        "inlier": false,
+        "score": -0.17703615128993988
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.856082916259766,
+            -73.66217803955078
+          ],
+          [
+            42.93175506591797,
+            -73.68767547607422
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 248,
+        "inlier": false,
+        "score": 0.07200951129198074
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85071563720703,
+            -73.68994903564453
+          ],
+          [
+            42.901756286621094,
+            -73.69374084472656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 249,
+        "inlier": false,
+        "score": -0.26999056339263916
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.855491638183594,
+            -73.67469024658203
+          ],
+          [
+            42.83234405517578,
+            -73.66354370117188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 250,
+        "inlier": false,
+        "score": 0.05646217614412308
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.86409378051758,
+            -73.6717529296875
+          ],
+          [
+            42.90436553955078,
+            -73.66239166259766
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 251,
+        "inlier": false,
+        "score": 5.5755622341280286e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74018859863281,
+            -73.70570373535156
+          ],
+          [
+            42.776676177978516,
+            -73.69111633300781
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 252,
+        "inlier": false,
+        "score": 0.14332671463489532
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75849151611328,
+            -73.69647216796875
+          ],
+          [
+            42.79472732543945,
+            -73.69664764404297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 253,
+        "inlier": false,
+        "score": 0.23100778460502625
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.756343841552734,
+            -73.69511413574219
+          ],
+          [
+            42.828575134277344,
+            -73.71279907226562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 254,
+        "inlier": false,
+        "score": -0.06731399148702621
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.753910064697266,
+            -73.7091064453125
+          ],
+          [
+            42.830108642578125,
+            -73.69206237792969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 255,
+        "inlier": false,
+        "score": 0.06295408308506012
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75709915161133,
+            -73.710693359375
+          ],
+          [
+            42.71956253051758,
+            -73.70594024658203
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 256,
+        "inlier": false,
+        "score": -0.0939551293849945
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78868865966797,
+            -73.701904296875
+          ],
+          [
+            42.771724700927734,
+            -73.69607543945312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 257,
+        "inlier": false,
+        "score": 0.04163097217679024
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.791221618652344,
+            -73.70004272460938
+          ],
+          [
+            42.72318649291992,
+            -73.69102478027344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 258,
+        "inlier": false,
+        "score": 0.032318226993083954
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.818721771240234,
+            -73.70965576171875
+          ],
+          [
+            42.7572021484375,
+            -73.71012878417969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 259,
+        "inlier": false,
+        "score": 0.03438740596175194
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81796646118164,
+            -73.70526123046875
+          ],
+          [
+            42.83079147338867,
+            -73.6921157836914
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 260,
+        "inlier": false,
+        "score": -0.09881602972745895
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80669403076172,
+            -73.69872283935547
+          ],
+          [
+            42.786930084228516,
+            -73.71312713623047
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 261,
+        "inlier": false,
+        "score": -0.4088471829891205
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.815364837646484,
+            -73.6946792602539
+          ],
+          [
+            42.79633331298828,
+            -73.6918716430664
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 262,
+        "inlier": false,
+        "score": -0.031843893229961395
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.826446533203125,
+            -73.69554901123047
+          ],
+          [
+            42.82623291015625,
+            -73.71080780029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 263,
+        "inlier": true,
+        "score": 0.01147316675633192
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83542251586914,
+            -73.7044906616211
+          ],
+          [
+            42.82623291015625,
+            -73.71080780029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 264,
+        "inlier": false,
+        "score": 5.080202925000776e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.826446533203125,
+            -73.69554901123047
+          ],
+          [
+            42.82623291015625,
+            -73.71080780029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 265,
+        "inlier": true,
+        "score": -0.01160858292132616
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84504699707031,
+            -73.71098327636719
+          ],
+          [
+            42.91895294189453,
+            -73.71478271484375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 266,
+        "inlier": false,
+        "score": 0.009927946142852306
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83542251586914,
+            -73.7044906616211
+          ],
+          [
+            42.82623291015625,
+            -73.71080780029297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 267,
+        "inlier": false,
+        "score": 0.007868994027376175
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.85453414916992,
+            -73.71477508544922
+          ],
+          [
+            42.887779235839844,
+            -73.7114486694336
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 268,
+        "inlier": false,
+        "score": -0.17082054913043976
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.84683609008789,
+            -73.72180938720703
+          ],
+          [
+            42.87519836425781,
+            -73.70100402832031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 269,
+        "inlier": false,
+        "score": -0.02424723654985428
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.850460052490234,
+            -73.69790649414062
+          ],
+          [
+            42.894874572753906,
+            -73.71224975585938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 270,
+        "inlier": false,
+        "score": 5.198830255181974e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.728755950927734,
+            -73.73303985595703
+          ],
+          [
+            42.72031784057617,
+            -73.73108673095703
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 271,
+        "inlier": false,
+        "score": -0.2801426351070404
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7415771484375,
+            -73.732177734375
+          ],
+          [
+            42.77235412597656,
+            -73.74021911621094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 272,
+        "inlier": false,
+        "score": 0.10301872342824936
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7415771484375,
+            -73.732177734375
+          ],
+          [
+            42.77235412597656,
+            -73.74021911621094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 273,
+        "inlier": false,
+        "score": -0.0027368857990950346
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74799346923828,
+            -73.72662353515625
+          ],
+          [
+            42.83091354370117,
+            -73.72520446777344
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 274,
+        "inlier": false,
+        "score": -0.013404169119894505
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76554489135742,
+            -73.73692321777344
+          ],
+          [
+            42.79269027709961,
+            -73.72895050048828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 275,
+        "inlier": false,
+        "score": -0.0882074236869812
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81198501586914,
+            -73.73751068115234
+          ],
+          [
+            42.77239990234375,
+            -73.74021911621094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 276,
+        "inlier": false,
+        "score": -0.02152237854897976
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81227493286133,
+            -73.74217987060547
+          ],
+          [
+            42.78904342651367,
+            -73.72452545166016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 277,
+        "inlier": false,
+        "score": -0.16495658457279205
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81300354003906,
+            -73.7220230102539
+          ],
+          [
+            42.7830924987793,
+            -73.72456359863281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 278,
+        "inlier": false,
+        "score": -0.04291088879108429
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81340026855469,
+            -73.72284698486328
+          ],
+          [
+            42.821842193603516,
+            -73.74634552001953
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 279,
+        "inlier": false,
+        "score": -0.26757746934890747
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.819942474365234,
+            -73.72087097167969
+          ],
+          [
+            42.7403564453125,
+            -73.7535400390625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 280,
+        "inlier": false,
+        "score": -0.09147310256958008
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.819942474365234,
+            -73.72087097167969
+          ],
+          [
+            42.7403564453125,
+            -73.7535400390625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 281,
+        "inlier": false,
+        "score": -0.19697895646095276
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81379318237305,
+            -73.75172424316406
+          ],
+          [
+            42.808658599853516,
+            -73.73558044433594
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 282,
+        "inlier": false,
+        "score": -0.1920396238565445
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83626937866211,
+            -73.73055267333984
+          ],
+          [
+            42.79352569580078,
+            -73.74128723144531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 283,
+        "inlier": false,
+        "score": -0.1563146561384201
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.834171295166016,
+            -73.72946166992188
+          ],
+          [
+            42.725120544433594,
+            -73.74551391601562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 284,
+        "inlier": false,
+        "score": -0.14672841131687164
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83230209350586,
+            -73.7537841796875
+          ],
+          [
+            42.83143615722656,
+            -73.73344421386719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 285,
+        "inlier": false,
+        "score": -0.3064842224121094
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.83230972290039,
+            -73.74803161621094
+          ],
+          [
+            42.79126739501953,
+            -73.7442626953125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 286,
+        "inlier": false,
+        "score": 6.169675881295689e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.730594635009766,
+            -73.77447509765625
+          ],
+          [
+            42.75465774536133,
+            -73.7656021118164
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 287,
+        "inlier": false,
+        "score": -0.05855688080191612
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73057174682617,
+            -73.77529907226562
+          ],
+          [
+            42.76858901977539,
+            -73.76837921142578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 288,
+        "inlier": false,
+        "score": 0.27733561396598816
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75920867919922,
+            -73.77201080322266
+          ],
+          [
+            42.74287796020508,
+            -73.75846862792969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 289,
+        "inlier": false,
+        "score": 0.2665807008743286
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74710464477539,
+            -73.7550048828125
+          ],
+          [
+            42.81348419189453,
+            -73.77639770507812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 290,
+        "inlier": false,
+        "score": 0.27628323435783386
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74998092651367,
+            -73.77526092529297
+          ],
+          [
+            42.810123443603516,
+            -73.7589111328125
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 291,
+        "inlier": false,
+        "score": 0.25561049580574036
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75114059448242,
+            -73.78160858154297
+          ],
+          [
+            42.74818801879883,
+            -73.75181579589844
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 292,
+        "inlier": false,
+        "score": -0.04709840565919876
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.762786865234375,
+            -73.76850891113281
+          ],
+          [
+            42.74504852294922,
+            -73.77568054199219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 293,
+        "inlier": false,
+        "score": 0.01075159851461649
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77585220336914,
+            -73.76913452148438
+          ],
+          [
+            42.78761672973633,
+            -73.75963592529297
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 294,
+        "inlier": false,
+        "score": 0.1088678315281868
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7753791809082,
+            -73.77579498291016
+          ],
+          [
+            42.7893180847168,
+            -73.75065612792969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 295,
+        "inlier": false,
+        "score": 0.2976588308811188
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77705383300781,
+            -73.75597381591797
+          ],
+          [
+            42.735599517822266,
+            -73.77273559570312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 296,
+        "inlier": false,
+        "score": 0.30690401792526245
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77992630004883,
+            -73.75387573242188
+          ],
+          [
+            42.831642150878906,
+            -73.7696304321289
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 297,
+        "inlier": false,
+        "score": 0.1528957337141037
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.801143646240234,
+            -73.77703857421875
+          ],
+          [
+            42.790611267089844,
+            -73.76680755615234
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 298,
+        "inlier": false,
+        "score": 0.0740903913974762
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82829284667969,
+            -73.77692413330078
+          ],
+          [
+            42.782588958740234,
+            -73.7757797241211
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 299,
+        "inlier": false,
+        "score": 4.362121774903471e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73069763183594,
+            -73.79500579833984
+          ],
+          [
+            42.81520462036133,
+            -73.79634857177734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 300,
+        "inlier": false,
+        "score": -1.71617591381073
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72407150268555,
+            -73.81119537353516
+          ],
+          [
+            42.74509811401367,
+            -73.78251647949219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 301,
+        "inlier": false,
+        "score": -1.395711898803711
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7349739074707,
+            -73.78704071044922
+          ],
+          [
+            42.74652862548828,
+            -73.80516052246094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 302,
+        "inlier": false,
+        "score": -0.006041401531547308
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.748714447021484,
+            -73.78665924072266
+          ],
+          [
+            42.830875396728516,
+            -73.78828430175781
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 303,
+        "inlier": false,
+        "score": -1.3038243055343628
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.748863220214844,
+            -73.80506134033203
+          ],
+          [
+            42.7633056640625,
+            -73.81051635742188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 304,
+        "inlier": false,
+        "score": -0.6943066120147705
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76475524902344,
+            -73.78194427490234
+          ],
+          [
+            42.75613021850586,
+            -73.80988311767578
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 305,
+        "inlier": false,
+        "score": -0.4543497860431671
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77964401245117,
+            -73.7815933227539
+          ],
+          [
+            42.764957427978516,
+            -73.80563354492188
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 306,
+        "inlier": false,
+        "score": -0.9345040917396545
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.804683685302734,
+            -73.80615234375
+          ],
+          [
+            42.72536087036133,
+            -73.80966186523438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 307,
+        "inlier": false,
+        "score": -1.5034500360488892
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.806583404541016,
+            -73.7961654663086
+          ],
+          [
+            42.77377700805664,
+            -73.78645324707031
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 308,
+        "inlier": false,
+        "score": -1.2829996347427368
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79903030395508,
+            -73.80999755859375
+          ],
+          [
+            42.733497619628906,
+            -73.78846740722656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 309,
+        "inlier": false,
+        "score": -1.855640172958374
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80035400390625,
+            -73.81083679199219
+          ],
+          [
+            42.72093200683594,
+            -73.81082153320312
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 310,
+        "inlier": false,
+        "score": -1.983904242515564
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.828182220458984,
+            -73.79481506347656
+          ],
+          [
+            42.80766296386719,
+            -73.79180145263672
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 311,
+        "inlier": false,
+        "score": -0.2421657145023346
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.828182220458984,
+            -73.79481506347656
+          ],
+          [
+            42.80766296386719,
+            -73.79180145263672
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 312,
+        "inlier": false,
+        "score": 1.2627909828921702e-10
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.729129791259766,
+            -73.84098052978516
+          ],
+          [
+            42.76629638671875,
+            -73.82382202148438
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 313,
+        "inlier": false,
+        "score": -0.08366942405700684
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72345733642578,
+            -73.82428741455078
+          ],
+          [
+            42.76631164550781,
+            -73.82357788085938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 314,
+        "inlier": false,
+        "score": -0.12486956268548965
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.725852966308594,
+            -73.8126220703125
+          ],
+          [
+            42.78385543823242,
+            -73.82522583007812
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 315,
+        "inlier": false,
+        "score": -0.02108924463391304
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.737979888916016,
+            -73.82040405273438
+          ],
+          [
+            42.755157470703125,
+            -73.84195709228516
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 316,
+        "inlier": false,
+        "score": -0.008510064333677292
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.737979888916016,
+            -73.82040405273438
+          ],
+          [
+            42.755157470703125,
+            -73.84195709228516
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 317,
+        "inlier": false,
+        "score": -0.010070182383060455
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.74500274658203,
+            -73.81301879882812
+          ],
+          [
+            42.76393508911133,
+            -73.83592224121094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 318,
+        "inlier": false,
+        "score": 0.618850588798523
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75456237792969,
+            -73.81729125976562
+          ],
+          [
+            42.792205810546875,
+            -73.83920288085938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 319,
+        "inlier": false,
+        "score": 0.104949451982975
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7608642578125,
+            -73.83924865722656
+          ],
+          [
+            42.72665786743164,
+            -73.82220458984375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 320,
+        "inlier": false,
+        "score": -0.025447295978665352
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.753780364990234,
+            -73.82205200195312
+          ],
+          [
+            42.74699783325195,
+            -73.84098815917969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 321,
+        "inlier": false,
+        "score": 0.06447487324476242
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.75609588623047,
+            -73.82234191894531
+          ],
+          [
+            42.753273010253906,
+            -73.833740234375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 322,
+        "inlier": false,
+        "score": 0.07959118485450745
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77567672729492,
+            -73.81036376953125
+          ],
+          [
+            42.78507995605469,
+            -73.81095123291016
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 323,
+        "inlier": false,
+        "score": 0.08694692701101303
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7703742980957,
+            -73.83049011230469
+          ],
+          [
+            42.76321029663086,
+            -73.8378677368164
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 324,
+        "inlier": false,
+        "score": 0.12271855026483536
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.789756774902344,
+            -73.82174682617188
+          ],
+          [
+            42.78400421142578,
+            -73.82752990722656
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 325,
+        "inlier": false,
+        "score": 0.25999215245246887
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80104064941406,
+            -73.82614135742188
+          ],
+          [
+            42.812591552734375,
+            -73.82443237304688
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 326,
+        "inlier": false,
+        "score": 0.07875572144985199
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80104064941406,
+            -73.82614135742188
+          ],
+          [
+            42.812591552734375,
+            -73.82443237304688
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 327,
+        "inlier": false,
+        "score": 0.10291051864624023
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80876541137695,
+            -73.8423843383789
+          ],
+          [
+            42.734615325927734,
+            -73.82514953613281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 328,
+        "inlier": false,
+        "score": 0.06518179923295975
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81951141357422,
+            -73.83413696289062
+          ],
+          [
+            42.76393508911133,
+            -73.83592224121094
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 329,
+        "inlier": false,
+        "score": 0.3814535439014435
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.824134826660156,
+            -73.82359313964844
+          ],
+          [
+            42.72844696044922,
+            -73.81338500976562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 330,
+        "inlier": false,
+        "score": -0.003000532975420356
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.82538604736328,
+            -73.82295227050781
+          ],
+          [
+            42.720218658447266,
+            -73.82263946533203
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 331,
+        "inlier": false,
+        "score": 0.10062222182750702
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.828094482421875,
+            -73.81526947021484
+          ],
+          [
+            42.733856201171875,
+            -73.81642150878906
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 332,
+        "inlier": false,
+        "score": 4.903089045882325e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73361587524414,
+            -73.85458374023438
+          ],
+          [
+            42.72869873046875,
+            -73.86859893798828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 333,
+        "inlier": false,
+        "score": -0.21258927881717682
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.7639274597168,
+            -73.85323333740234
+          ],
+          [
+            42.740901947021484,
+            -73.8515853881836
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 334,
+        "inlier": false,
+        "score": -0.169247105717659
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77561950683594,
+            -73.8484115600586
+          ],
+          [
+            42.7729377746582,
+            -73.86186218261719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 335,
+        "inlier": false,
+        "score": 0.2231660634279251
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.78277587890625,
+            -73.8531265258789
+          ],
+          [
+            42.79228210449219,
+            -73.84938049316406
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 336,
+        "inlier": false,
+        "score": 0.23985493183135986
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79755401611328,
+            -73.85562133789062
+          ],
+          [
+            42.78019714355469,
+            -73.87149047851562
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 337,
+        "inlier": false,
+        "score": -0.06712701171636581
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80235290527344,
+            -73.84300231933594
+          ],
+          [
+            42.7751579284668,
+            -73.84857940673828
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 338,
+        "inlier": false,
+        "score": -0.06893938034772873
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.799591064453125,
+            -73.8456039428711
+          ],
+          [
+            42.792606353759766,
+            -73.8392333984375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 339,
+        "inlier": false,
+        "score": 0.1310753971338272
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81861114501953,
+            -73.84246826171875
+          ],
+          [
+            42.73984146118164,
+            -73.85710144042969
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 340,
+        "inlier": false,
+        "score": -0.06281187385320663
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81306838989258,
+            -73.8406982421875
+          ],
+          [
+            42.784828186035156,
+            -73.86426544189453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 341,
+        "inlier": false,
+        "score": 0.15308484435081482
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80956268310547,
+            -73.86872100830078
+          ],
+          [
+            42.723541259765625,
+            -73.8482666015625
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 342,
+        "inlier": false,
+        "score": -0.08802264928817749
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.81009292602539,
+            -73.86038970947266
+          ],
+          [
+            42.74590301513672,
+            -73.84252166748047
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 343,
+        "inlier": false,
+        "score": -0.0709453895688057
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80707931518555,
+            -73.85114288330078
+          ],
+          [
+            42.74524688720703,
+            -73.86410522460938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 344,
+        "inlier": false,
+        "score": 5.131783886724861e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72779083251953,
+            -73.87739562988281
+          ],
+          [
+            42.8342170715332,
+            -73.89521026611328
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 345,
+        "inlier": false,
+        "score": -0.14490607380867004
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.72779083251953,
+            -73.87739562988281
+          ],
+          [
+            42.8342170715332,
+            -73.89521026611328
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 346,
+        "inlier": false,
+        "score": -0.1741318553686142
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.735084533691406,
+            -73.89116668701172
+          ],
+          [
+            42.808616638183594,
+            -73.88130187988281
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 347,
+        "inlier": false,
+        "score": -0.19621531665325165
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.73781204223633,
+            -73.87047576904297
+          ],
+          [
+            42.78249740600586,
+            -73.86861419677734
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 348,
+        "inlier": false,
+        "score": 0.4129653871059418
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.754310607910156,
+            -73.88520050048828
+          ],
+          [
+            42.77989959716797,
+            -73.87152099609375
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 349,
+        "inlier": false,
+        "score": 0.06108885630965233
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.765220642089844,
+            -73.88966369628906
+          ],
+          [
+            42.833370208740234,
+            -73.8725357055664
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 350,
+        "inlier": false,
+        "score": 0.10336083173751831
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.77302551269531,
+            -73.87865447998047
+          ],
+          [
+            42.83261489868164,
+            -73.88871765136719
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 351,
+        "inlier": false,
+        "score": 0.018047308549284935
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76348114013672,
+            -73.8763198852539
+          ],
+          [
+            42.75083541870117,
+            -73.89362335205078
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 352,
+        "inlier": false,
+        "score": 0.3056863248348236
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.777408599853516,
+            -73.89656066894531
+          ],
+          [
+            42.79695510864258,
+            -73.8934097290039
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 353,
+        "inlier": false,
+        "score": -0.19546566903591156
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80865478515625,
+            -73.88379669189453
+          ],
+          [
+            42.71921157836914,
+            -73.89966583251953
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 354,
+        "inlier": false,
+        "score": 5.4213522560075944e-11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71989822387695,
+            -73.90703582763672
+          ],
+          [
+            42.793701171875,
+            -73.91407012939453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 355,
+        "inlier": false,
+        "score": -0.14193056523799896
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.71989822387695,
+            -73.90703582763672
+          ],
+          [
+            42.793701171875,
+            -73.91407012939453
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 356,
+        "inlier": false,
+        "score": -0.04095865413546562
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.726470947265625,
+            -73.91023254394531
+          ],
+          [
+            42.76480484008789,
+            -73.90933227539062
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 357,
+        "inlier": false,
+        "score": -0.10699779540300369
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.756446838378906,
+            -73.88969421386719
+          ],
+          [
+            42.782920837402344,
+            -73.91630554199219
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 358,
+        "inlier": false,
+        "score": -0.2477574497461319
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.770259857177734,
+            -73.90253448486328
+          ],
+          [
+            42.77494812011719,
+            -73.91635131835938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 359,
+        "inlier": false,
+        "score": -0.09374308586120605
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.76511764526367,
+            -73.8868408203125
+          ],
+          [
+            42.73066711425781,
+            -73.88734436035156
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 360,
+        "inlier": false,
+        "score": 0.20241086184978485
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.787784576416016,
+            -73.88880920410156
+          ],
+          [
+            42.80396270751953,
+            -73.91961669921875
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 361,
+        "inlier": false,
+        "score": -0.34989845752716064
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.79707336425781,
+            -73.91549682617188
+          ],
+          [
+            42.787635803222656,
+            -73.91928100585938
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 362,
+        "inlier": false,
+        "score": -0.18796607851982117
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            42.80709457397461,
+            -73.88967895507812
+          ],
+          [
+            42.719337463378906,
+            -73.90046691894531
+          ]
+        ]
+      },
+      "properties": {
+        "point_id": 363,
+        "inlier": false,
+        "score": 6.559253140636656e-11
+      }
+    }
+  ]
+}

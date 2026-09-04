@@ -4,7 +4,7 @@
 import numpy as np
 import pytest
 
-from src.metrics import rmse, inlier_stats
+from src.metrics import rmse, inlier_stats, fit_reliability
 from src.types import MatchResult
 
 
@@ -217,3 +217,54 @@ def test_inlier_stats_of_empty_match_result_is_zero_ratio_not_nan():
     stats = inlier_stats(mr)
     assert stats == {"inlier_count": 0, "total_matches": 0, "inlier_ratio": 0.0}
     assert not np.isnan(stats["inlier_ratio"])
+
+
+# ---- fit_reliability ---------------------------------------------------------
+
+def test_fit_reliability_flags_exactly_four_unique_inliers_as_trivial():
+    """A real observed failure mode: 4 distinct point pairs exactly satisfy a
+    homography's 8 degrees of freedom regardless of whether they're real
+    correspondences -- reprojection_residual reads as perfect, but proves
+    nothing. Must be flagged, not read as a validated result.
+    """
+    pts_a = np.array([[0, 0], [10, 0], [0, 10], [10, 10]], dtype=np.float32)
+    pts_b = pts_a + np.array([5, 2], dtype=np.float32)
+    transform = np.array([[1, 0, 5], [0, 1, 2], [0, 0, 1]], dtype=np.float64)
+    mr = _match_result(pts_a, pts_b, np.ones(4, dtype=bool), transform)
+
+    result = fit_reliability(mr)
+    assert result == {"unique_inlier_locations": 4, "trivial_fit": True, "well_determined": False}
+
+
+def test_fit_reliability_collapses_duplicate_locations_from_overlapping_tiles():
+    """match_tiled can report the same physical keypoint multiple times when
+    adjacent tiles overlap -- those duplicates are not independent evidence
+    and must not inflate the trusted count. 3 copies of 1 point + 1 distinct
+    point = 2 unique locations, not 4.
+    """
+    pts_a = np.array([[10.0, 10.0], [10.2, 9.8], [9.9, 10.1], [50.0, 50.0]], dtype=np.float32)
+    pts_b = pts_a.copy()
+    mr = _match_result(pts_a, pts_b, np.ones(4, dtype=bool), np.eye(3))
+
+    result = fit_reliability(mr)
+    assert result["unique_inlier_locations"] == 2
+    assert result["trivial_fit"] is True
+
+
+def test_fit_reliability_well_determined_with_enough_distinct_inliers():
+    rng = np.random.default_rng(5)
+    pts_a = rng.uniform(0, 256, size=(20, 2)).astype(np.float32)
+    mr = _match_result(pts_a, pts_a, np.ones(20, dtype=bool), np.eye(3))
+
+    result = fit_reliability(mr)
+    assert result["unique_inlier_locations"] == 20
+    assert result["trivial_fit"] is False
+    assert result["well_determined"] is True
+
+
+def test_fit_reliability_of_empty_match_result_is_trivial_not_well_determined():
+    empty = np.zeros((0, 2), dtype=np.float32)
+    mr = _match_result(empty, empty, np.zeros(0, dtype=bool), transform=np.eye(3))
+
+    result = fit_reliability(mr)
+    assert result == {"unique_inlier_locations": 0, "trivial_fit": True, "well_determined": False}

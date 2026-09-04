@@ -50,6 +50,42 @@ def inlier_stats(match_result: MatchResult) -> dict:
     return {"inlier_count": count, "total_matches": total, "inlier_ratio": ratio}
 
 
+# A projective homography has 8 degrees of freedom -- exactly 4 point
+# correspondences (8 equations) satisfy it with zero reprojection error,
+# regardless of whether those points are real matches or coincidental noise.
+# A RANSAC fit whose inliers reduce to 4 or fewer *distinct* locations proves
+# nothing about registration accuracy, however small reprojection_residual
+# comes out -- that low residual is the fit's own construction, not evidence.
+# Verified against a real failure: a real CH2 x LRO run reported 8 "inliers"
+# (four locations, each duplicated by overlapping tiles) whose own pairwise
+# offsets disagreed by hundreds of pixels, yet reprojection_residual was a
+# deceptive 0.0066px.
+MIN_TRUSTED_INLIER_LOCATIONS = 5
+
+
+def fit_reliability(match_result: MatchResult, min_unique_inliers: int = MIN_TRUSTED_INLIER_LOCATIONS) -> dict:
+    """Whether the inlier set is large enough for reprojection_residual to mean
+    anything. See MIN_TRUSTED_INLIER_LOCATIONS for why a trivial fit can report
+    a perfect residual while being pure noise.
+
+    Duplicate inlier locations (the same physical keypoint found by more than
+    one overlapping tile in match_tiled) are collapsed by rounding to the
+    nearest pixel before counting -- they are not independent evidence.
+    """
+    inliers = match_result.pts_a[match_result.inlier_mask]
+    if len(inliers) == 0:
+        unique = 0
+    else:
+        rounded = np.round(inliers).astype(np.int64)
+        unique = len(np.unique(rounded, axis=0))
+
+    return {
+        "unique_inlier_locations": int(unique),
+        "trivial_fit": bool(unique <= 4),
+        "well_determined": bool(unique >= min_unique_inliers),
+    }
+
+
 def coverage(match_result: MatchResult, grid: int = 8) -> dict:
     """Divide image A into a `grid` x `grid` grid; using inlier points only,
     count cells containing at least one match. Makes the statement's

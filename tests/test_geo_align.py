@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import pytest
 
-from src.geo import align_pair, _meters_per_degree
+from src.geo import align_pair, to_original_pixels, _meters_per_degree
 from src.types import Product
 
 
@@ -291,3 +291,78 @@ def test_align_pair_rejects_non_positive_gsd():
 
     with pytest.raises(ValueError, match="gsd"):
         align_pair(positive_gsd, negative_gsd)
+
+
+# ---- to_original_pixels: coordinate inversion out of align_pair's common grid ----
+
+def test_to_original_pixels_round_trips_a_products_own_corners():
+    """When the two products share exactly the same footprint (test 1's setup),
+    aligned_hi's array covers exactly product_hi's own corners -- so mapping
+    aligned_hi's own four pixel corners back through to_original_pixels(aligned_hi,
+    product_hi, ...) must land back on product_hi's own four pixel corners
+    (0,0)..(w-1,h-1), regardless of the resolution change align_pair applied.
+    """
+    size_hi = 256
+    factor = 4
+    hi_img = _textured_field(size_hi, seed=7)
+    lo_img = cv2.resize(hi_img, (size_hi // factor, size_hi // factor), interpolation=cv2.INTER_AREA)
+
+    lat0, lat1, lon0, lon1 = 0.0, 1.0, 0.0, 1.0
+    m_per_deg_lat, _ = _meters_per_degree((lat0 + lat1) / 2.0)
+    gsd_hi = (lat1 - lat0) / (size_hi - 1) * m_per_deg_lat
+    gsd_lo = (lat1 - lat0) / (size_hi // factor - 1) * m_per_deg_lat
+
+    product_hi = _product_for_square_deg(hi_img, lat0, lat1, lon0, lon1, gsd_hi, "hi")
+    product_lo = _product_for_square_deg(lo_img, lat0, lat1, lon0, lon1, gsd_lo, "lo")
+    aligned_hi, aligned_lo = align_pair(product_hi, product_lo)
+
+    ah, aw = aligned_hi.array.shape[:2]
+    aligned_corners = np.float32([[0, 0], [aw - 1, 0], [aw - 1, ah - 1], [0, ah - 1]])
+
+    back = to_original_pixels(aligned_hi, product_hi, aligned_corners)
+
+    h, w = product_hi.array.shape[:2]
+    expected = np.float32([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]])
+    np.testing.assert_allclose(back, expected, atol=1.5)
+
+
+def test_to_original_pixels_maps_the_two_sides_of_a_pair_independently():
+    """The same aligned-grid point, inverted against each product's own original
+    frame, generally lands at a different pixel location in each -- since
+    aligned_a and aligned_b were resampled from different source resolutions.
+    Regression check that the function actually uses the `original_product`
+    argument rather than always returning the aligned-grid coordinate unchanged.
+    """
+    size = 128
+    lat0, lat1, lon0, lon1 = 0.0, 2.0, 0.0, 2.0
+    m_per_deg_lat, _ = _meters_per_degree((lat0 + lat1) / 2.0)
+    gsd = (lat1 - lat0) / (size - 1) * m_per_deg_lat
+
+    a = _product_for_square_deg(_textured_field(size, seed=1), lat0, lat1, lon0, lon1, gsd, "a")
+    b = _product_for_square_deg(_textured_field(size // 2, seed=2), lat0, lat1, lon0, lon1, gsd * 2, "b")
+    aligned_a, aligned_b = align_pair(a, b)
+
+    point = np.float32([[aligned_a.array.shape[1] / 2, aligned_a.array.shape[0] / 2]])
+    back_a = to_original_pixels(aligned_a, a, point)
+    back_b = to_original_pixels(aligned_b, b, point)
+
+    # both should land near each product's own centre pixel, at each one's own scale
+    assert back_a[0, 0] == pytest.approx(a.array.shape[1] / 2, abs=2)
+    assert back_b[0, 0] == pytest.approx(b.array.shape[1] / 2, abs=2)
+
+
+def test_to_original_pixels_handles_zero_points_without_crashing():
+    """A rung that finds zero matches (a real, observed outcome -- e.g. rung-1 on
+    the real CH2 x LRO pair) must not crash the pipeline's coordinate inversion
+    step. cv2.perspectiveTransform returns None (not an empty array) on empty
+    input, which crashed here before this guard.
+    """
+    size = 64
+    lat0, lat1, lon0, lon1 = 0.0, 1.0, 0.0, 1.0
+    a = _product_for_square_deg(_textured_field(size, seed=1), lat0, lat1, lon0, lon1, 10.0, "a")
+    b = _product_for_square_deg(_textured_field(size, seed=2), lat0, lat1, lon0, lon1, 10.0, "b")
+    aligned_a, _ = align_pair(a, b)
+
+    empty = np.zeros((0, 2), dtype=np.float32)
+    out = to_original_pixels(aligned_a, a, empty)
+    assert out.shape == (0, 2)

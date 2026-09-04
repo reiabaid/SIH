@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from src.metrics import coverage, inlier_stats, rmse
+from src.metrics import coverage, fit_reliability, inlier_stats, rmse
 from src.types import MatchResult, Product
 
 
@@ -26,11 +26,8 @@ def _pixel_to_geo(product: Product, points: np.ndarray) -> np.ndarray:
     return cv2.perspectiveTransform(points, transform).reshape(-1, 2)
 
 
-def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
-    try:
-        from osgeo import gdal, osr
-    except ImportError as exc:
-        raise RuntimeError("GDAL is required to write the registered GeoTIFF") from exc
+def _write_geotiff_gdal(path: str, array: np.ndarray, product: Product) -> None:
+    from osgeo import gdal, osr
 
     height, width = array.shape
     driver = gdal.GetDriverByName("GTiff")
@@ -51,6 +48,51 @@ def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
     dataset.GetRasterBand(1).WriteArray(array.astype(np.float32))
     dataset.FlushCache()
     dataset = None
+
+
+def _write_geotiff_rasterio(path: str, array: np.ndarray, product: Product) -> None:
+    import rasterio
+    from rasterio.transform import from_origin
+
+    height, width = array.shape
+    ul_lat, ul_lon = product.corners["ul"]
+    ur_lat, ur_lon = product.corners["ur"]
+    ll_lat, ll_lon = product.corners["ll"]
+    pixel_lon = (ur_lon - ul_lon) / max(width - 1, 1)
+    pixel_lat = (ul_lat - ll_lat) / max(height - 1, 1)  # from_origin wants a positive south-going step
+    transform = from_origin(ul_lon, ul_lat, pixel_lon, pixel_lat)
+
+    with rasterio.open(
+        path, "w", driver="GTiff", height=height, width=width, count=1,
+        dtype="float32", crs="EPSG:4326", transform=transform, compress="lzw",
+    ) as dst:
+        dst.write(array.astype(np.float32), 1)
+
+
+def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
+    """Write a registered raster as a GeoTIFF. Prefers osgeo.gdal directly when
+    installed; falls back to rasterio, which bundles its own GDAL build and
+    doesn't need the separate osgeo package (whose wheel needs a C++ build
+    toolchain on Windows) -- same fallback pattern as io_ch2.load_product.
+    """
+    errors = []
+    try:
+        _write_geotiff_gdal(path, array, product)
+        return
+    except ImportError as exc:
+        errors.append(f"gdal: {exc}")
+    except Exception as exc:
+        errors.append(f"gdal: {exc}")
+
+    try:
+        _write_geotiff_rasterio(path, array, product)
+        return
+    except ImportError as exc:
+        errors.append(f"rasterio: {exc}")
+
+    raise RuntimeError(
+        f"{path}: could not write GeoTIFF via GDAL or rasterio. Errors: {'; '.join(errors)}"
+    )
 
 
 def write_match_points(path: str, match_result: MatchResult, product_a: Product,
@@ -126,6 +168,7 @@ def build_deliverable(product_a: Product, product_b: Product, match_result: Matc
         **rmse(match_result),
         **inlier_stats(match_result),
         **coverage(match_result),
+        **fit_reliability(match_result),
     }
     with open(os.path.join(out_dir, "metrics.json"), "w") as handle:
         json.dump(metrics, handle, indent=2, allow_nan=False)

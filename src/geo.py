@@ -158,3 +158,44 @@ def align_pair(a: Product, b: Product) -> "tuple[Product, Product]":
         meta={**b.meta, "aligned_from": b.product_id},
     )
     return aligned_a, aligned_b
+
+
+def original_pixel_transform(aligned_product: Product, original_product: Product) -> np.ndarray:
+    """3x3 homography mapping `aligned_product`'s common-grid pixel coords (as
+    produced by `align_pair`) to `original_product`'s own raw pixel coords.
+
+    Composes the aligned grid's pixel->geo transform with the inverse of the
+    original product's own pixel->geo transform; both are the same corner-fit
+    approximation `align_pair` itself uses, so this exactly undoes its
+    resampling. Exposed separately from `to_original_pixels` so a caller can
+    also carry a homography *fit on the aligned grid* (e.g. a MatchResult's
+    A->B transform) into original-pixel space by composing on both sides,
+    rather than only transforming points.
+    """
+    aligned_pix2geo = _pixel_to_geo_transform(aligned_product)
+    orig_geo2pix = np.linalg.inv(_pixel_to_geo_transform(original_product))
+    m = orig_geo2pix @ aligned_pix2geo
+    return (m / m[2, 2]).astype(np.float64)
+
+
+def to_original_pixels(aligned_product: Product, original_product: Product,
+                        points: np.ndarray) -> np.ndarray:
+    """Map (x, y) pixel points from `aligned_product`'s common-grid frame (as
+    produced by `align_pair`) back to `original_product`'s own raw pixel frame.
+
+    Needed because match() runs on the aligned grid, so its output points are
+    in that shared frame -- not in either product's original raster, which is
+    what downstream consumers (cnet.py Sample/Line, a registered-raster export
+    against the untouched source image) actually need.
+    """
+    points = np.asarray(points, dtype=np.float32)
+    if len(points) == 0:
+        # cv2.perspectiveTransform returns None on an empty input rather than an
+        # empty array -- match_tiled legitimately produces zero points when a
+        # rung finds no matches at all, and that's not an error here.
+        return points.reshape(-1, 2)
+
+    m = original_pixel_transform(aligned_product, original_product).astype(np.float32)
+    pts = points.reshape(-1, 1, 2)
+    out = cv2.perspectiveTransform(pts, m)
+    return out.reshape(-1, 2)
