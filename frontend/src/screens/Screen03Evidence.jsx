@@ -1,9 +1,91 @@
-import React, { useState } from 'react';
-import { BarChart3, TrendingUp, ShieldCheck, ArrowRight, Info, CheckCircle2 } from 'lucide-react';
-import { MOCK_DATASET } from '../data/mockLunarData';
+import React, { useState, useEffect } from 'react';
+import { BarChart3, TrendingUp, ShieldCheck, ArrowRight, Info, CheckCircle2, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 
-export default function Screen03Evidence({ onProceedToExport }) {
+export default function Screen03Evidence({ jobId, selectedProductA, selectedProductB, onProceedToExport, onBack }) {
   const [activeTab, setActiveTab] = useState('azimuth'); // azimuth | elevation
+  
+  const [status, setStatus] = useState('fetching'); // fetching, ready, failed
+  const [metrics, setMetrics] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const prodA_id = selectedProductA?.product_id || 'Unknown Product';
+  const prodB_id = selectedProductB?.product_id || 'Unknown Product';
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchArtefacts = async () => {
+      if (!jobId) {
+        if (isMounted) {
+          setErrorMsg("Missing job ID from previous step. Please go back and run a match.");
+          setStatus('failed');
+        }
+        return;
+      }
+
+      try {
+        const metricsRes = await fetch(`http://127.0.0.1:8000/jobs/${jobId}/artefacts/metrics.json`);
+        if (!metricsRes.ok) throw new Error("Failed to fetch metrics.json");
+        const metricsData = await metricsRes.json();
+
+        if (isMounted) {
+          setMetrics(metricsData);
+          setStatus('ready');
+        }
+      } catch (err) {
+        if (isMounted) {
+          setErrorMsg(err.message || "Failed to fetch evidence artefacts.");
+          setStatus('failed');
+        }
+      }
+    };
+
+    fetchArtefacts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [jobId]);
+
+  if (status === 'failed') {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-4 animate-fadeIn">
+        <AlertTriangle className="w-12 h-12 text-red-500" />
+        <h2 className="text-xl font-bold text-white">Missing Evidence Data</h2>
+        <p className="text-slate-400 font-mono text-sm">{errorMsg}</p>
+        <button onClick={onBack} className="mt-4 flex items-center space-x-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition">
+          <ArrowLeft className="w-4 h-4" />
+          <span>Return to Review</span>
+        </button>
+      </div>
+    );
+  }
+
+  if (status !== 'ready') {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-6 animate-fadeIn">
+        <div className="relative w-16 h-16">
+          <Loader2 className="w-16 h-16 animate-spin text-cyan-500" />
+          <div className="absolute inset-0 border-4 border-t-cyan-300 border-r-cyan-500 border-b-cyan-700 border-l-cyan-900 rounded-full animate-spin-slow"></div>
+        </div>
+        <div className="text-center space-y-2">
+          <h2 className="text-xl font-display font-bold text-white">
+            Retrieving Match Evidence...
+          </h2>
+          <p className="text-sm font-mono text-cyan-300">
+            {prodA_id} ➜ {prodB_id}
+          </p>
+          <p className="text-xs font-mono text-slate-500 mt-2 animate-pulse">Loading backend artefacts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Safe Metric Formatters
+  const safeNum = (val, decimals = 2) => {
+    if (val === null || val === undefined || isNaN(Number(val))) return "N/A";
+    return Number(val).toFixed(decimals);
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
@@ -71,65 +153,15 @@ export default function Screen03Evidence({ onProceedToExport }) {
               </div>
             </div>
 
-            {/* SVG Chart Plot Render */}
-            <div className="relative h-64 bg-[#090d14] border border-[#1b273a] rounded-lg p-4 overflow-hidden">
-              <svg viewBox="0 0 500 200" className="w-full h-full">
-                {/* Grid Lines */}
-                <line x1="40" y1="20" x2="480" y2="20" stroke="#182538" strokeWidth="1" strokeDasharray="3,3" />
-                <line x1="40" y1="60" x2="480" y2="60" stroke="#182538" strokeWidth="1" strokeDasharray="3,3" />
-                <line x1="40" y1="100" x2="480" y2="100" stroke="#182538" strokeWidth="1" strokeDasharray="3,3" />
-                <line x1="40" y1="140" x2="480" y2="140" stroke="#182538" strokeWidth="1" strokeDasharray="3,3" />
-                <line x1="40" y1="180" x2="480" y2="180" stroke="#253750" strokeWidth="1" />
-
-                {/* Y-Axis Labels */}
-                <text x="32" y="24" fill="#5c6c84" fontSize="9" textAnchor="end" fontFamily="monospace">1500</text>
-                <text x="32" y="64" fill="#5c6c84" fontSize="9" textAnchor="end" fontFamily="monospace">1000</text>
-                <text x="32" y="104" fill="#5c6c84" fontSize="9" textAnchor="end" fontFamily="monospace">500</text>
-                <text x="32" y="144" fill="#5c6c84" fontSize="9" textAnchor="end" fontFamily="monospace">100</text>
-                <text x="32" y="184" fill="#5c6c84" fontSize="9" textAnchor="end" fontFamily="monospace">0</text>
-
-                {/* X-Axis Labels */}
-                <text x="40" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">0°</text>
-                <text x="113" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">30°</text>
-                <text x="186" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">60°</text>
-                <text x="260" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">90°</text>
-                <text x="333" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">120°</text>
-                <text x="406" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">150°</text>
-                <text x="480" y="195" fill="#5c6c84" fontSize="9" textAnchor="middle" fontFamily="monospace">180°</text>
-
-                {/* Curve 1: SIFT (Orange - Drops rapidly) */}
-                <path
-                  d="M 40,22 C 80,80 113,150 186,174 C 260,178 333,179 480,180"
-                  fill="none"
-                  stroke="#ffb703"
-                  strokeWidth="2.5"
-                />
-
-                {/* Curve 2: MOD-X (Cyan - High stability) */}
-                <path
-                  d="M 40,28 C 113,32 186,40 260,48 C 333,52 406,56 480,62"
-                  fill="none"
-                  stroke="#00f2fe"
-                  strokeWidth="3"
-                />
-
-                {/* Curve 3: LIGHTGLUE (Blue - High stability) */}
-                <path
-                  d="M 40,18 C 113,22 186,28 260,36 C 333,40 406,44 480,50"
-                  fill="none"
-                  stroke="#00a8ff"
-                  strokeWidth="2"
-                  strokeDasharray="4,4"
-                />
-
-                {/* Interactive Callout Badge at 30° difference */}
-                <g transform="translate(113, 85)">
-                  <rect x="-60" y="-22" width="120" height="26" rx="4" fill="#182638" stroke="#ffb703" strokeWidth="1" />
-                  <text x="0" y="-5" fill="#ffb703" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="monospace">
-                    Δ 30° SIFT inliers -78%
-                  </text>
-                </g>
-              </svg>
+            {/* Explanatory Panel replacing static SVG */}
+            <div className="bg-[#0b0f17] border border-[#1b273a] rounded-lg p-6 text-center space-y-4">
+              <Info className="w-10 h-10 text-cyan-500 mx-auto opacity-80" />
+              <div>
+                <h4 className="text-white font-bold font-display">Offline Algorithm Validation Result</h4>
+                <p className="text-slate-400 text-sm mt-2">
+                  The sun-azimuth sensitivity curve (SIFT vs. Mod-X) is an offline validation step confirming Mod-X's edge/phase correlation robustness under synthetic extreme lighting shifts. It is not generated dynamically by the current backend job.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -155,30 +187,44 @@ export default function Screen03Evidence({ onProceedToExport }) {
           {/* Top Stat Summary Box */}
           <div className="glass-panel p-5 rounded-xl border border-cyan-900/50 space-y-4 font-mono text-xs">
             <div className="flex items-center justify-between text-cyan-300 font-bold border-b border-[#1f2e45] pb-2">
-              <span>GROUND TRUTH EVALUATION</span>
+              <span>ACTUAL RUN EVALUATION</span>
               <ShieldCheck className="w-4 h-4 text-cyan-400" />
             </div>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">RMSE (ground truth):</span>
-                <span className="text-cyan-300 font-bold text-sm">{MOCK_DATASET.metrics.rmseGroundTruth}</span>
+                <span className="text-slate-400">Job ID:</span>
+                <span className="text-cyan-300 font-bold text-[10px]">{jobId}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Total Matches:</span>
+                <span className="text-emerald-400 font-semibold">{safeNum(metrics?.total_matches, 0)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Inlier Count:</span>
-                <span className="text-emerald-400 font-semibold">{MOCK_DATASET.metrics.inlierCount}</span>
+                <span className="text-emerald-400 font-semibold">{safeNum(metrics?.inlier_count, 0)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Inlier Ratio:</span>
-                <span className="text-emerald-400 font-semibold">{MOCK_DATASET.metrics.inlierRatio}</span>
+                <span className="text-emerald-400 font-semibold">{metrics?.inlier_ratio !== undefined && metrics?.inlier_ratio !== null ? safeNum(metrics.inlier_ratio * 100, 1) + '%' : 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
+                <span className="text-slate-400">Sub-pixel RMSE:</span>
+                <span className="text-slate-200 font-semibold">{safeNum(metrics?.reprojection_residual, 3)} px</span>
+              </div>
+              {metrics?.rmse_ground_truth !== undefined && metrics?.rmse_ground_truth !== null && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">RMSE (Ground Truth):</span>
+                  <span className="text-slate-200 font-semibold">{safeNum(metrics?.rmse_ground_truth, 3)} px</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center">
                 <span className="text-slate-400">Grid Coverage:</span>
-                <span className="text-slate-200 font-semibold">{MOCK_DATASET.metrics.gridCoverage}</span>
+                <span className="text-slate-200 font-semibold">{safeNum((metrics?.occupied_fraction || 0) * 100, 1)}%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Distribution CV:</span>
-                <span className="text-slate-200 font-semibold">{MOCK_DATASET.metrics.distributionCV}</span>
+                <span className="text-slate-200 font-semibold">{safeNum(metrics?.coefficient_of_variation, 2)}</span>
               </div>
             </div>
           </div>
@@ -189,17 +235,9 @@ export default function Screen03Evidence({ onProceedToExport }) {
               UNIFORM DISTRIBUTION MATRIX
             </div>
 
-            <div className="grid grid-cols-8 gap-1 aspect-square bg-[#0b0f17] p-2 rounded-lg border border-[#1b273a]">
-              {MOCK_DATASET.gridHeatmap.map((row, rIdx) =>
-                row.map((val, cIdx) => (
-                  <div
-                    key={`ev-${rIdx}-${cIdx}`}
-                    className="rounded-sm bg-cyan-950/60 border border-cyan-800/40 flex items-center justify-center text-[9px] font-mono text-cyan-300"
-                  >
-                    {val}
-                  </div>
-                ))
-              )}
+            <div className="bg-[#0b0f17] p-4 rounded-lg border border-[#1b273a] text-center text-slate-400 font-mono text-[10px]">
+              <p className="font-bold text-slate-300">Spatial Grid Heatmap is disabled.</p>
+              <p className="mt-1 text-slate-500">The backend does not expose the 8x8 cell density array in metrics.json.</p>
             </div>
 
             <p className="text-[11px] font-mono text-slate-400 leading-tight">

@@ -16,6 +16,7 @@ export default function App() {
   const [selectedProductA, setSelectedProductA] = useState(null);
   const [selectedProductB, setSelectedProductB] = useState(null);
   const [selectedRung, setSelectedRung] = useState('rung1');
+  const [completedJobId, setCompletedJobId] = useState(null);
 
   const handleRunDemo = () => {
     setCurrentScreen(1);
@@ -53,13 +54,23 @@ export default function App() {
               selectedProductA={selectedProductA}
               selectedProductB={selectedProductB}
               selectedRung={selectedRung}
-              onAcceptMatch={() => setCurrentScreen(3)} 
+              completedJobId={completedJobId}
+              onAcceptMatch={(jobId) => {
+                  setCompletedJobId(jobId);
+                  setCurrentScreen(3);
+              }} 
               onBack={() => setCurrentScreen(1)}
             />
           )}
 
           {currentScreen === 3 && (
-            <Screen03Evidence onProceedToExport={() => setCurrentScreen(4)} />
+            <Screen03Evidence 
+              jobId={completedJobId}
+              selectedProductA={selectedProductA}
+              selectedProductB={selectedProductB}
+              onProceedToExport={() => setCurrentScreen(4)}
+              onBack={() => setCurrentScreen(2)}
+            />
           )}
 
           {currentScreen === 4 && (

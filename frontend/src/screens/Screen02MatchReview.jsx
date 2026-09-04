@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Eye, Layers, Sliders, CheckCircle2, XCircle, Grid, Filter, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 
-export default function Screen02MatchReview({ selectedProductA, selectedProductB, selectedRung, onAcceptMatch, onBack }) {
+export default function Screen02MatchReview({ selectedProductA, selectedProductB, selectedRung, completedJobId, onAcceptMatch, onBack }) {
   const [viewMode, setViewMode] = useState('overlay'); // overlay is best since we only have overlay_rgb.png
   const [showEdgeDetection, setShowEdgeDetection] = useState(false);
   const [showPdsOverlap, setShowPdsOverlap] = useState(true);
   const [showAllKeypoints, setShowAllKeypoints] = useState(true);
   
   const [jobStatus, setJobStatus] = useState('registering'); // registering, polling, fetching_artefacts, ready, failed
-  const [jobId, setJobId] = useState(null);
+  const [jobId, setJobId] = useState(completedJobId || null);
   const [metrics, setMetrics] = useState(null);
   const [geoJson, setGeoJson] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -111,13 +111,20 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
       }
     };
 
-    startJob();
+    if (completedJobId) {
+      if (isMounted) {
+        setJobId(completedJobId);
+        fetchArtefacts(completedJobId);
+      }
+    } else {
+      startJob();
+    }
 
     return () => {
       isMounted = false;
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [selectedProductA, selectedProductB, rungInt]);
+  }, [selectedProductA, selectedProductB, rungInt, completedJobId]);
 
   if (jobStatus === 'failed') {
     return (
@@ -243,7 +250,7 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
             </button>
 
             <button
-              onClick={onAcceptMatch}
+              onClick={() => onAcceptMatch(jobId)}
               className="flex items-center space-x-2 px-6 py-2.5 rounded-lg glow-btn-cyan text-xs font-mono font-bold tracking-wide transition"
             >
               <span>Accept &amp; Proceed to Evidence ➜</span>
