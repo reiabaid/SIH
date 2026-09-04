@@ -1,0 +1,33 @@
+{
+  "product_a": "synthetic_a",
+  "product_b": "synthetic_b",
+  "matcher": "lightglue",
+  "transform_a_to_b": [
+    [
+      1.0077415423502996,
+      -0.029353837349020563,
+      10.114419984112772
+    ],
+    [
+      0.03000144739745875,
+      1.0084085749089604,
+      -14.756662927087461
+    ],
+    [
+      0.00014352057522435798,
+      0.00048132186093867197,
+      1.0
+    ]
+  ],
+  "runtime_s": 9.354809522628784,
+  "rmse_ground_truth": null,
+  "reprojection_residual": 0.916488234667663,
+  "inlier_count": 473,
+  "total_matches": 667,
+  "inlier_ratio": 0.7091454272863568,
+  "occupied_fraction": 0.9375,
+  "coefficient_of_variation": 0.7110103480849445,
+  "unique_inlier_locations": 473,
+  "trivial_fit": false,
+  "well_determined": true
+}

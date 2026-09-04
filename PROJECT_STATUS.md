@@ -150,20 +150,26 @@ Every module in `src/` is unit-tested against hand-checkable synthetic data
   her lane below for the one remaining action (re-run with the *current*
   script, since her run used a pre-fix copy).
 
-### Mehak — Deliverable 2 (registered product + match points) — ⚠️ partially verified
+### Mehak — Deliverable 2 (registered product + match points) — ✅ safe example now packaged
 - `deliverable.build_deliverable` writes a registered GeoTIFF, match points
   (CSV + GeoJSON), an RGB overlay, and `metrics.json` — confirmed working
   end-to-end in tests, GDAL-optional now (see Reia's lane).
 - `cnet.py` (control network writer) is implemented, tested, and validated by
   round-tripping through the independent `pvl` parser.
-- **Not independently verified this session:** whether `cnet.py` has been
-  re-exported using coordinates from the *fixed* pipeline (post coordinate-
-  inversion), whether the CH-2 rasters made it onto a USB stick, and whether
-  `demo/real_pair_result/` has been assembled as one final handoff folder.
-  Given the real-pair registration is currently `trivial_fit=True` (see
-  Reia's lane), there is not yet a genuine real-data example to package as
-  Deliverable 2 — the synthetic/DEM-rendered pair remains the safe fallback
-  for a demoable registered product.
+- **Done this session:** since the real CH2×LRO pair is `trivial_fit=True`,
+  built a complete, honestly-labelled Deliverable 2 example on a synthetic
+  pair instead (`scripts/make_synthetic_deliverable.py` →
+  `demo/synthetic_deliverable/`), run through the full production pipeline
+  (LightGlue, the strongest benchmarked matcher) — **473 unique inliers,
+  0.92px reprojection residual, `trivial_fit=False`**. Includes the
+  registered GeoTIFF, match points (CSV/GeoJSON), overlay, metrics.json, and
+  a control network re-verified to parse cleanly via `pvl`. This is a real,
+  demoable, self-verified example of every deliverable artifact — Mehak
+  should treat this as the reference for what a valid package looks like,
+  and can point Slide 6 of the deck at it instead of the empty real-pair
+  placeholder.
+- **Still not independently verified:** whether the CH-2 rasters made it onto
+  a USB stick for travel (a logistics item, not code).
 
 ### Manya — visual assets, deck, demo script, rehearsal — ✅ 5/6 done, 1 blocked on regeneration
 - All visual assets, the 8-slide deck (`demo/deck.html`), and the SPICE
@@ -212,24 +218,26 @@ Every module in `src/` is unit-tested against hand-checkable synthetic data
    registration** — be ready to explain this honestly (see Reia's lane) if
    asked about real-data results; do not present the raw inlier counts from
    that pair as a validated win.
-3. **Win plot / coverage plot are currently synthetic-terrain, not real-DEM**
-   — regenerate from the real DEM before final printing if that file is
-   available to anyone on the team.
-4. **New Python dependencies discovered as necessary this session:** `pdr`,
-   `webgeocalc`, and (as a GDAL-optional fallback, already handled in code)
-   `rasterio` for writing GeoTIFFs. Make sure `requirements.txt` reflects
-   these so a fresh machine doesn't silently get a `(0,0)`-sentinel geometry
-   fallback or a crash on the deliverable writer.
+3. **`demo/win_plot.png`'s title is stale** (pre-fix copy of the generator
+   script was used) — regenerate from the real DEM before final printing.
+   See Manya's lane above; this is the one remaining visual defect on the
+   deck as it stands.
+4. ~~New Python dependencies~~ — **done this session:** `requirements.txt`
+   now lists `pdr` and `webgeocalc` (with comments explaining why); `rasterio`
+   was already present.
 
 ## 5. Suggested immediate next steps
 
-1. Decide and lock the headline framing (LightGlue vs. mod-π) so Manya's deck
-   and Riddhi's plots agree.
-2. Regenerate `win_plot.png` / `coverage_plot.png` from the real DEM if
-   available.
-3. Verify Mehak's `cnet.py` re-export path against the fixed pipeline's
-   coordinate inversion, and assemble a final `demo/real_pair_result/`
-   package using the synthetic/DEM pair as the safe demoable example.
+1. ~~Decide and lock the headline framing~~ — **done:** deck already leads
+   with LightGlue, confirmed accurate.
+2. Manya: `git pull`, re-run `python -m scripts.gen_win_plot` and
+   `python -m scripts.gen_coverage_plot` with the real DEM, re-commit.
+3. ~~Assemble a Deliverable 2 package~~ — **done this session:**
+   `demo/synthetic_deliverable/` (473 inliers, 0.92px residual,
+   `trivial_fit=False`, valid control network). Mehak should point Slide 6
+   at this instead of the empty real-pair placeholder, and can still pursue
+   a genuine real-pair package separately once `align_pair`'s geometric
+   model is improved.
 4. Correct or remove the stale benchmark table in
    `ARCHITECTURE_AND_SOLUTION.md`.
-5. Check in with Manya on deck status and rehearsal timing.
+5. Check in with Manya on rehearsal timing (item 6, whole-team task).
