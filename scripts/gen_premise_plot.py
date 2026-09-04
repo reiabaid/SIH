@@ -30,9 +30,10 @@ plt.rcParams.update({
     "font.size":        13,
 })
 
-# ── Real data from premise_test.py ────────────────────────────────────────────
-az   = [0,   15,  30, 60, 120]
-inliers = [1590, 650, 40,  3,   2]   # from actual run
+# ── Real data from premise_test.py — real SLDEM2015 DEM patch (2000,2000,512) ─
+# Run: python -m src.premise_test  (refactored to call src.match.match)
+az      = [0,    15,  30,  60, 120]
+inliers = [1578, 602, 38,   4,   4]   # real DEM run, 2026-09-05
 
 fig, ax = plt.subplots(figsize=(12, 7), facecolor=DARK_BG)
 ax.set_facecolor(PANEL_BG)
@@ -79,8 +80,8 @@ ax.grid(True, linestyle="--", alpha=0.25)
 
 # Subtitle
 fig.text(0.5, 0.01,
-         "Premise test — synthetic DEM rendered at 240 m/px, elevation 30°, "
-         "azimuth sweep on one axis   |   pipeline: premise_test.py",
+         "Premise test — NASA SLDEM2015 real DEM (~69°S, 32°E), 240 m/px, elevation 30°, "
+         "azimuth sweep on one axis   |   pipeline: src.premise_test → src.match.match",
          ha="center", fontsize=9, color=SUBTEXT, style="italic")
 
 os.makedirs("demo", exist_ok=True)

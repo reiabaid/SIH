@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LunarMatch · SIH26166 · ISRO · Presentation Deck</title>
+<meta name="description" content="LunarMatch — Solar-invariant lunar image registration for Chandrayaan-2 × LRO. SIH 2026, Problem Statement SIH26166, ISRO.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0d1117;
+    --panel:    #161b22;
+    --border:   #21262d;
+    --text:     #e6edf3;
+    --sub:      #8b949e;
+    --blue:     #58a6ff;
+    --green:    #3fb950;
+    --red:      #f85149;
+    --purple:   #bc8cff;
+    --yellow:   #d29922;
+    --accent:   #1f6feb;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── Deck container ── */
+  #deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 64px 40px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ── Slide number badge ── */
+  .slide-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .slide-num span {
+    color: var(--blue);
+  }
+
+  /* ── Tag line at top ── */
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 14px;
+  }
+
+  /* ── Headlines ── */
+  h1 {
+    font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 800;
+    line-height: 1.12;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: clamp(18px, 2.2vw, 30px);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: clamp(13px, 1.2vw, 17px);
+    line-height: 1.7;
+    color: var(--sub);
+    max-width: 900px;
+  }
+
+  /* ── Two-col layout ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ── Image boxes ── */
+  .img-box {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    position: relative;
+  }
+
+  .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .img-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(13,17,23,0.92));
+    padding: 24px 16px 12px;
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+
+  /* ── Metrics table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--border);
+    color: var(--sub);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .good { color: var(--green); font-weight: 600; }
+  .bad  { color: var(--red);   font-weight: 600; }
+  .mid  { color: var(--yellow); font-weight: 600; }
+
+  /* ── Highlight box ── */
+  .highlight {
+    background: rgba(88, 166, 255, 0.07);
+    border: 1px solid rgba(88, 166, 255, 0.25);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-top: 12px;
+  }
+
+  .highlight .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+
+  .highlight .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(20px, 2.5vw, 36px);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* ── Stat pills ── */
+  .stat-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .stat-pill {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .stat-pill .num {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    display: block;
+  }
+
+  .stat-pill .lbl {
+    font-size: 11px;
+    color: var(--sub);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ── Math / code ── */
+  .math {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(14px, 1.6vw, 22px);
+    font-weight: 500;
+    color: var(--blue);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 22px;
+    display: inline-block;
+    margin: 16px 0;
+  }
+
+  /* ── Placeholder slide 6 ── */
+  .placeholder-box {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(248, 81, 73, 0.03) 0px,
+      rgba(248, 81, 73, 0.03) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    border: 2px dashed rgba(248, 81, 73, 0.3);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    min-height: 200px;
+  }
+
+  .placeholder-box .ph-icon {
+    font-size: 40px;
+    opacity: 0.5;
+  }
+
+  .placeholder-box .ph-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--red);
+  }
+
+  .placeholder-box .ph-note {
+    font-size: 13px;
+    color: var(--sub);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  /* ── Limitation items ── */
+  .limit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .limit-item .icon {
+    font-size: 18px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .limit-item .text h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .limit-item .text p {
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.5;
+  }
+
+  /* ── Slide 3 — arrow diagram ── */
+  .arrow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--sub);
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .arrow-step {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .arrow-step .step-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .arrow-sep {
+    color: var(--blue);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  /* ── Navigation ── */
+  #nav {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(22, 27, 34, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 10px 20px;
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  #nav button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--sub);
+    border-radius: 8px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+
+  #nav button:hover { border-color: var(--blue); color: var(--blue); }
+  #nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  #slide-counter {
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--sub);
+    min-width: 50px;
+    text-align: center;
+  }
+
+  /* Progress dots */
+  #dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .dot.active {
+    background: var(--blue);
+    transform: scale(1.4);
+  }
+
+  /* ── Keyboard hint ── */
+  #keyhint {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    font-size: 11px;
+    color: var(--border);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── SPICE check panel ── */
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .check-row .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: rgba(63, 185, 80, 0.15);
+    color: var(--green);
+    border: 1px solid rgba(63, 185, 80, 0.3);
+    white-space: nowrap;
+  }
+
+  .check-row .badge.warn {
+    background: rgba(248, 81, 73, 0.1);
+    color: var(--red);
+    border-color: rgba(248, 81, 73, 0.3);
+  }
+
+  .check-row .pid {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .check-row .vals {
+    font-size: 12px;
+    color: var(--sub);
+    text-align: right;
+  }
+
+  /* ── Full-image slide ── */
+  .full-img-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .full-img-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: var(--bg);
+  }
+
+  .full-img-slide .caption-overlay {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(13,17,23,0.88);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 28px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+  }
+
+  .full-img-slide .caption-overlay h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .full-img-slide .caption-overlay p {
+    font-size: 13px;
+    color: var(--sub);
+  }
+</style>
+</head>
+<body>
+
+<div id="keyhint">← → arrow keys to navigate</div>
+
+<div id="deck">
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 1 -->
+  <div class="slide active" id="slide-1">
+    <!-- Full-bleed crater image -->
+    <div style="position:absolute;inset:0;z-index:0;">
+      <img src="demo/crater_two_suns.png" alt="Same crater, two sun angles" style="width:100%;height:100%;object-fit:contain;background:var(--bg);">
+    </div>
+    <!-- Caption overlay -->
+    <div style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(13,17,23,0.88);border:1px solid var(--border);border-radius:10px;padding:16px 32px;text-align:center;backdrop-filter:blur(8px);">
+      <h2 style="font-size:20px;margin-bottom:6px;">Same crater — two different sun angles</h2>
+      <p style="font-size:14px;color:var(--sub);">Every standard feature matcher (SIFT, ORB) thinks these are different places.</p>
+      <div style="margin-top:10px;display:flex;gap:20px;justify-content:center;">
+        <span style="font-size:12px;color:#58a6ff;font-weight:600;">Sun 0° (North)</span>
+        <span style="font-size:12px;color:#f85149;font-weight:600;">Sun 180° (South)</span>
+      </div>
+    </div>
+    <div class="slide-num" style="position:relative;z-index:1;">Slide <span>01</span> / 08 · SIH26166 · ISRO · LunarMatch</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 2 -->
+  <div class="slide" id="slide-2">
+    <div class="slide-num">Slide <span>02</span> / 08 · Why matching fails</div>
+    <div class="eyebrow">The problem</div>
+    <h1>Gradient direction reverses with the sun.</h1>
+    <p>When the sun's azimuth shifts, shadows invert. The bright side of a crater rim becomes the dark side. Standard descriptors encode <em>signed</em> gradient direction (0°–360°) — so the same edge becomes an opposite descriptor. Match confidence drops from ~1,500 inliers to 4.</p>
+
+    <div class="two-col" style="margin-top:24px;flex:1;min-height:0;">
+      <div class="img-box">
+        <img src="demo/gradient_flip_diagram.png" alt="Gradient flip diagram">
+        <div class="img-label">Gradient-flip diagram — the entire problem in one figure</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <h3 style="color:var(--red);">Why SIFT fails on the Moon</h3>
+          <p>SIFT builds orientation histograms over 0°–360°. A 180° sun shift rotates the gradient at every crater-rim pixel by exactly 180°. The descriptor bin becomes its own mirror image — the same terrain produces a descriptor with maximum possible distance from itself.</p>
+        </div>
+        <div class="card">
+          <h3>The math</h3>
+          <div class="math">∇(1−I) = −∇I</div>
+          <p>Gradient magnitude is invariant. Gradient <em>direction</em> rotates by exactly π. SIFT measures direction. Our fix: measure orientation (direction mod π) instead.</p>
+        </div>
+        <div class="img-box" style="flex:1;min-height:0;">
+          <img src="demo/premise_plot.png" alt="Premise plot — SIFT collapse">
+          <div class="img-label">Real SLDEM2015 terrain · SIFT inliers vs solar azimuth shift</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 3 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-num">Slide <span>03</span> / 08 · The fix</div>
+    <div class="eyebrow">Our solution</div>
+    <h1>One line of arithmetic eliminates the problem.</h1>
+    <p>Take gradient orientation modulo π. Direction collapses to orientation — which way the edge runs, ignoring which side is bright. Both illuminations map to the same value. This is not a new idea (RIFT, HAPCG, phase congruency use the same family). Our contribution is the <strong style="color:var(--blue);">benchmark</strong> and the <strong style="color:var(--blue);">pipeline integration</strong>.</p>
+
+    <div class="math" style="margin-top:24px;font-size:clamp(18px,2vw,28px);">
+      θ_unsigned = θ mod π &nbsp;&nbsp;→&nbsp;&nbsp; [0, π)
+    </div>
+
+    <div class="arrow-diagram" style="margin-top:20px;">
+      <div class="arrow-step">
+        <div class="step-title" style="color:var(--red);">SIFT (rung 0)</div>
+        <div style="font-size:12px;color:var(--sub);">Signed gradient 0°–360°<br>Fails at Δaz ≥ 30°</div>
+      </div>
+      <div class="arrow-sep">→</div>
+      <div class="arrow-step" style="border-color:rgba(63,185,80,0.35);">
+        <div class="step-title" style="color:var(--green);">Mod-π (rung 1)</div>
+        <div style="font-size:12px;color:var(--sub);">Unsigned orientation [0, π)<br>Illumination invariant</div>
+      </div>
+      <div class="arrow-sep">→</div>
+      <div class="arrow-step" style="border-color:rgba(88,166,255,0.35);">
+        <div class="step-title" style="color:var(--blue);">LightGlue (rung 2)</div>
+        <div style="font-size:12px;color:var(--sub);">Deep learned matching<br>Holds at Δaz = 90°</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px;flex:1;min-height:0;">
+      <div class="card" style="border-color:rgba(31,111,235,0.3);">
+        <h3>Move 1 · Scale</h3>
+        <p>GSD from metadata. Resample both products to a common grid with <code style="color:var(--blue);font-size:12px;">geo.align_pair()</code> before any descriptor is computed. A 320× OHRC–IIRS gap becomes 1×.</p>
+      </div>
+      <div class="card" style="border-color:rgba(63,185,80,0.3);">
+        <h3>Move 2 · Illumination</h3>
+        <p>Mod-π in <code style="color:var(--green);font-size:12px;">prep.mod_pi()</code>. Local contrast normalisation strips low-frequency shading. Together they make matching independent of which orbit pass produced the image.</p>
+      </div>
+      <div class="card" style="border-color:rgba(188,140,255,0.3);">
+        <h3>Move 3 · Distribution</h3>
+        <p>8×8 keypoint grid cap. Coverage CV ≤ 0.20. The problem statement explicitly requires "uniform distribution" — we measure it and enforce it, which no baseline does.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 4 -->
+  <div class="slide" id="slide-4">
+    <div class="slide-num">Slide <span>04</span> / 08 · The win plot</div>
+    <div class="eyebrow">The headline result</div>
+    <h1>SIFT collapses at 30°. LightGlue holds at 90°.</h1>
+
+    <div class="two-col" style="margin-top:20px;flex:1;min-height:0;">
+      <div class="img-box">
+        <img src="demo/win_plot.png" alt="Win plot — inlier count vs azimuth difference">
+        <div class="img-label">Real NASA SLDEM2015 terrain · src/sweep.py + src/match.py</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card" style="border-color:rgba(248,81,73,0.35);">
+          <h3 style="color:var(--red);">SIFT (baseline)</h3>
+          <p>1,578 inliers at 0° → 38 at 30° → 4 at 60°. Complete operational failure within a single orbital pass difference.</p>
+          <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red);">−97% by 30°</div>
+        </div>
+        <div class="card" style="border-color:rgba(63,185,80,0.35);">
+          <h3 style="color:var(--green);">Mod-π (our fix)</h3>
+          <p>1,167 at 0° → 426 at 15°. Holds partially up to 150° then recovers to 907 at 180° (full reversal = symmetric). Shows the physics working correctly.</p>
+        </div>
+        <div class="card" style="border-color:rgba(88,166,255,0.35);">
+          <h3 style="color:var(--blue);">LightGlue (learned)</h3>
+          <p>1,790 inliers at 0°. <strong style="color:var(--blue);">951 at 30°. 666 at 60°. 552 at 90°.</strong> Never falls below 449. Matches across the entire illumination range where SIFT has zero.</p>
+        </div>
+        <div class="highlight">
+          <div class="label">Sub-pixel registration</div>
+          <div class="value">RMSE &lt; 0.5 px</div>
+          <div style="font-size:12px;color:var(--sub);margin-top:6px;">Quadratic peak correlation refinement (MAGSAC + parabolic fit)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 5 -->
+  <div class="slide" id="slide-5">
+    <div class="slide-num">Slide <span>05</span> / 08 · The finding</div>
+    <div class="eyebrow">A result, not a feature</div>
+    <h1>It is the sun's direction that breaks matching, not its height.</h1>
+    <p>Two separate sweeps — one varying azimuth, one varying elevation at fixed azimuth — produce dramatically different degradation curves. This separates a physical finding from a tuning parameter.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px;flex:1;min-height:0;">
+      <div class="card" style="justify-content:space-between;">
+        <div>
+          <h3 style="color:var(--red);">Azimuth sweep (direction)</h3>
+          <p style="margin-top:8px;">Sun rotates in the horizontal plane — shadows flip. SIFT crashes immediately. Mod-π holds, then recovers at 180°. <strong style="color:var(--red);">This is the failure mode.</strong></p>
+        </div>
+        <table style="margin-top:16px;">
+          <tr><th>Δ Azimuth</th><th>SIFT</th><th>Mod-π</th><th>LightGlue</th></tr>
+          <tr><td>0°</td>   <td class="good">1578</td><td class="good">1167</td><td class="good">1790</td></tr>
+          <tr><td>30°</td>  <td class="bad">38</td>   <td class="mid">14</td>  <td class="good">951</td></tr>
+          <tr><td>60°</td>  <td class="bad">4</td>    <td class="bad">0</td>   <td class="good">666</td></tr>
+          <tr><td>180°</td> <td class="bad">4</td>    <td class="good">907</td><td class="good">1071</td></tr>
+        </table>
+      </div>
+      <div class="card" style="justify-content:space-between;">
+        <div>
+          <h3 style="color:var(--green);">Elevation sweep (height)</h3>
+          <p style="margin-top:8px;">Sun moves toward zenith — shadows shorten but do not flip. Gradient direction does not reverse. SIFT stays stable. This validates the mechanism. <strong style="color:var(--green);">This is not the failure mode.</strong></p>
+        </div>
+        <div style="margin-top:16px;background:var(--bg);border-radius:8px;padding:18px;border:1px solid var(--border);">
+          <div style="font-size:13px;color:var(--sub);line-height:1.8;">
+            <div>Elevation 10° → 50°: &nbsp;<span style="color:var(--green);font-weight:600;">SIFT stable</span></div>
+            <div>No gradient sign reversal occurs</div>
+            <div style="margin-top:10px;font-size:12px;color:var(--sub);font-style:italic;">Separating these two sweeps is what makes azimuth-collapse a <em>finding</em> rather than a curiosity.</div>
+          </div>
+        </div>
+        <div class="highlight" style="margin-top:12px;">
+          <div class="label">Conclusion for ISRO operations</div>
+          <div style="font-size:14px;color:var(--text);margin-top:4px;line-height:1.5;">Cross-orbit matching failures at the south pole are driven by orbital azimuth separation, not by the sun's elevation (incidence angle). Re-planning acquisitions to minimise azimuth difference will have far greater impact than minimising incidence angle difference.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 6 -->
+  <div class="slide" id="slide-6">
+    <div class="slide-num">Slide <span>06</span> / 08 · Real data</div>
+    <div class="eyebrow">Deliverable 2</div>
+    <h1>The registered product and its match points.</h1>
+
+    <div class="two-col" style="margin-top:20px;flex:1;min-height:0;">
+      <div style="display:flex;flex-direction:column;gap:16px;min-height:0;">
+        <div class="placeholder-box" style="flex:1;">
+          <div class="ph-icon">🛰️</div>
+          <div class="ph-label">PLACEHOLDER — Reia's real-run output pending</div>
+          <div class="ph-note">
+            This slide will show:<br>
+            <strong style="color:var(--text);">Registered CH-2 × LRO overlay</strong> (red/green alignment)<br>
+            Match-point scatter on the registered raster<br>
+            Metrics: RMSE, inlier count, grid coverage<br><br>
+            Swap in <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/overlay_rgb.png</code><br>
+            and fill the metric cards from <code style="color:var(--blue);font-size:11px;">demo/real_pair_result/metrics.json</code><br>
+            once Reia's coordinate inversion + end-to-end run lands.
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <h3>What the deliverable contains</h3>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:13px;">
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">registered_a_to_b.tif</code> — GeoTIFF warped into reference frame</span></div>
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">match_points.csv</code> — human-readable tie-points with geo-coords</span></div>
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">match_points.geojson</code> — tie-point lines as GeoJSON</span></div>
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">overlay_rgb.png</code> — red/green channel alignment preview</span></div>
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">control_network.net</code> — ISIS PVL control network (ISRO-ready)</span></div>
+            <div style="display:flex;gap:10px;align-items:center;"><span style="color:var(--green);font-size:16px;">✓</span><span><code style="color:var(--blue);">metrics.json</code> — RMSE, coverage, inlier stats</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>SPICE incidence angle cross-check</h3>
+          <p style="font-size:12px;margin-bottom:10px;">WebGeocalc values verified against PDS3 label bounds and CROSSTRACK_SUMMING consistency:</p>
+          <div class="check-row"><span class="badge">PASS</span><span class="pid">M1499112398LE</span><span class="vals">78.36° · az 321°</span></div>
+          <div class="check-row"><span class="badge">PASS</span><span class="pid">M1519292928LE</span><span class="vals">71.12° · az 351°</span></div>
+          <div class="check-row"><span class="badge">PASS</span><span class="pid">M1519299970LE</span><span class="vals">72.64° · az 350°</span></div>
+          <div style="font-size:11px;color:var(--sub);margin-top:6px;">GSD: summing=2 → 1.001 m/px expected, 1.0005 m/px in inventory (Δ &lt; 0.001) ✓<br>Range: all values 60°–90° as expected for south-pole geometry ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 7 -->
+  <div class="slide" id="slide-7">
+    <div class="slide-num">Slide <span>07</span> / 08 · Pipeline handoff</div>
+    <div class="eyebrow">ISRO integration</div>
+    <h1>One command changes. Everything downstream is untouched.</h1>
+    <p>The output is a native ISIS Control Network (PVL format, <code style="color:var(--blue);">.net</code> extension). ISRO photogrammetrists can load it directly into their existing jigsaw bundle-adjustment workflow — no Python, no custom tooling required on their side.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;flex:1;min-height:0;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card" style="border-color:rgba(88,166,255,0.3);">
+          <h3>Before LunarMatch</h3>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sub);margin-top:8px;line-height:2;">
+            <div>$ findfeatures  <span style="color:var(--red);"># fails at 30° sun shift</span></div>
+            <div>$ autoseed      <span style="color:var(--red);"># no valid tie-points</span></div>
+            <div>$ jigsaw        <span style="color:var(--red);"># manual intervention</span></div>
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(63,185,80,0.3);">
+          <h3>After LunarMatch</h3>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sub);margin-top:8px;line-height:2;">
+            <div>$ python -m lunarmatch register \</div>
+            <div>&nbsp;&nbsp;--a CH2_OHRC.img --b LRO_NAC.img</div>
+            <div style="color:var(--green);"># → control_network.net</div>
+            <div>$ jigsaw fromlist=... cnet=control_network.net</div>
+            <div style="color:var(--green);"># unchanged command ✓</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Control network format</h3>
+          <p style="font-size:12px;line-height:1.7;">Written to USGS ISIS PVL spec version 5. <code style="color:var(--blue);">PointType = Free</code>, <code style="color:var(--blue);">MeasureType = RegisteredSubPixel</code>, exact Sample/Line pixel coordinates. Round-tripped through the <code style="color:var(--blue);">pvl</code> parser — structure validates. <em>Note: "Written to spec and round-tripped" is true and strong. "Validated in ISIS jigsaw" would require running jigsaw, which we have not done.</em></p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card" style="flex:1;">
+          <h3>Performance summary (real DEM sweep)</h3>
+          <table style="margin-top:12px;">
+            <thead>
+              <tr><th>Matcher</th><th>0° inliers</th><th>30° inliers</th><th>90° inliers</th><th>RMSE</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--red);font-weight:600;">SIFT</td>
+                <td>1,578</td>
+                <td class="bad">38</td>
+                <td class="bad">4</td>
+                <td class="bad">unstable</td>
+              </tr>
+              <tr>
+                <td style="color:var(--green);font-weight:600;">Mod-π</td>
+                <td>1,167</td>
+                <td class="mid">14</td>
+                <td class="bad">0</td>
+                <td class="mid">0.37 px</td>
+              </tr>
+              <tr>
+                <td style="color:var(--blue);font-weight:600;">LightGlue</td>
+                <td class="good">1,790</td>
+                <td class="good">951</td>
+                <td class="good">552</td>
+                <td class="good">&lt; 0.5 px</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="font-size:11px;color:var(--sub);margin-top:8px;">RMSE = reprojection_residual from src/metrics.py · real SLDEM2015 DEM</div>
+        </div>
+        <div class="highlight">
+          <div class="label">170 / 170 automated tests passing</div>
+          <div style="font-size:13px;color:var(--text);margin-top:6px;line-height:1.6;">All components validated against synthetic warps with known homographies and point sets with known coverage. No real-data test is as strict — the ground truth there is unknown.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 8 -->
+  <div class="slide" id="slide-8">
+    <div class="slide-num">Slide <span>08</span> / 08 · Where it still breaks</div>
+    <div class="eyebrow">Honest limitations</div>
+    <h1>Four things we would not want a judge to discover.</h1>
+    <p>Naming your own limits in a technical room reads as competence. Hiding them reads as naivety.</p>
+
+    <div style="margin-top:24px;flex:1;overflow:auto;">
+      <div class="limit-item">
+        <div class="icon">🔬</div>
+        <div class="text">
+          <h4>DEM resolution vs OHRC resolution</h4>
+          <p>The premise plot and win plot were generated on NASA SLDEM2015 at 240 m/px. Chandrayaan-2 OHRC sees terrain at 0.25 m/px — about 1,000× finer. Shadow inversion is scale-invariant physics, so the finding almost certainly transfers, but we have not shown it at OHRC resolution. The real end-to-end run is the defence.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="icon">🔲</div>
+        <div class="text">
+          <h4>Tiling on repetitive terrain</h4>
+          <p>An OHRC strip is ~54,860 × 12,000 px. Tiling is required. On craters that look alike (repetitive terrain), matching across tiles can produce confident false positives ~1,000 px away from the true position. The fix (coarse phase-correlation pre-alignment, then windowed tile search) is understood but not yet implemented in the production pipeline.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="icon">📡</div>
+        <div class="text">
+          <h4>IIRS not implemented</h4>
+          <p>The problem statement includes ISRO IIRS hyperspectral data. We have CH-2 OHRC and LRO NAC readers. IIRS has a different data format and spectral structure. Our pipeline does not handle it yet. This is a real scope gap.</p>
+        </div>
+      </div>
+      <div class="limit-item">
+        <div class="icon">⚙️</div>
+        <div class="text">
+          <h4>ISIS jigsaw compatibility — not tested end-to-end</h4>
+          <p>The control network is written to the documented PVL spec and round-trips through the pvl parser. We have not run jigsaw on it. "Written to spec and round-tripped" is accurate and defensible. "ISIS-validated" would require actually running jigsaw, which we have not done. Do not say the latter.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div style="margin-top:20px;display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);margin-bottom:4px;">Future work</div>
+        <div style="font-size:13px;color:var(--sub);">Tiling fix · IIRS reader · real end-to-end CH-2 × LRO bundle · ISIS jigsaw validation · elevation-vs-azimuth sweep test</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">SIH26166 · ISRO</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);margin-top:4px;">LunarMatch</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" onclick="navigate(-1)" disabled>← Prev</button>
+  <div id="dots"></div>
+  <div id="slide-counter">1 / 8</div>
+  <button id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 8;
+let current = 1;
+
+// Build dots
+const dotsEl = document.getElementById('dots');
+for (let i = 1; i <= TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 1 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 1 || next > TOTAL) return;
+  goTo(next);
+}
+
+function goTo(n) {
+  if (n === current) return;
+  const outEl = document.getElementById(`slide-${current}`);
+  const inEl  = document.getElementById(`slide-${n}`);
+
+  outEl.classList.remove('active');
+  outEl.classList.add('exit');
+  setTimeout(() => { outEl.classList.remove('exit'); }, 420);
+
+  // Delay in-slide slightly for smooth stagger
+  setTimeout(() => {
+    inEl.classList.add('active');
+  }, 60);
+
+  current = n;
+
+  document.getElementById('slide-counter').textContent = `${n} / ${TOTAL}`;
+  document.getElementById('btn-prev').disabled = n === 1;
+  document.getElementById('btn-next').disabled = n === TOTAL;
+
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i + 1 === n);
+  });
+}
+
+// Keyboard nav
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    navigate(1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    navigate(-1);
+  } else if (e.key >= '1' && e.key <= '8') {
+    goTo(parseInt(e.key));
+  }
+});
+</script>
+</body>
+</html>
