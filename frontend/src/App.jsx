@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import ReportModalPreview from './components/ReportModalPreview';
 
 import Screen00Landing from './screens/Screen00Landing';
 import Screen01SelectPair from './screens/Screen01SelectPair';
@@ -11,7 +10,6 @@ import Screen04TerrainReport from './screens/Screen04TerrainReport';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(0); // 0: Landing, 1: Select, 2: Review, 3: Evidence, 4: Terrain
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   
   const [selectedProductA, setSelectedProductA] = useState(null);
   const [selectedProductB, setSelectedProductB] = useState(null);
@@ -79,17 +77,10 @@ export default function App() {
               selectedProductA={selectedProductA}
               selectedProductB={selectedProductB}
               onBack={() => setCurrentScreen(3)}
-              onOpenReportModal={() => setIsReportModalOpen(true)} 
             />
           )}
         </main>
       </div>
-
-      {/* Live Scientific Report Preview Modal */}
-      <ReportModalPreview
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-      />
     </div>
   );
 }

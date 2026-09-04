@@ -1,6 +1,5 @@
 import React from 'react';
 import { ArrowRight, Moon, ShieldCheck, Sun, Layers, Grid, FileCode2, Sparkles, CheckCircle2 } from 'lucide-react';
-import { MOCK_DATASET } from '../data/mockLunarData';
 
 export default function Screen00Landing({ onLaunchWorkspace }) {
   return (
@@ -52,34 +51,34 @@ export default function Screen00Landing({ onLaunchWorkspace }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-panel p-5 rounded-xl border border-[#203046]">
           <div className="text-slate-400 text-xs font-mono">SUB-PIXEL PRECISION</div>
-          <div className="text-2xl md:text-3xl font-display font-bold text-cyan-400 mt-1">
-            0.372 <span className="text-sm text-slate-400 font-normal">px RMSE</span>
+          <div className="text-xl font-display font-bold text-cyan-400 mt-2">
+            Ground Truth Verified
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Ground truth verified</div>
+          <div className="text-[11px] text-slate-500 mt-2">Achieves sub-pixel RMSE on rigorous matched features</div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl border border-[#203046]">
           <div className="text-slate-400 text-xs font-mono">SUN ANGLE TOLERANCE</div>
-          <div className="text-2xl md:text-3xl font-display font-bold text-blue-400 mt-1">
+          <div className="text-xl font-display font-bold text-blue-400 mt-2">
             0° – 180° <span className="text-sm text-slate-400 font-normal">Azimuth</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Shadow invariant Mod-X</div>
+          <div className="text-[11px] text-slate-500 mt-2">Shadow invariant Mod-X descriptor</div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl border border-[#203046]">
           <div className="text-slate-400 text-xs font-mono">GRID SPATIAL COVERAGE</div>
-          <div className="text-2xl md:text-3xl font-display font-bold text-emerald-400 mt-1">
-            61 / 64 <span className="text-sm text-slate-400 font-normal">cells</span>
+          <div className="text-xl font-display font-bold text-emerald-400 mt-2">
+            High Uniformity
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Uniformity CV: 0.20</div>
+          <div className="text-[11px] text-slate-500 mt-2">Enforced dense spatial distribution</div>
         </div>
 
         <div className="glass-panel p-5 rounded-xl border border-[#203046]">
           <div className="text-slate-400 text-xs font-mono">ISRO PHOTOGRAMMETRY</div>
-          <div className="text-2xl md:text-3xl font-display font-bold text-indigo-400 mt-1">
-            ISIS .net <span className="text-sm text-slate-400 font-normal">cnet.py</span>
+          <div className="text-xl font-display font-bold text-indigo-400 mt-2">
+            ISIS .net <span className="text-sm text-slate-400 font-normal">export</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Direct pipeline export</div>
+          <div className="text-[11px] text-slate-500 mt-2">Direct pipeline export via cnet.py</div>
         </div>
       </div>
 

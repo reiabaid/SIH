@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Globe, FileText, ArrowLeft, AlertTriangle, Mountain, DownloadCloud } from 'lucide-react';
 
-export default function Screen04TerrainReport({ jobId, selectedProductA, selectedProductB, onBack, onOpenReportModal }) {
+export default function Screen04TerrainReport({ jobId, selectedProductA, selectedProductB, onBack }) {
   const [selectedExports, setSelectedExports] = useState({
     raster: true,
     points: true,
@@ -168,15 +168,6 @@ export default function Screen04TerrainReport({ jobId, selectedProductA, selecte
             <div className="p-3 rounded-lg bg-cyan-950/40 border border-cyan-800/50 text-[11px] text-cyan-300 leading-relaxed break-all">
               Artifacts are generated directly by the backend for Job ID: {jobId ? jobId.substring(0, 8) + '...' : 'Unknown'}
             </div>
-
-            {/* Live Report Modal Trigger Button */}
-            <button
-              onClick={onOpenReportModal}
-              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg bg-[#182638] hover:bg-[#20324a] text-cyan-300 border border-cyan-800/60 text-xs font-mono transition"
-            >
-              <FileText className="w-4 h-4" />
-              <span>Preview Scientific Report</span>
-            </button>
 
             {/* Primary Download All Button */}
             <button

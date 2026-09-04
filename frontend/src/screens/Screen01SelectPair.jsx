@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Layers, Sliders, CheckCircle2, Zap, AlertCircle, Loader2 } from 'lucide-react';
-import { MOCK_DATASET } from '../data/mockLunarData';
+import { Search, Map, Layers, CheckCircle2, AlertCircle, Zap, Loader2 } from 'lucide-react';
 
 export default function Screen01SelectPair({ onRunMatch }) {
   const [selectedRung, setSelectedRung] = useState('rung1');
@@ -188,32 +187,18 @@ export default function Screen01SelectPair({ onRunMatch }) {
         </div>
       )}
 
-      {/* Calculated Overlap Bar - Only show if both selected */}
-      {selectedA && selectedB && (
-        <div className="glass-panel p-4 rounded-xl border border-[#203046] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs animate-fadeIn">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-950/80 border border-cyan-700/60 flex items-center justify-center text-cyan-400 font-bold text-sm">
-              {MOCK_DATASET.geometry.calculatedOverlap}%
-            </div>
-            <div>
-              <div className="text-slate-200 font-semibold tracking-wide">CALCULATED FOOTPRINT OVERLAP</div>
-              <div className="text-slate-400 text-[11px]">Computed from PDS footprint intersection (`footprint_overlap()`). Footprint segments normalized to 0-360°.</div>
-            </div>
-          </div>
-          <div className="w-full sm:w-48 bg-[#0c131f] rounded-full h-2.5 overflow-hidden border border-[#1e2d42]">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full w-[31.4%]" />
-          </div>
-        </div>
-      )}
-
       {/* Registration Pipeline Rung Selector */}
-      <div className="space-y-3">
+      <div className="space-y-3 mt-6">
         <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
           SELECT REGISTRATION ALGORITHM PIPELINE RUNG
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {MOCK_DATASET.pipelines.map((p) => {
+          {[
+            { id: 'rung1', name: 'SIFT (Scale-Invariant)', status: 'Online', desc: 'Fast, high recall for similar illuminations' },
+            { id: 'rung2', name: 'Mod-X (Shadow-Invariant)', status: 'Online', desc: 'Phase-congruency for multi-temporal pairs' },
+            { id: 'rung3', name: 'LightGlue (Neural)', status: 'Offline', desc: 'Deep learning based dense matching (Offline)' }
+          ].map((p) => {
             const isSelected = selectedRung === p.id;
             return (
               <div
@@ -235,7 +220,7 @@ export default function Screen01SelectPair({ onRunMatch }) {
                 <p className="text-xs text-slate-400">{p.desc}</p>
 
                 <div className="text-[11px] font-mono text-slate-500 pt-2 border-t border-[#1e2d40]">
-                  Status: <span className={p.id === 'rung1' ? 'text-emerald-400 font-semibold' : 'text-slate-400'}>{p.status}</span>
+                  Status: <span className={p.id === 'rung1' || p.id === 'rung2' ? 'text-emerald-400 font-semibold' : 'text-slate-400'}>{p.status}</span>
                 </div>
               </div>
             );
@@ -274,8 +259,7 @@ export default function Screen01SelectPair({ onRunMatch }) {
         </div>
 
         <div className="text-xs font-mono text-slate-400 text-right space-y-0.5">
-          <div>EST. {MOCK_DATASET.geometry.estimatedComputeSec} s • {MOCK_DATASET.geometry.tflopsRequired} TFLOPS</div>
-          <div className="text-slate-500">{MOCK_DATASET.geometry.swathOverlapPx} px SWATH OVERLAP SEARCH WINDOW</div>
+          <div className="text-slate-500">DYNAMIC SWATH OVERLAP SEARCH WINDOW</div>
         </div>
       </div>
 
