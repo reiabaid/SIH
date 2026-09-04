@@ -49,7 +49,13 @@ export default function App() {
           )}
 
           {currentScreen === 2 && (
-            <Screen02MatchReview onAcceptMatch={() => setCurrentScreen(3)} />
+            <Screen02MatchReview 
+              selectedProductA={selectedProductA}
+              selectedProductB={selectedProductB}
+              selectedRung={selectedRung}
+              onAcceptMatch={() => setCurrentScreen(3)} 
+              onBack={() => setCurrentScreen(1)}
+            />
           )}
 
           {currentScreen === 3 && (
