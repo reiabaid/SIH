@@ -74,7 +74,13 @@ export default function App() {
           )}
 
           {currentScreen === 4 && (
-            <Screen04TerrainReport onOpenReportModal={() => setIsReportModalOpen(true)} />
+            <Screen04TerrainReport 
+              jobId={completedJobId}
+              selectedProductA={selectedProductA}
+              selectedProductB={selectedProductB}
+              onBack={() => setCurrentScreen(3)}
+              onOpenReportModal={() => setIsReportModalOpen(true)} 
+            />
           )}
         </main>
       </div>
