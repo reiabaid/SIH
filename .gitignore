@@ -11,3 +11,4 @@ venv/
 data/
 node_modules/
 .pytest_cache/
+jobs.db
