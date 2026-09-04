@@ -130,3 +130,23 @@ When Reia's inversion and `cnet.py` are available, export the same inlier rows
 through `cnet.py`, then parse the result again with `pvl` as a round-trip
 validation. That control-network step is intentionally not claimed here until
 the inversion implementation lands.
+
+## API and Job Store
+
+The project includes a FastAPI backend (`src/api.py`) for managing products and execution of the LunarMatch pipeline. 
+
+### Starting the API
+
+Run the server from the repository root:
+
+```powershell
+python -m uvicorn src.api:app --host 127.0.0.1 --port 8000
+```
+
+### Endpoints
+
+- **`GET /products`**: Returns the combined inventory list from `data/lro_inventory.csv` and `data/ch2_inventory.csv`. Exposes product information required for matching, including sun angle and GSD.
+- **`POST /register`**: Accepts a JSON payload containing `product_a`, `product_b`, and `rung` (0, 1, or 2). Validates that the products exist in the inventory, assigns a unique `job_id`, updates the `jobs.db` SQLite database to `pending`, and immediately returns the `job_id` while spinning up the real pipeline execution in the background.
+- **`GET /jobs/{id}`**: Returns the current status of the job (e.g., `pending`, `completed`, `failed`), along with pipeline metrics like `rmse`, `inliers`, and `coverage`.
+- **`GET /jobs/{id}/artefacts/{filename}`**: Serves generated artefacts from the job's directory (`data/jobs/{job_id}`). Can be used to download the overlay PNG (`overlay_rgb.png`), registered raster (`registered_a_to_b.tif`), metrics JSON, etc.
+
