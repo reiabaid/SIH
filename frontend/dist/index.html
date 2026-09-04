@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LunarMatch | Chandrayaan-2 & LRO Image Registration Mission Suite</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Global Error Handler -->
+    <script>
+      window.addEventListener('error', function(e) {
+        var errDiv = document.getElementById('debug-error');
+        if (!errDiv) {
+          errDiv = document.createElement('div');
+          errDiv.id = 'debug-error';
+          errDiv.style = 'position:fixed; top:0; left:0; right:0; z-index:99999; background:#800; color:#fff; padding:20px; font-family:monospace; white-space:pre-wrap; font-size:14px;';
+          document.body.appendChild(errDiv);
+        }
+        errDiv.innerText += '\n[JS ERROR]: ' + e.message + ' at ' + e.filename + ':' + e.lineno;
+      });
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-Yciiwk8g.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B_SYJSkx.css">
+  </head>
+  <body class="bg-[#0b0f17] text-slate-100 antialiased font-sans">
+    <div id="root"></div>
+  </body>
+</html>
