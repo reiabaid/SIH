@@ -92,3 +92,41 @@ src/io_ch2.py
 ```
 
 Large downloaded image files may exceed normal GitHub repository limits. If the raw files are not committed, download them from the archive above and keep the same directory structure before running the commands.
+
+## Registered pair hand-off
+
+Before travelling, confirm that the two Chandrayaan-2 product folders and their
+paired `.xml` and `.img` files are present on the USB stick. The USB check is a
+physical step and cannot be verified by GitHub or this repository.
+
+The registered-pair command currently works with two LRO NAC products. Place
+two real LRO files under `data/lro_nac/`, then run this from the repository root:
+
+```powershell
+python -m scripts.make_real_pair_result `
+	data/lro_nac/A.IMG `
+	data/lro_nac/B.IMG
+```
+
+The command reports each stage: loading A, loading B, matching, and writing the
+handoff. It warps A into B's pixel frame using the fitted homography and writes
+one self-contained result folder:
+
+```text
+demo/real_pair_result/
+	registered_a_to_b.tif   # A warped into B's frame, GeoTIFF
+	overlay_rgb.png         # red=B, green=registered A
+	match_points.csv        # human-readable pixel and lon/lat coordinates
+	match_points.geojson    # same points as geographic LineString features
+	metrics.json            # transform, RMSE, inlier count, and coverage
+```
+
+The match-point CSV is the primary honest deliverable. Each row records both
+image coordinates, both geographic coordinates, the match score, and whether
+RANSAC kept the point as an inlier. Open it in a spreadsheet or inspect it as
+plain text before handing it over.
+
+When Reia's inversion and `cnet.py` are available, export the same inlier rows
+through `cnet.py`, then parse the result again with `pvl` as a round-trip
+validation. That control-network step is intentionally not claimed here until
+the inversion implementation lands.

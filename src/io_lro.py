@@ -65,7 +65,7 @@ def _parse_label(label_str: str) -> dict:
     SKIP = frozenset({"OBJECT", "END_OBJECT", "GROUP", "END_GROUP", "PDS_VERSION_ID"})
     result: dict = {}
     pattern = re.compile(
-        r'^([A-Z][A-Z0-9_:]*)\s*=\s*'
+        r'^\s*([A-Z][A-Z0-9_:]*)\s*=\s*'
         r'(?:"([^"\n]*)"'        # group 2: double-quoted string
         r'|(\([^\)\n]*\))'       # group 3: parenthesised tuple
         r'|([^\r\n<"(]+?))'      # group 4: bare value (stop before unit/EOL)
@@ -83,6 +83,15 @@ def _parse_label(label_str: str) -> dict:
             val = (m.group(4) or "").strip()
         result[key] = val
     return result
+
+
+def _read_attached_pds3_label(path: str) -> str:
+    """Read the ASCII PDS3 label at the front of an attached .IMG file."""
+    with open(path, "rb") as handle:
+        header = handle.read(1024 * 1024)
+    text = header.decode("ascii", errors="ignore")
+    end_match = re.search(r"^\s*END\s*$", text, flags=re.MULTILINE)
+    return text[:end_match.end()] if end_match else text
 
 
 def _get(parsed: dict, *candidates: str):
@@ -139,7 +148,11 @@ def _load_with_gdal_fallback(path: str):
 
     array = ds.ReadAsArray()
     meta_dict = ds.GetMetadata() or {}
-    label_str = "\n".join(f"{k} = {v}" for k, v in meta_dict.items())
+    # GDAL exposes only a subset of PDS3 keywords for these EDR products;
+    # recover the attached label so fields such as CROSSTRACK_SUMMING survive.
+    label_str = _read_attached_pds3_label(path)
+    if not label_str.strip():
+        label_str = "\n".join(f"{k} = {v}" for k, v in meta_dict.items())
     return array, label_str
 
 
