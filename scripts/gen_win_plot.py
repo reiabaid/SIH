@@ -94,9 +94,25 @@ for m in METHODS:
 fig, ax = plt.subplots(figsize=(13, 7), facecolor=DARK_BG)
 ax.set_facecolor(PANEL_BG)
 
-# Shaded collapse zone
-ax.axvspan(25, 70, alpha=0.07, color="#f85149")
-ax.text(47, -12, "SIFT blind zone", color="#f85149", fontsize=10, alpha=0.7, ha="center")
+# Shaded zones. Mod-pi's invariance is exact only for a true ~180-degree sun
+# reversal (a global intensity negation) -- an arbitrary azimuth rotation
+# reshuffles which slopes are lit rather than uniformly flipping bright/dark,
+# so both matchers collapse together well past 70 degrees. Verified directly:
+# rung 1 finds 0 total matches (not just 0 inliers) at 60/90/120 degrees on
+# both real and synthetic terrain -- RANSAC's own 4-point minimum, not a
+# plotting artifact. Do not shade this as a "SIFT blind zone" mod-pi escapes;
+# it doesn't, until azimuth difference approaches full reversal.
+ax.axvspan(25, 145, alpha=0.07, color="#f85149")
+ax.axvspan(145, 190, alpha=0.07, color="#3fb950")
+# Blended transform (x in data coords, y in axes-fraction) so these labels sit
+# just above the x-axis regardless of the y-scale -- with LightGlue's much
+# larger inlier counts sharing this axis, a fixed data-space y (e.g. -12)
+# increasingly no longer lands below the SIFT/mod-pi lines as they crowd zero.
+label_transform = ax.get_xaxis_transform()
+ax.text(85, -0.06, "SIFT & mod-pi collapse", color="#f85149", fontsize=10, alpha=0.8,
+       ha="center", transform=label_transform)
+ax.text(167, -0.06, "mod-pi recovers\n(near-full reversal)", color="#3fb950", fontsize=9, alpha=0.85,
+       ha="center", transform=label_transform)
 
 for m in METHODS:
     lbl = m["label"]
@@ -116,8 +132,8 @@ for m in METHODS:
 ax.set_xlim(-5, 190)
 ax.set_xlabel("Sun Azimuth Difference  (degrees)", fontsize=14, labelpad=8)
 ax.set_ylabel("Inlier Match Count", fontsize=14, labelpad=8)
-ax.set_title("SIFT collapses at 30 degrees. Mod-pi holds.", fontsize=17,
-             fontweight="bold", color=TEXT, pad=14)
+ax.set_title("Standard matching fails under any sun-angle change.\nMod-pi recovers only near full reversal (~150-180 deg).",
+             fontsize=15, fontweight="bold", color=TEXT, pad=14)
 ax.grid(True, linestyle="--", alpha=0.25)
 legend = ax.legend(fontsize=11, framealpha=0.15, edgecolor=GRID,
 
