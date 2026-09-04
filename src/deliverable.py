@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from src.metrics import coverage, inlier_stats, rmse
+from src.metrics import coverage, fit_reliability, inlier_stats, rmse
 from src.types import MatchResult, Product
 
 
@@ -148,6 +148,7 @@ def build_deliverable(product_a: Product, product_b: Product, match_result: Matc
         **rmse(match_result),
         **inlier_stats(match_result),
         **coverage(match_result),
+        **fit_reliability(match_result),
     }
     with open(os.path.join(out_dir, "metrics.json"), "w") as handle:
         json.dump(metrics, handle, indent=2, allow_nan=False)
