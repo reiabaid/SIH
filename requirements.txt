@@ -10,8 +10,5 @@ lightglue @ git+https://github.com/cvg/LightGlue.git
 pytest
 pillow
 pvl
-pdr            # reads real LRO NAC .IMG products (io_lro.py) -- without it,
-               # load_product falls back to GDAL, which is not always installed
-webgeocalc     # real NAIF SPICE geometry for LRO products (io_lro.py) -- without
-               # it, LRO corners silently default to a (0,0) sentinel and
-               # geo.align_pair produces meaningless output with no error
+fastapi
+uvicorn
