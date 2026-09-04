@@ -12,6 +12,10 @@ import Screen04TerrainReport from './screens/Screen04TerrainReport';
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(0); // 0: Landing, 1: Select, 2: Review, 3: Evidence, 4: Terrain
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  
+  const [selectedProductA, setSelectedProductA] = useState(null);
+  const [selectedProductB, setSelectedProductB] = useState(null);
+  const [selectedRung, setSelectedRung] = useState('rung1');
 
   const handleRunDemo = () => {
     setCurrentScreen(1);
@@ -34,7 +38,14 @@ export default function App() {
           )}
 
           {currentScreen === 1 && (
-            <Screen01SelectPair onRunMatch={() => setCurrentScreen(2)} />
+            <Screen01SelectPair 
+                onRunMatch={(productA, productB, rung) => {
+                    setSelectedProductA(productA);
+                    setSelectedProductB(productB);
+                    setSelectedRung(rung);
+                    setCurrentScreen(2);
+                }} 
+            />
           )}
 
           {currentScreen === 2 && (
