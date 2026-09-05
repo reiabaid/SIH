@@ -23,10 +23,17 @@
   --text-dim: #6e6e68;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Wrapped in @layer base: Tailwind v4 puts every utility class (p-4, px-6,
+   gap-4, ...) inside @layer utilities, and CSS Cascade Layers rule says
+   unlayered declarations always beat layered ones regardless of selector
+   specificity. An unlayered `* { padding: 0 }` here silently zeroes out
+   every padding/margin/gap utility in the whole app. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 html, body, #root {

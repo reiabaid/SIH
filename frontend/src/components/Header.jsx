@@ -3,9 +3,9 @@ import { Play, Download, Moon, ShieldCheck, Sparkles } from 'lucide-react';
 
 export default function Header({ currentScreen, onRunDemo }) {
   return (
-    <header className="h-14 bg-[#141414] border-b border-[#2a2a2a] px-5 flex items-center justify-between text-sm select-none z-20">
+    <header className="h-16 bg-[#141414] border-b border-[#2a2a2a] px-6 md:px-8 flex items-center justify-between text-sm select-none z-20 gap-6">
       {/* Left Logo & Mission Context */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 text-cyan-400 font-display font-semibold text-base">
           <Moon className="w-4 h-4 text-cyan-400" />
           <span>LunarMatch</span>
@@ -21,7 +21,7 @@ export default function Header({ currentScreen, onRunDemo }) {
       </div>
 
       {/* Center Target Coordinates -- status element, not a decorative pill */}
-      <div className="hidden lg:flex items-center space-x-2 text-xs font-mono border-l border-[#2a2a2a] pl-3">
+      <div className="hidden lg:flex items-center space-x-2 text-xs font-mono border-l border-[#2a2a2a] pl-6">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
         <span className="text-slate-500">TARGET:</span>
         <span className="text-slate-300 font-medium">69.37°S, 32.35°E</span>
@@ -29,7 +29,7 @@ export default function Header({ currentScreen, onRunDemo }) {
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-3">
         <button
           onClick={onRunDemo}
           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-transparent hover:bg-[#1c1c1c] text-slate-400 border border-[#2a2a2a] text-xs font-mono transition"
