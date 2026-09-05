@@ -31,7 +31,7 @@ export default function App() {
         <Sidebar currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} />
 
         {/* Dynamic Main Workspace Content View */}
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
+        <main className="flex-1 px-6 py-8 md:px-8 md:py-10 overflow-y-auto max-w-7xl mx-auto w-full">
           {currentScreen === 0 && (
             <Screen00Landing onLaunchWorkspace={() => setCurrentScreen(1)} />
           )}
