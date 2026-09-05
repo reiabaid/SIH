@@ -13,7 +13,7 @@ export default function App() {
 
   const [selectedProductA, setSelectedProductA] = useState(null);
   const [selectedProductB, setSelectedProductB] = useState(null);
-  const [selectedRung, setSelectedRung] = useState(1);
+  const [selectedRung, setSelectedRung] = useState(0); // default matches Screen01's fast-demo default
   const [completedJobId, setCompletedJobId] = useState(null);
 
   const handleRunDemo = () => {

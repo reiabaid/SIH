@@ -8,8 +8,12 @@ export default function Screen03Evidence({ jobId, selectedProductA, selectedProd
   const [metrics, setMetrics] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const prodA_id = selectedProductA?.product_id || 'Unknown Product';
-  const prodB_id = selectedProductB?.product_id || 'Unknown Product';
+  // Display label only -- never rename to a real product id: that would
+  // misrepresent synthetic validation data as a real registration.
+  const displayName = (id) => id === 'synthetic_a' ? 'Validation Pair A'
+    : id === 'synthetic_b' ? 'Validation Pair B' : id;
+  const prodA_id = displayName(selectedProductA?.product_id) || 'Unknown Product';
+  const prodB_id = displayName(selectedProductB?.product_id) || 'Unknown Product';
 
   useEffect(() => {
     let isMounted = true;

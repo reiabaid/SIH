@@ -13,8 +13,13 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
   const [errorMsg, setErrorMsg] = useState(null);
 
   const rungInt = selectedRung != null ? selectedRung : 1;
-  const prodA_id = selectedProductA?.product_id || 'Unknown Product';
-  const prodB_id = selectedProductB?.product_id || 'Unknown Product';
+  // Display label only -- honest, just not the raw internal id. Never
+  // rename this to a real product id (e.g. "d32"/"M1499112398LE"): that
+  // would misrepresent synthetic validation data as a real registration.
+  const displayName = (id) => id === 'synthetic_a' ? 'Validation Pair A'
+    : id === 'synthetic_b' ? 'Validation Pair B' : id;
+  const prodA_id = displayName(selectedProductA?.product_id) || 'Unknown Product';
+  const prodB_id = displayName(selectedProductB?.product_id) || 'Unknown Product';
 
   useEffect(() => {
     let isMounted = true;

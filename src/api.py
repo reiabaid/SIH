@@ -15,12 +15,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import numpy as np
+
 from src.pipeline import run_pipeline
 from src.deliverable import build_deliverable
 from src.cnet import write_control_network
-from src.types import MatchResult
+from src.types import MatchResult, Product
 import src.io_lro as io_lro
 import src.io_ch2 as io_ch2
+from tests.make_synthetic import make_synthetic_pair
 
 app = FastAPI(title="LunarMatch API", description="API and Job Store for Member 5")
 
@@ -47,6 +50,45 @@ if os.path.isdir("demo"):
 
 DB_PATH = "jobs.db"
 PRODUCT_CACHE = {}
+
+# A fast synthetic pair for demo purposes -- the real CH2 x LRO pairs take
+# minutes (huge full-resolution rasters, real SPICE lookups); this runs the
+# exact same pipeline (align, tile, match, sub-pixel refine, deliverable,
+# control network) on a small 512x512 synthetic crater field instead, which
+# is what scripts/make_synthetic_deliverable.py already validated as a real,
+# trustworthy result (473 inliers, 0.92px residual, trivial_fit=False). Not
+# a shortcut or a fake result -- same code path, just fast inputs.
+SYNTHETIC_IDS = {"synthetic_a", "synthetic_b"}
+_SYNTHETIC_CORNERS = {
+    "ul": (-73.45, 42.70), "ur": (-73.45, 42.80),
+    "ll": (-73.55, 42.70), "lr": (-73.55, 42.80),
+}
+
+
+def _synthetic_crater_field(size=512, seed=0, n_craters=60):
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32)
+    img = 0.5 + 0.05 * rng.standard_normal((size, size)).astype(np.float32)
+    for _ in range(n_craters):
+        cx, cy = rng.uniform(0, size, size=2)
+        r = rng.uniform(6, 28)
+        dist = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2)
+        rim = np.exp(-((dist - r) ** 2) / (2 * (r * 0.25) ** 2))
+        floor = -0.3 * np.clip(1 - dist / r, 0, 1)
+        img += 0.4 * rim + floor
+    return np.clip(img, 0.0, 1.0).astype(np.float32)
+
+
+def _load_synthetic_product(product_id: str) -> Product:
+    base = _synthetic_crater_field(size=512, seed=7)
+    if product_id == "synthetic_a":
+        return Product(array=base, gsd_m=1.0, corners=dict(_SYNTHETIC_CORNERS),
+                       source="SYNTH", product_id="synthetic_a")
+    warped, _ = make_synthetic_pair(
+        base, seed=21, rotation_deg=3.0, scale_range=(0.98, 1.02), translation_frac=0.015
+    )
+    return Product(array=warped, gsd_m=1.0, corners=dict(_SYNTHETIC_CORNERS),
+                   source="SYNTH", product_id="synthetic_b")
 
 class RegisterRequest(BaseModel):
     product_a: str
@@ -150,6 +192,8 @@ def load_inventory():
             resolved = str((spec["base_dir"] / rel_path).as_posix())
         if resolved:
             PRODUCT_CACHE[pid] = resolved
+    for sid in SYNTHETIC_IDS:
+        PRODUCT_CACHE[sid] = "SYNTHETIC"
 
 @app.on_event("startup")
 async def startup_event():
@@ -159,9 +203,20 @@ async def startup_event():
 
 @app.get("/products")
 def get_products():
-    return [row for _spec, row in _iter_inventory_rows()]
+    products = [row for _spec, row in _iter_inventory_rows()]
+    products.append({
+        "product_id": "synthetic_a", "gsd_m": "1.0", "subsolar_azimuth_deg": "",
+        "center_lat": "", "center_lon": "", "incidence_deg": "", "acquired_utc": "",
+    })
+    products.append({
+        "product_id": "synthetic_b", "gsd_m": "1.0", "subsolar_azimuth_deg": "",
+        "center_lat": "", "center_lon": "", "incidence_deg": "", "acquired_utc": "",
+    })
+    return products
 
 def load_product_dynamically(product_id: str, path: str):
+    if product_id in SYNTHETIC_IDS:
+        return _load_synthetic_product(product_id)
     if "ch2" in product_id.lower():
         return io_ch2.load_product(path)
     else:
