@@ -1,6 +1,8 @@
 # src/geo.py — footprint overlap and common-grid resampling for Product pairs
 # Owner: Riddhi
 
+import math
+
 import numpy as np
 import cv2
 from shapely.geometry import Polygon
@@ -70,14 +72,76 @@ def _meters_per_degree(lat_deg: float) -> "tuple[float, float]":
     return m_per_deg_lat, m_per_deg_lon
 
 
+def _half_lon_deg(lat_deg: float, n_samples: int, gsd_m: float) -> float:
+    """Half the cross-track angular width (degrees of longitude) of a strip
+    `n_samples` pixels wide at ground sample distance `gsd_m`, evaluated at
+    `lat_deg` (longitude degrees shrink toward the poles).
+    """
+    half_lon_m = (n_samples * gsd_m) / 2.0
+    cos_lat = math.cos(math.radians(lat_deg))
+    if abs(cos_lat) < 1e-6:
+        cos_lat = 1e-6
+    return math.degrees(half_lon_m / (MOON_RADIUS_M * cos_lat))
+
+
+def _pixel_to_geo_transforms_piecewise(product: Product) -> "list[tuple[int, int, np.ndarray]]":
+    """Per-segment (row_start, row_end, transform) triples mapping a segment's
+    own local pixel coords (row 0 at row_start) to (lon, lat).
+
+    A single perspective fit from the product's 4 corners (`_pixel_to_geo_transform`)
+    assumes the ground track between corners is straight — wrong for a long,
+    narrow, curved-orbit pushbroom strip, and doubly wrong for LRO NAC, whose
+    corners themselves are extrapolated from *one* SPICE-derived centre point
+    under a flat-rectangle assumption (see io_lro._compute_corners), carrying
+    no curvature information at all. When a product's `meta["line_geometry"]`
+    holds several real SPICE-derived (line_fraction, lat, lon) samples along
+    the track (io_lro._fetch_line_geometry), fit one local homography per
+    consecutive pair instead — each covers a much shorter along-track span, so
+    the straight-track assumption holds far better within each segment.
+    Falls back to the single whole-image transform when that data isn't
+    available (CH2, synthetic test products, or LRO products offline/without
+    SPICE kernels) — this is a pure accuracy improvement, not a behaviour
+    change, for any product without `line_geometry`.
+    """
+    h, w = product.array.shape[:2]
+    line_geo = (product.meta or {}).get("line_geometry")
+    if not line_geo or len(line_geo) < 2:
+        return [(0, h - 1, _pixel_to_geo_transform(product))]
+
+    line_geo = sorted(line_geo, key=lambda t: t[0])
+    segments = []
+    for (f0, lat0, lon0), (f1, lat1, lon1) in zip(line_geo[:-1], line_geo[1:]):
+        row_start = int(round(f0 * (h - 1)))
+        row_end = int(round(f1 * (h - 1)))
+        if row_end <= row_start:
+            continue
+        half_lon0 = _half_lon_deg(lat0, w, product.gsd_m)
+        half_lon1 = _half_lon_deg(lat1, w, product.gsd_m)
+        seg_h = row_end - row_start
+        pixel_corners = np.float32([[0, 0], [w - 1, 0], [w - 1, seg_h], [0, seg_h]])
+        geo_corners = np.float32([
+            [lon0 - half_lon0, lat0], [lon0 + half_lon0, lat0],
+            [lon1 + half_lon1, lat1], [lon1 - half_lon1, lat1],
+        ])
+        m = cv2.getPerspectiveTransform(pixel_corners, geo_corners)
+        segments.append((row_start, row_end, m))
+
+    return segments if segments else [(0, h - 1, _pixel_to_geo_transform(product))]
+
+
 def _resample_onto_grid(product: Product, dst_geo2pix: np.ndarray, dsize: tuple) -> np.ndarray:
-    src_pix2geo = _pixel_to_geo_transform(product)
-    m = dst_geo2pix @ src_pix2geo  # src pixel -> dst pixel, forward map
-    m = (m / m[2, 2]).astype(np.float64)
-    return cv2.warpPerspective(
-        product.array.astype(np.float32), m, dsize,
-        flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0.0,
-    )
+    out = np.zeros((dsize[1], dsize[0]), dtype=np.float32)
+    for row_start, row_end, seg_pix2geo in _pixel_to_geo_transforms_piecewise(product):
+        crop = product.array[row_start:row_end + 1].astype(np.float32)
+        m = dst_geo2pix @ seg_pix2geo  # segment-local src pixel -> dst pixel, forward map
+        m = (m / m[2, 2]).astype(np.float64)
+        warped = cv2.warpPerspective(
+            crop, m, dsize,
+            flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0.0,
+        )
+        mask = warped != 0.0
+        out[mask] = warped[mask]
+    return out
 
 
 def align_pair(a: Product, b: Product) -> "tuple[Product, Product]":

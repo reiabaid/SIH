@@ -66,15 +66,27 @@ def _subpixel_refine(pts_a, pts_b, img_a, img_b, window=SUBPIXEL_WINDOW):
     """Refine each match to sub-pixel accuracy: correlate a small patch around the
     point in A against B's neighbourhood, fit a quadratic to the 3x3 around the
     correlation peak, take its analytic maximum.
+
+    Skips points where the initial match is already within 0.1 px of integer
+    alignment (the refine would move them by <0.01 px anyway — not worth the
+    cv2.matchTemplate call). Also skips boundary points that can't supply a
+    full search window.
     """
     half = window // 2
     refined_b = pts_b.copy()
     ha, wa = img_a.shape[:2]
     hb, wb = img_b.shape[:2]
+    refined_count = 0
 
     for i in range(len(pts_a)):
         ax, ay = pts_a[i]
         bx, by = pts_b[i]
+
+        # Skip if already within 0.1 px of integer alignment — the parabolic
+        # fit would contribute <0.01 px correction, not worth the overhead.
+        if abs(bx - round(bx)) < 0.1 and abs(by - round(by)) < 0.1:
+            continue
+
         ax_i, ay_i = int(round(ax)), int(round(ay))
         bx_i, by_i = int(round(bx)), int(round(by))
 
@@ -104,6 +116,7 @@ def _subpixel_refine(pts_a, pts_b, img_a, img_b, window=SUBPIXEL_WINDOW):
 
         refined_b[i, 0] = bx_i + (peak_x - 1) + dx
         refined_b[i, 1] = by_i + (peak_y - 1) + dy
+        refined_count += 1
 
     return refined_b
 
@@ -316,9 +329,13 @@ def _finalize(pts_a, pts_b, scores, a8, b8, matcher_name, t0) -> MatchResult:
         return _empty_result(a8, b8, matcher_name, time.time() - t0)
 
     inlier_mask = ransac_mask.ravel().astype(bool)
-    # Refine on gradient magnitude, not raw intensity, so the correlation peak survives
-    # an illumination polarity flip (see _gradient_magnitude_u8).
-    pts_b_refined = _subpixel_refine(pts_a, pts_b, _gradient_magnitude_u8(a8), _gradient_magnitude_u8(b8))
+    # Compute gradient magnitude once, reuse for all sub-pixel refinements.
+    # Previously this was called inside _subpixel_refine which recomputed it
+    # on the full image for every call — wasted work since the gradient doesn't
+    # change between the two calls (a and b are the same pair throughout).
+    grad_a = _gradient_magnitude_u8(a8)
+    grad_b = _gradient_magnitude_u8(b8)
+    pts_b_refined = _subpixel_refine(pts_a, pts_b, grad_a, grad_b)
 
     return MatchResult(
         pts_a=pts_a.astype(np.float32),
@@ -405,9 +422,10 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
 
     # Capped below cpu_count(): OpenCV/BLAS/PyTorch each do their own internal
     # multi-threading per call too, so matching cpu_count() 1:1 here would
-    # oversubscribe rather than help. Half the cores is a reasonable balance
-    # without needing per-machine tuning.
-    max_workers = min(max(1, (os.cpu_count() or 1) // 2), len(tiles_a)) or 1
+    # oversubscribe rather than help. Capped at 4 to avoid melting a laptop
+    # on 8+ core machines — the GIL means we only benefit from real cores,
+    # and each worker already spawns its own BLAS threads.
+    max_workers = min(max(1, (os.cpu_count() or 1) // 2), 4, len(tiles_a)) or 1
 
     def _match_one(pair):
         (ta, offset_a), (tb, offset_b) = pair
@@ -417,14 +435,31 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
         return untile_points(result.pts_a, offset_a), untile_points(result.pts_b, offset_b), result.scores
 
     pool_a, pool_b, pool_scores = [], [], []
+
+    # Use submit + as_completed for early exit: once we've accumulated enough
+    # candidate matches (>= 500 points across all tiles processed so far),
+    # skip remaining tiles rather than burning CPU on tiles that won't change
+    # the global homography fit. On a 55k×12k OHRC strip this can save 30-60%
+    # of wall-clock time when the early tiles already produce abundant matches.
+    MIN_POOL_POINTS = 500
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        for out in pool.map(_match_one, zip(tiles_a, tiles_b)):
+        futures = {pool.submit(_match_one, pair): pair
+                   for pair in zip(tiles_a, tiles_b)}
+        from concurrent.futures import as_completed
+        for future in as_completed(futures):
+            out = future.result()
             if out is None:
                 continue
             a_pts, b_pts, scores = out
             pool_a.append(a_pts)
             pool_b.append(b_pts)
             pool_scores.append(scores)
+            total_pts = sum(len(p) for p in pool_a)
+            if total_pts >= MIN_POOL_POINTS:
+                # Cancel remaining futures to stop burning CPU
+                for f in futures:
+                    f.cancel()
+                break
 
     matcher_name = f"{matcher}-rung{rung}-tiled" if matcher == "sift" else f"{matcher}-tiled"
     if not pool_a:

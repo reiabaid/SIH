@@ -60,6 +60,8 @@ export default function Screen01SelectPair({ onRunMatch }) {
 
   const [selectedCh2, setSelectedCh2] = useState(null);
   const [selectedLro, setSelectedLro] = useState(null);
+  const [overlapPct, setOverlapPct] = useState(null);
+  const [overlapLoading, setOverlapLoading] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE}/products`)
@@ -74,6 +76,29 @@ export default function Screen01SelectPair({ onRunMatch }) {
         setIsLoadingProducts(false);
       });
   }, []);
+
+  // Fetch overlap when both products are selected
+  useEffect(() => {
+    if (!selectedCh2 || !selectedLro) {
+      setOverlapPct(null);
+      return;
+    }
+    setOverlapLoading(true);
+    fetch(`${API_BASE}/overlap`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_a: selectedCh2.product_id, product_b: selectedLro.product_id }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        setOverlapPct(data.overlap_percent);
+        setOverlapLoading(false);
+      })
+      .catch(() => {
+        setOverlapPct(null);
+        setOverlapLoading(false);
+      });
+  }, [selectedCh2, selectedLro]);
 
   // Split by source agency -- CH2 (ISRO) always on the left, LRO (NASA)
   // always on the right. Confirmed this session that no two LRO products
@@ -307,8 +332,17 @@ export default function Screen01SelectPair({ onRunMatch }) {
           </button>
 
           {selectedCh2 && selectedLro && (
-            <div className="text-slate-500 text-xs mt-2 font-mono">
-              {selectedCh2.product_id.slice(-8)} × {selectedLro.product_id}
+            <div className="flex items-center gap-4 text-xs font-mono mt-2">
+              <span className="text-slate-500">
+                {selectedCh2.product_id.slice(-8)} × {selectedLro.product_id}
+              </span>
+              {overlapLoading ? (
+                <span className="text-slate-600">computing overlap...</span>
+              ) : overlapPct !== null ? (
+                <span className={`font-semibold ${overlapPct > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {overlapPct}% overlap
+                </span>
+              ) : null}
             </div>
           )}
         </div>

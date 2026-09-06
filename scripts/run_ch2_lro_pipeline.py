@@ -29,7 +29,7 @@ from src.types import MatchResult
 D32_XML = ("data/ch2_products/ch2_ohr_ncp_20200229T0938004033_d_img_d32/"
           "miscellaneous/calibrated/20200229/"
           "ch2_ohr_ncp_20200229T0938004033_d_img_d32.xml")
-LRO_IMG = "data/lro_nac/M1499112398LE.IMG"
+LRO_IMG = "data/lro_nac/M1519299970LE.IMG"
 OUT_DIR = "demo/real_pair_result"
 
 
@@ -53,11 +53,12 @@ def main() -> None:
 
     os.makedirs(OUT_DIR, exist_ok=True)
     runs = {}
-    for rung in (0, 1):
-        label = f"sift-rung{rung}"
-        print(f"\nRunning pipeline: align=True, matcher=sift, rung={rung} (tiled, real scale)...")
+    configs = [("sift", 0), ("sift", 1), ("lightglue", 0)]
+    for matcher, rung in configs:
+        label = f"{matcher}-rung{rung}" if matcher == "sift" else matcher
+        print(f"\nRunning pipeline: align=True, matcher={matcher}, rung={rung} (tiled, real scale)...")
         t0 = time.time()
-        out = run_pipeline(d32, lro, matcher="sift", rung=rung, align=True)
+        out = run_pipeline(d32, lro, matcher=matcher, rung=rung, align=True)
         elapsed = time.time() - t0
         mr = out["match_result"]
         result = _to_match_result(mr)
@@ -82,9 +83,9 @@ def main() -> None:
         }
         runs[label] = metrics
 
-        if rung == 0 and n_total > 0:
-            write_match_points(os.path.join(OUT_DIR, "match_points.csv"), result, d32, lro)
-            write_match_geojson(os.path.join(OUT_DIR, "match_points.geojson"), result, d32, lro)
+        if reliability["well_determined"]:
+            write_match_points(os.path.join(OUT_DIR, f"match_points_{label}.csv"), result, d32, lro)
+            write_match_geojson(os.path.join(OUT_DIR, f"match_points_{label}.geojson"), result, d32, lro)
 
     summary = {
         "ch2_product": d32.product_id,

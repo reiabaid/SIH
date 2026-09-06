@@ -104,7 +104,8 @@ def coverage(match_result: MatchResult, grid: int = 8) -> dict:
     pts = match_result.pts_a[match_result.inlier_mask]
 
     if len(pts) == 0:
-        return {"occupied_fraction": 0.0, "coefficient_of_variation": float("nan")}
+        return {"occupied_fraction": 0.0, "coefficient_of_variation": float("nan"),
+                "grid_counts": [[0] * grid for _ in range(grid)]}
 
     cell_h, cell_w = h / grid, w / grid
     cols = np.clip((pts[:, 0] // cell_w).astype(int), 0, grid - 1)
@@ -117,4 +118,8 @@ def coverage(match_result: MatchResult, grid: int = 8) -> dict:
     mean = counts.mean()
     cv = float(counts.std() / mean) if mean > 0 else float("nan")
 
-    return {"occupied_fraction": occupied_fraction, "coefficient_of_variation": cv}
+    return {
+        "occupied_fraction": occupied_fraction,
+        "coefficient_of_variation": cv,
+        "grid_counts": counts.reshape(grid, grid).tolist(),
+    }

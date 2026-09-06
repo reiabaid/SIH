@@ -21,6 +21,7 @@ from src.pipeline import run_pipeline
 from src.deliverable import build_deliverable
 from src.cnet import write_control_network
 from src.types import MatchResult, Product
+from src.geo import footprint_overlap
 import src.io_lro as io_lro
 import src.io_ch2 as io_ch2
 from tests.make_synthetic import make_synthetic_pair
@@ -213,6 +214,34 @@ def get_products():
         "center_lat": "", "center_lon": "", "incidence_deg": "", "acquired_utc": "",
     })
     return products
+
+
+class OverlapRequest(BaseModel):
+    product_a: str
+    product_b: str
+
+
+@app.post("/overlap")
+def compute_overlap(req: OverlapRequest):
+    """Compute footprint overlap fraction between two products."""
+    path_a = PRODUCT_CACHE.get(req.product_a)
+    path_b = PRODUCT_CACHE.get(req.product_b)
+    if not path_a or not path_b:
+        raise HTTPException(status_code=400, detail="One or both products not found")
+
+    try:
+        product_a = load_product_dynamically(req.product_a, path_a)
+        product_b = load_product_dynamically(req.product_b, path_b)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to load products: {e}")
+
+    overlap_frac = footprint_overlap(product_a, product_b)
+    return {
+        "product_a": req.product_a,
+        "product_b": req.product_b,
+        "overlap_percent": round(overlap_frac * 100, 1),
+    }
+
 
 def load_product_dynamically(product_id: str, path: str):
     if product_id in SYNTHETIC_IDS:

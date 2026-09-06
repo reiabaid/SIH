@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Globe, Sun, Download, AlertCircle, ArrowLeft } from 'lucide-react';
+import * as THREE from 'three';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
@@ -12,55 +13,247 @@ const ARTEFACTS = [
   { file: 'match_points.geojson', label: 'Match points (GeoJSON)', desc: 'Tie-point lines as GeoJSON' },
   { file: 'overlay_rgb.png', label: 'Overlay preview', desc: 'Red/green registered alignment' },
   { file: 'control_network.net', label: 'Control network', desc: 'ISIS PVL format, ready for jigsaw' },
-  { file: 'metrics.json', label: 'Metrics', desc: 'RMSE, inliers, coverage, trivial_fit' },
+  { file: 'metrics.json', label: 'Metrics (raw JSON)', desc: 'Same numbers shown on the Evidence screen, as a machine-readable file' },
 ];
 
 export default function Screen04TerrainReport({ jobId, selectedProductA, selectedProductB, onBack }) {
   const [sunAzimuth, setSunAzimuth] = useState(118);
   const [sunElevation, setSunElevation] = useState(27);
-  const canvas2DRef = useRef(null);
+  const canvasRef = useRef(null);
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null);
+  const terrainMeshRef = useRef(null);
+  const sunLightRef = useRef(null);
+  const sunIndicatorRef = useRef(null);
+  const cameraRef = useRef(null);
+  const animationIdRef = useRef(null);
 
-  const prodA_id = selectedProductA?.product_id || 'Unknown Product';
-  const prodB_id = selectedProductB?.product_id || 'Unknown Product';
+  // Generate procedural lunar terrain using Perlin-like noise
+  const generateTerrainGeometry = () => {
+    const size = 64;
+    const detail = 32;
+    const geometry = new THREE.IcosahedronGeometry(2, detail);
+    
+    const positions = geometry.attributes.position;
+    const positionArray = positions.array;
+    
+    // Noise-like function (simple sine-based pseudo-noise)
+    const noise = (x, y, z, scale = 1, octaves = 4) => {
+      let value = 0;
+      let amplitude = 1;
+      let frequency = 1;
+      let maxValue = 0;
+      
+      for (let i = 0; i < octaves; i++) {
+        const sx = Math.sin(x * frequency * scale + y * frequency * 0.7);
+        const sy = Math.sin(y * frequency * scale + z * frequency * 0.3);
+        const sz = Math.sin(z * frequency * scale + x * frequency * 0.5);
+        value += (sx * sy * sz) * amplitude;
+        maxValue += amplitude;
+        amplitude *= 0.5;
+        frequency *= 2;
+      }
+      
+      return value / maxValue;
+    };
+    
+    // Displace vertices outward based on noise
+    for (let i = 0; i < positionArray.length; i += 3) {
+      const x = positionArray[i];
+      const y = positionArray[i + 1];
+      const z = positionArray[i + 2];
+      
+      const length = Math.sqrt(x * x + y * y + z * z);
+      const n = noise(x, y, z, 2, 4);
+      const displacement = 0.3 + n * 0.3;
+      
+      const scale = length + displacement;
+      positionArray[i] = (x / length) * scale;
+      positionArray[i + 1] = (y / length) * scale;
+      positionArray[i + 2] = (z / length) * scale;
+    }
+    
+    positions.needsUpdate = true;
+    geometry.computeVertexNormals();
+    return geometry;
+  };
 
-  // Illumination preview: a 2D canvas shading simulation, not a real 3D
-  // terrain mesh -- src/render.py's real hillshade renderer works on a real
-  // DEM offline (see demo/win_plot.png), it isn't wired into the live app.
+  // Initialize Three.js scene
   useEffect(() => {
-    if (!canvas2DRef.current) return;
-    const canvas = canvas2DRef.current;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
+    if (!canvasRef.current) return;
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a0a);
+    sceneRef.current = scene;
 
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#1c1c1c';
-    ctx.fillRect(0, 0, w, h);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      canvasRef.current.clientWidth / canvasRef.current.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 3.5;
+    cameraRef.current = camera;
 
-    const azRad = (sunAzimuth * Math.PI) / 180;
-    const shadowLength = Math.tan((90 - sunElevation) * (Math.PI / 180)) * 20;
-    const shadowX = Math.cos(azRad) * shadowLength;
-    const shadowY = Math.sin(azRad) * shadowLength;
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: canvasRef.current, 
+      antialias: true, 
+      alpha: false 
+    });
+    renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    rendererRef.current = renderer;
 
-    const cx = w * 0.45, cy = h * 0.48, radius = 80;
-    ctx.beginPath();
-    ctx.ellipse(cx + shadowX * 0.6, cy + shadowY * 0.6, radius * 0.95, radius * 0.7, azRad, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(90, 78, 58, 0.35)';
-    ctx.fill();
+    // Create lunar terrain
+    const terrainGeometry = generateTerrainGeometry();
+    const terrainMaterial = new THREE.MeshStandardMaterial({
+      color: 0x888888,
+      roughness: 0.85,
+      metalness: 0.1,
+      side: THREE.FrontSide,
+    });
+    const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
+    terrainMesh.castShadow = true;
+    terrainMesh.receiveShadow = true;
+    terrainMeshRef.current = terrainMesh;
+    scene.add(terrainMesh);
 
-    const lightX = cx - Math.cos(azRad) * radius;
-    const lightY = cy - Math.sin(azRad) * radius;
-    const grad = ctx.createRadialGradient(lightX, lightY, 10, cx, cy, radius);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.6, '#2a2a2a');
-    grad.addColorStop(1, '#333333');
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.strokeStyle = '#3a3a3a';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // Ambient light (moonlit night)
+    const ambientLight = new THREE.AmbientLight(0x1a1a2e, 0.3);
+    scene.add(ambientLight);
+
+    // Sun directional light
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 0.1;
+    sunLight.shadow.camera.far = 100;
+    sunLight.shadow.camera.left = -3;
+    sunLight.shadow.camera.right = 3;
+    sunLight.shadow.camera.top = 3;
+    sunLight.shadow.camera.bottom = -3;
+    sunLightRef.current = sunLight;
+    scene.add(sunLight);
+
+    // Sun indicator (small glowing sphere)
+    const sunGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+    const sunMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      emissive: 0xffaa00,
+      emissiveIntensity: 1.5,
+    });
+    const sunIndicator = new THREE.Mesh(sunGeometry, sunMaterial);
+    sunIndicatorRef.current = sunIndicator;
+    scene.add(sunIndicator);
+
+    // Add glow effect to sun
+    const glowGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      transparent: true,
+      opacity: 0.2,
+    });
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    sunIndicator.add(glow);
+
+    // Handle mouse interaction
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    const rotation = { x: 0, y: 0 };
+
+    canvasRef.current.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+
+    canvasRef.current.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - previousMousePosition.x;
+      const deltaY = e.clientY - previousMousePosition.y;
+      rotation.y += deltaX * 0.005;
+      rotation.x += deltaY * 0.005;
+      previousMousePosition = { x: e.clientX, y: e.clientY };
+      terrainMesh.rotation.y = rotation.y;
+      terrainMesh.rotation.x = rotation.x;
+    });
+
+    canvasRef.current.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    canvasRef.current.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      camera.position.z += e.deltaY * 0.002;
+      camera.position.z = Math.max(2, Math.min(8, camera.position.z));
+    });
+
+    // Animation loop
+    const animate = () => {
+      animationIdRef.current = requestAnimationFrame(animate);
+
+      // Update sun position based on sliders
+      if (sunLightRef.current && sunIndicatorRef.current) {
+        const azimuthRad = (sunAzimuth * Math.PI) / 180;
+        const elevationRad = (sunElevation * Math.PI) / 180;
+        
+        const distance = 5;
+        const sunX = distance * Math.cos(azimuthRad) * Math.cos(elevationRad);
+        const sunY = distance * Math.sin(elevationRad);
+        const sunZ = distance * Math.sin(azimuthRad) * Math.cos(elevationRad);
+        
+        sunLightRef.current.position.set(sunX, sunY, sunZ);
+        sunLightRef.current.target.position.set(0, 0, 0);
+        sunIndicatorRef.current.position.set(sunX, sunY, sunZ);
+      }
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    // Handle window resize
+    const handleResize = () => {
+      if (!canvasRef.current) return;
+      const width = canvasRef.current.clientWidth;
+      const height = canvasRef.current.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+      canvasRef.current?.removeEventListener('mousedown', () => {});
+      canvasRef.current?.removeEventListener('mousemove', () => {});
+      canvasRef.current?.removeEventListener('mouseup', () => {});
+      canvasRef.current?.removeEventListener('wheel', () => {});
+      renderer.dispose();
+      terrainGeometry.dispose();
+      terrainMaterial.dispose();
+    };
+  }, []);
+
+  // Update sun position when sliders change
+  useEffect(() => {
+    if (!sunLightRef.current || !sunIndicatorRef.current) return;
+    
+    const azimuthRad = (sunAzimuth * Math.PI) / 180;
+    const elevationRad = (sunElevation * Math.PI) / 180;
+    
+    const distance = 5;
+    const sunX = distance * Math.cos(azimuthRad) * Math.cos(elevationRad);
+    const sunY = distance * Math.sin(elevationRad);
+    const sunZ = distance * Math.sin(azimuthRad) * Math.cos(elevationRad);
+    
+    sunLightRef.current.position.set(sunX, sunY, sunZ);
+    sunLightRef.current.target.position.set(0, 0, 0);
+    sunIndicatorRef.current.position.set(sunX, sunY, sunZ);
   }, [sunAzimuth, sunElevation]);
 
   return (
@@ -86,7 +279,7 @@ export default function Screen04TerrainReport({ jobId, selectedProductA, selecte
         {selectedProductA && selectedProductB && (
           <div className="flex items-center space-x-2 text-xs font-mono text-slate-500 bg-[#141414] border border-[#2a2a2a] px-3 py-1.5 rounded-md">
             <span className="text-slate-600">PAIRED:</span>
-            <span className="text-cyan-400 font-medium">{prodA_id} &amp; {prodB_id}</span>
+            <span className="text-cyan-400 font-medium">{selectedProductA.product_id} &amp; {selectedProductB.product_id}</span>
           </div>
         )}
       </div>
@@ -94,11 +287,11 @@ export default function Screen04TerrainReport({ jobId, selectedProductA, selecte
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <div className="relative bg-[#141414] border border-[#2a2a2a] rounded-md h-[360px] overflow-hidden flex items-center justify-center">
-            <canvas ref={canvas2DRef} width={600} height={360} className="w-full h-full object-cover" />
+            <canvas ref={canvasRef} className="w-full h-full" />
 
             <div className="absolute top-4 left-4 bg-[#141414]/90 border border-[#2a2a2a] p-3 rounded-md text-xs font-mono">
-              <div className="text-cyan-400 font-semibold">Illumination preview</div>
-              <div className="text-slate-500 text-[11px]">Sun-angle shading simulation, not a live 3D terrain mesh</div>
+              <div className="text-cyan-400 font-semibold">3D Lunar Terrain</div>
+              <div className="text-slate-500 text-[11px]">Procedural terrain with real-time sun lighting</div>
             </div>
 
             <div className="absolute bottom-4 left-4 bg-[#141414]/95 border border-[#2a2a2a] p-4 rounded-md text-xs font-mono space-y-3 w-72">
@@ -126,6 +319,9 @@ export default function Screen04TerrainReport({ jobId, selectedProductA, selecte
                   onChange={(e) => setSunElevation(Number(e.target.value))}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500" />
               </div>
+              <div className="text-[11px] text-slate-500 pt-2 border-t border-[#2a2a2a]">
+                Drag to rotate • Scroll to zoom
+              </div>
             </div>
           </div>
         </div>
@@ -147,8 +343,7 @@ export default function Screen04TerrainReport({ jobId, selectedProductA, selecte
                   <a
                     key={a.file}
                     href={`${API_BASE}/jobs/${jobId}/artefacts/${a.file}`}
-                    target="_blank"
-                    rel="noreferrer"
+                    download={a.file}
                     className="flex items-start justify-between space-x-3 p-2.5 rounded-md bg-[#141414] border border-[#2a2a2a] hover:border-cyan-500/60 transition group"
                   >
                     <div>

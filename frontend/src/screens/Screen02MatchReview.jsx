@@ -257,18 +257,49 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
         <div className="space-y-4">
           <div className="glass-panel p-4 space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-slate-400 font-semibold">TIE-POINTS (GEOJSON)</span>
-              <span className="text-cyan-400 font-semibold">{geoJson?.features?.length || 0} found</span>
+              <span className="text-slate-400 font-semibold">SPATIAL HEATMAP</span>
+              <span className="text-cyan-400 font-semibold">{metrics?.grid_counts ? '8×8' : 'N/A'}</span>
             </div>
 
-            <div className="bg-[#0a0a0a] p-4 rounded-md border border-[#2a2a2a] text-center text-slate-500 font-mono text-[10px]">
-              <Grid className="w-8 h-8 mx-auto mb-2 text-slate-600" />
-              <p>Spatial grid heatmap is disabled.</p>
-              <p className="mt-1 text-slate-600">Real coordinate mapping requires image bounds.</p>
-            </div>
+            {metrics?.grid_counts ? (
+              <div className="bg-[#0a0a0a] p-3 rounded-md border border-[#2a2a2a]">
+                <div className="grid grid-cols-8 gap-0.5">
+                  {metrics.grid_counts.flat().map((count, i) => {
+                    const maxCount = Math.max(...metrics.grid_counts.flat());
+                    const intensity = maxCount > 0 ? count / maxCount : 0;
+                    const bg = count === 0
+                      ? 'bg-[#1a1a1a]'
+                      : intensity > 0.7
+                        ? 'bg-cyan-600'
+                        : intensity > 0.4
+                          ? 'bg-cyan-800'
+                          : 'bg-cyan-950';
+                    return (
+                      <div
+                        key={i}
+                        className={`aspect-square rounded-sm flex items-center justify-center text-[8px] font-mono ${bg} ${count > 0 ? 'text-white' : 'text-slate-700'}`}
+                        title={`Cell ${Math.floor(i / 8) + 1},${(i % 8) + 1}: ${count} inliers`}
+                      >
+                        {count}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between mt-2 text-[9px] font-mono text-slate-600">
+                  <span>Coverage: {safeNum((metrics?.occupied_fraction || 0) * 100, 1)}%</span>
+                  <span>CV: {safeNum(metrics?.coefficient_of_variation, 2)}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#0a0a0a] p-4 rounded-md border border-[#2a2a2a] text-center text-slate-500 font-mono text-[10px]">
+                <Grid className="w-8 h-8 mx-auto mb-2 text-slate-600" />
+                <p>Spatial grid heatmap not available.</p>
+                <p className="mt-1 text-slate-600">Requires grid_counts in metrics.json.</p>
+              </div>
+            )}
 
             <p className="text-[11px] font-mono text-slate-500 leading-tight">
-              Tiepoints extracted via `{metrics?.matcher || 'matcher'}` engine. Coordinates stored natively as [lon, lat] in GeoJSON artefact.
+              Tiepoints extracted via `{metrics?.matcher || 'matcher'}` engine. 8×8 grid cells with inlier counts.
             </p>
           </div>
 

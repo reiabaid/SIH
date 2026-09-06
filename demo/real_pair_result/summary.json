@@ -1,6 +1,6 @@
 {
   "ch2_product": "urn:isro:isda:ch2_cho.ohr:data_calibrated:ch2_ohr_ncp_20200229t0938004033_d_img_d32",
-  "lro_product": "M1499112398LE",
+  "lro_product": "M1519299970LE",
   "ch2_gsd_m": 0.2302230600054759,
   "lro_gsd_m": 1.0005431519967982,
   "lro_geometry_source": "naif_webgeocalc",
@@ -8,21 +8,103 @@
   "runs": {
     "sift-rung0": {
       "matcher": "sift-rung0-tiled",
-      "wall_time_s": 37.87386512756348,
+      "wall_time_s": 22.92283010482788,
       "rmse_ground_truth": null,
-      "reprojection_residual": 0.006618965205276451,
-      "inlier_count": 8,
-      "total_matches": 364,
-      "inlier_ratio": 0.02197802197802198,
+      "reprojection_residual": 0.23135379880417417,
+      "inlier_count": 22,
+      "total_matches": 480,
+      "inlier_ratio": 0.04583333333333333,
       "occupied_fraction": 0.0625,
-      "coefficient_of_variation": 4.123105625617661,
-      "unique_inlier_locations": 4,
-      "trivial_fit": true,
-      "well_determined": false
+      "coefficient_of_variation": 4.088888389827094,
+      "grid_counts": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          0,
+          5,
+          8,
+          6,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "unique_inlier_locations": 15,
+      "trivial_fit": false,
+      "well_determined": true
     },
     "sift-rung1": {
       "matcher": "sift-rung1-tiled",
-      "wall_time_s": 201.41315627098083,
+      "wall_time_s": 22.064775466918945,
       "rmse_ground_truth": null,
       "reprojection_residual": NaN,
       "inlier_count": 0,
@@ -30,9 +112,187 @@
       "inlier_ratio": 0.0,
       "occupied_fraction": 0.0,
       "coefficient_of_variation": NaN,
+      "grid_counts": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
       "unique_inlier_locations": 0,
       "trivial_fit": true,
       "well_determined": false
+    },
+    "lightglue": {
+      "matcher": "lightglue-tiled",
+      "wall_time_s": 149.86347317695618,
+      "rmse_ground_truth": null,
+      "reprojection_residual": 0.7015053748935594,
+      "inlier_count": 6,
+      "total_matches": 113,
+      "inlier_ratio": 0.05309734513274336,
+      "occupied_fraction": 0.046875,
+      "coefficient_of_variation": 4.8876260995383936,
+      "grid_counts": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "unique_inlier_locations": 6,
+      "trivial_fit": false,
+      "well_determined": true
     }
   }
 }

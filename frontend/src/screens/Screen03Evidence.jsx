@@ -176,15 +176,46 @@ export default function Screen03Evidence({ jobId, selectedProductA, selectedProd
             </div>
           </div>
 
-          {/* Spatial grid heatmap -- honestly not implemented, not faked */}
+          {/* Spatial grid heatmap */}
           <div className="glass-panel p-4 space-y-2">
             <div className="text-xs font-mono text-slate-400 font-semibold">
               UNIFORM DISTRIBUTION MATRIX
             </div>
-            <div className="bg-[#0a0a0a] p-4 rounded-md border border-[#2a2a2a] text-center text-slate-500 font-mono text-[10px]">
-              <p className="font-semibold text-slate-400">Spatial grid heatmap is disabled.</p>
-              <p className="mt-1 text-slate-600">The backend does not expose the 8x8 cell density array in metrics.json.</p>
-            </div>
+            {metrics?.grid_counts ? (
+              <div className="bg-[#0a0a0a] p-3 rounded-md border border-[#2a2a2a]">
+                <div className="grid grid-cols-8 gap-0.5">
+                  {metrics.grid_counts.flat().map((count, i) => {
+                    const maxCount = Math.max(...metrics.grid_counts.flat());
+                    const intensity = maxCount > 0 ? count / maxCount : 0;
+                    const bg = count === 0
+                      ? 'bg-[#1a1a1a]'
+                      : intensity > 0.7
+                        ? 'bg-cyan-600'
+                        : intensity > 0.4
+                          ? 'bg-cyan-800'
+                          : 'bg-cyan-950';
+                    return (
+                      <div
+                        key={i}
+                        className={`aspect-square rounded-sm flex items-center justify-center text-[8px] font-mono ${bg} ${count > 0 ? 'text-white' : 'text-slate-700'}`}
+                        title={`Cell ${Math.floor(i / 8) + 1},${(i % 8) + 1}: ${count} inliers`}
+                      >
+                        {count}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between mt-2 text-[9px] font-mono text-slate-600">
+                  <span>Coverage: {safeNum((metrics?.occupied_fraction || 0) * 100, 1)}%</span>
+                  <span>CV: {safeNum(metrics?.coefficient_of_variation, 2)}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#0a0a0a] p-4 rounded-md border border-[#2a2a2a] text-center text-slate-500 font-mono text-[10px]">
+                <p className="font-semibold text-slate-400">Spatial grid heatmap not available.</p>
+                <p className="mt-1 text-slate-600">Requires grid_counts in metrics.json.</p>
+              </div>
+            )}
           </div>
 
           <button

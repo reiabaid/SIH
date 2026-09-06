@@ -12,7 +12,7 @@ export default function Header({ currentScreen, onRunDemo }) {
         </div>
         <div className="h-4 w-px bg-[#2a2a2a]" />
         <div className="flex items-center space-x-2 text-xs font-mono text-slate-500">
-          <span className="px-1.5 py-0.5 rounded-sm bg-[#1c1c1c] border border-[#2a2a2a] text-slate-400">CH2/OHRA</span>
+          <span className="px-1.5 py-0.5 rounded-sm bg-[#1c1c1c] border border-[#2a2a2a] text-slate-400">CH2/OHRC</span>
           <span>•</span>
           <span className="px-1.5 py-0.5 rounded-sm bg-[#1c1c1c] border border-[#2a2a2a] text-slate-400">LROC/LRO</span>
           <span>•</span>

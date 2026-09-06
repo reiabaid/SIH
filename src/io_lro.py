@@ -40,6 +40,7 @@ from __future__ import annotations
 import math
 import os
 import re
+from datetime import datetime
 import numpy as np
 
 from src.types import Product
@@ -311,6 +312,58 @@ def _fetch_geometry(utc_time: str, instrument: str) -> dict:
     }
 
 
+_LINE_GEOMETRY_SAMPLES = 5  # along-track SPICE samples -> up to 4 piecewise segments
+
+
+def _fetch_line_geometry(start_utc: "str | None", stop_utc: "str | None", instrument: str,
+                          n_samples: int = _LINE_GEOMETRY_SAMPLES) -> list:
+    """Real geolocated centre points at several times along the acquisition,
+    instead of only the midpoint `_fetch_geometry` uses for the single
+    SPICE-derived centre that `_compute_corners` then extrapolates into a flat
+    rectangle. A pushbroom sensor's ground track curves over a ~15000-line
+    strip; sampling several along-track points lets geo.py fit a local
+    homography per segment (see geo._pixel_to_geo_transforms_piecewise)
+    instead of one straight-line fit across the whole curved strip.
+
+    Returns a list of (line_fraction in [0,1], lat_deg, lon_deg) tuples, in
+    fraction order. Returns [] on any failure (offline, no kernels, bad
+    timestamps) — callers fall back to the existing flat-rectangle corners.
+    """
+    try:
+        from webgeocalc import SurfaceInterceptPoint
+    except ImportError:
+        return []
+    if not start_utc or not stop_utc:
+        return []
+    try:
+        t1 = datetime.fromisoformat(start_utc.replace("Z", ""))
+        t2 = datetime.fromisoformat(stop_utc.replace("Z", ""))
+    except ValueError:
+        return []
+
+    points = []
+    for frac in np.linspace(0.0, 1.0, n_samples):
+        frac = float(frac)
+        t = t1 + (t2 - t1) * frac
+        utc_str = t.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+        try:
+            obs = SurfaceInterceptPoint(
+                kernels=_LRO_KERNEL_SET,
+                times=[utc_str],
+                target="MOON",
+                target_frame="IAU_MOON",
+                observer="LRO",
+                direction_vector_type="INSTRUMENT_BORESIGHT",
+                direction_instrument=instrument,
+                aberration_correction="LT+S",
+                state_representation="LATITUDINAL",
+            ).run()
+            points.append((frac, float(obs["LATITUDE"]), float(obs["LONGITUDE"])))
+        except Exception:
+            continue
+    return points
+
+
 # ---------------------------------------------------------------------------
 # Corner computation from SPICE centre + swath geometry
 # ---------------------------------------------------------------------------
@@ -345,6 +398,44 @@ def _compute_corners(
         "ll": (center_lat - half_lat_deg, (c_lon - half_lon_deg) % 360.0),
         "lr": (center_lat - half_lat_deg, (c_lon + half_lon_deg) % 360.0),
     }
+
+
+def _corners_from_line_geometry(line_geometry: list, n_samples: int, gsd_m: float) -> dict:
+    """Corners from the real geolocated first/last along-track points, instead
+    of `_compute_corners`'s single-centre flat-rectangle extrapolation.
+
+    `_compute_corners` always labels row 0 "ul" (north) regardless of the
+    spacecraft's real scan direction. Verified wrong on a real product: for
+    M1499112398LE, line_geometry shows row 0 at lat -75.4 deg (the
+    *southernmost* point) and row (n_lines-1) at lat -73.0 deg (northernmost)
+    -- an ascending pass, the opposite of what the flat-rectangle assumption
+    bakes in. That mislabelling was self-consistently absorbed by the old
+    single-homography align_pair (wrong corners, wrong warp, but internally
+    matched), but breaks the piecewise warp in geo.py, which places segments
+    at their true geolocation: the destination window (sized from `corners`)
+    and the actual warped content (from `line_geometry`) disagreed on which
+    end of the strip is north, so their overlap was zero. Naming "ul"/"ll"
+    row 0 / row (n-1) here regardless of true compass direction keeps this
+    only a polygon-vertex-ordering label, consistent with how the rest of the
+    pipeline already treats these keys.
+    """
+    line_geometry = sorted(line_geometry, key=lambda t: t[0])
+    _, lat0, lon0 = line_geometry[0]
+    _, lat1, lon1 = line_geometry[-1]
+    half0 = _half_lon_deg(lat0, n_samples, gsd_m)
+    half1 = _half_lon_deg(lat1, n_samples, gsd_m)
+    return {
+        "ul": (lat0, (lon0 - half0) % 360.0), "ur": (lat0, (lon0 + half0) % 360.0),
+        "ll": (lat1, (lon1 - half1) % 360.0), "lr": (lat1, (lon1 + half1) % 360.0),
+    }
+
+
+def _half_lon_deg(lat_deg: float, n_samples: int, gsd_m: float) -> float:
+    half_lon_m = (n_samples * gsd_m) / 2.0
+    cos_lat = math.cos(math.radians(lat_deg))
+    if abs(cos_lat) < 1e-6:
+        cos_lat = 1e-6
+    return math.degrees(half_lon_m / (_MOON_RADIUS_M * cos_lat))
 
 
 # ---------------------------------------------------------------------------
@@ -458,7 +549,6 @@ def load_product(path: str) -> Product:
     acquired_utc = start_utc
     if start_utc and stop_utc and "T" in start_utc and "T" in stop_utc:
         try:
-            from datetime import datetime
             t1 = datetime.fromisoformat(start_utc.replace("Z", ""))
             t2 = datetime.fromisoformat(stop_utc.replace("Z", ""))
             mid = t1 + (t2 - t1) / 2
@@ -479,6 +569,7 @@ def load_product(path: str) -> Product:
 
     # --- Geometry from NAIF WebGeocalc ---
     geo = _fetch_geometry(acquired_utc, instrument) if acquired_utc else {}
+    line_geometry = _fetch_line_geometry(start_utc, stop_utc, instrument)
 
     center_lat           = geo.get("center_lat")
     center_lon           = geo.get("center_lon")
@@ -490,7 +581,10 @@ def load_product(path: str) -> Product:
     corners, corners_src = _extract_corners_from_label(parsed, n_lines, n_samples, gsd_m)
 
     if not corners:
-        if center_lat is not None and center_lon is not None:
+        if line_geometry and len(line_geometry) >= 2:
+            corners = _corners_from_line_geometry(line_geometry, n_samples, gsd_m)
+            corners_src = "spice_line_approx"
+        elif center_lat is not None and center_lon is not None:
             corners = _compute_corners(center_lat, center_lon, n_lines, n_samples, gsd_m)
             corners_src = "spice_approx"
         else:
@@ -509,6 +603,7 @@ def load_product(path: str) -> Product:
         "orbit_number":       _as_float(_get(parsed, "ORBIT_NUMBER")),
         "geometry_source":    "naif_webgeocalc" if geo.get("center_lat") is not None else "none",
         "geo_error":          geo.get("_error_obs"),
+        "line_geometry":      line_geometry,
     }
 
     return Product(
