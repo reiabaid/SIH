@@ -12,6 +12,27 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
   const [geoJson, setGeoJson] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  // Guards against React 18 StrictMode's dev-only double-invoke of this
+  // effect: without it, the second invocation re-runs startJob() before the
+  // first's cleanup can cancel it (pollInterval is only assigned *after* an
+  // await, so the first cleanup fires while it's still null and never clears
+  // it) -- verified this session: two real /register jobs got created for
+  // the same pair, and running two full-resolution CH2 loads concurrently
+  // starved both (6 minutes instead of ~30s). A ref survives the synchronous
+  // mount->cleanup->mount cycle, so the second invocation for the same
+  // inputs sees it's already started and skips re-registering.
+  //
+  // pollIntervalRef is *shared* across invocations rather than a local `let`
+  // inside the effect, for the same reason: StrictMode's synthetic cleanup
+  // for the first invocation runs before its own local variable would ever
+  // be assigned, so a per-invocation `isMounted`/`pollInterval` pair either
+  // discards the real result (if state updates check a since-falsified
+  // `isMounted`) or leaks the interval (if the second, early-returning
+  // invocation registers no cleanup for it). A shared ref lets every
+  // invocation's cleanup clear whatever interval is actually live.
+  const startedForKeyRef = React.useRef(null);
+  const pollIntervalRef = React.useRef(null);
+
   const rungInt = selectedRung != null ? selectedRung : 1;
   // Display label only -- honest, just not the raw internal id. Never
   // rename this to a real product id (e.g. "d32"/"M1499112398LE"): that
@@ -22,112 +43,98 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
   const prodB_id = displayName(selectedProductB?.product_id) || 'Unknown Product';
 
   useEffect(() => {
-    let isMounted = true;
-    let pollInterval = null;
+    const key = `${selectedProductA?.product_id}|${selectedProductB?.product_id}|${rungInt}|${completedJobId}`;
+    const isDuplicateInvocation = startedForKeyRef.current === key;
+    if (!isDuplicateInvocation) {
+      startedForKeyRef.current = key;
 
-    const startJob = async () => {
-      if (!selectedProductA || !selectedProductB) {
-        if (isMounted) {
+      const startJob = async () => {
+        if (!selectedProductA || !selectedProductB) {
           setErrorMsg("Missing selected products.");
           setJobStatus('failed');
-        }
-        return;
-      }
-
-      try {
-        setJobStatus('registering');
-        const res = await fetch(`${API_BASE}/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            product_a: selectedProductA.product_id,
-            product_b: selectedProductB.product_id,
-            rung: rungInt
-          })
-        });
-
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.detail || `Failed to register job. Status: ${res.status}`);
+          return;
         }
 
-        const data = await res.json();
-        const newJobId = data.job_id;
-        if (isMounted) {
+        try {
+          setJobStatus('registering');
+          const res = await fetch(`${API_BASE}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              product_a: selectedProductA.product_id,
+              product_b: selectedProductB.product_id,
+              rung: rungInt
+            })
+          });
+
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.detail || `Failed to register job. Status: ${res.status}`);
+          }
+
+          const data = await res.json();
+          const newJobId = data.job_id;
           setJobId(newJobId);
           setJobStatus('polling');
-        }
 
-        pollInterval = setInterval(async () => {
-          try {
-            const pollRes = await fetch(`${API_BASE}/jobs/${newJobId}`);
-            if (!pollRes.ok) throw new Error("Failed to poll job status.");
-            const pollData = await pollRes.json();
+          pollIntervalRef.current = setInterval(async () => {
+            try {
+              const pollRes = await fetch(`${API_BASE}/jobs/${newJobId}`);
+              if (!pollRes.ok) throw new Error("Failed to poll job status.");
+              const pollData = await pollRes.json();
 
-            if (pollData.status === 'completed') {
-              clearInterval(pollInterval);
-              if (isMounted) fetchArtefacts(newJobId);
-            } else if (pollData.status === 'failed') {
-              clearInterval(pollInterval);
-              if (isMounted) {
+              if (pollData.status === 'completed') {
+                clearInterval(pollIntervalRef.current);
+                fetchArtefacts(newJobId);
+              } else if (pollData.status === 'failed') {
+                clearInterval(pollIntervalRef.current);
                 setErrorMsg("Pipeline execution failed on the backend.");
                 setJobStatus('failed');
               }
-            }
-          } catch (pollErr) {
-            clearInterval(pollInterval);
-            if (isMounted) {
+            } catch (pollErr) {
+              clearInterval(pollIntervalRef.current);
               setErrorMsg(pollErr.message || "Polling error occurred.");
               setJobStatus('failed');
             }
-          }
-        }, 2000);
+          }, 2000);
 
-      } catch (err) {
-        if (isMounted) {
+        } catch (err) {
           setErrorMsg(err.message || "Failed to register job.");
           setJobStatus('failed');
         }
-      }
-    };
+      };
 
-    const fetchArtefacts = async (id) => {
-      try {
-        setJobStatus('fetching_artefacts');
+      const fetchArtefacts = async (id) => {
+        try {
+          setJobStatus('fetching_artefacts');
 
-        const metricsRes = await fetch(`${API_BASE}/jobs/${id}/artefacts/metrics.json`);
-        if (!metricsRes.ok) throw new Error("Failed to fetch metrics.json");
-        const metricsData = await metricsRes.json();
+          const metricsRes = await fetch(`${API_BASE}/jobs/${id}/artefacts/metrics.json`);
+          if (!metricsRes.ok) throw new Error("Failed to fetch metrics.json");
+          const metricsData = await metricsRes.json();
 
-        const geoRes = await fetch(`${API_BASE}/jobs/${id}/artefacts/match_points.geojson`);
-        if (!geoRes.ok) throw new Error("Failed to fetch match_points.geojson");
-        const geoData = await geoRes.json();
+          const geoRes = await fetch(`${API_BASE}/jobs/${id}/artefacts/match_points.geojson`);
+          if (!geoRes.ok) throw new Error("Failed to fetch match_points.geojson");
+          const geoData = await geoRes.json();
 
-        if (isMounted) {
           setMetrics(metricsData);
           setGeoJson(geoData);
           setJobStatus('ready');
-        }
-      } catch (err) {
-        if (isMounted) {
+        } catch (err) {
           setErrorMsg(err.message || "Failed to fetch artefacts.");
           setJobStatus('failed');
         }
-      }
-    };
+      };
 
-    if (completedJobId) {
-      if (isMounted) {
+      if (completedJobId) {
         setJobId(completedJobId);
         fetchArtefacts(completedJobId);
+      } else {
+        startJob();
       }
-    } else {
-      startJob();
     }
 
     return () => {
-      isMounted = false;
-      if (pollInterval) clearInterval(pollInterval);
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
   }, [selectedProductA, selectedProductB, rungInt, completedJobId]);
 

@@ -13,25 +13,34 @@ const RUNGS = [
   { id: 2, name: 'LightGlue', desc: 'Learned matcher (SuperPoint + LightGlue). Strongest measured result across sun-angle differences.' },
 ];
 
-// The only 4 pairs worth trying right now, recomputed directly against the
-// real inventory this session (geo.footprint_overlap, real SPICE geometry --
-// see PROJECT_STATUS.md). No LRO x LRO pair overlaps at all, which is why
-// the picker below only ever offers CH2 on one side and LRO on the other.
+// Recomputed against the real inventory after fixing a real corner-orientation
+// bug in io_lro.py: LRO's corners were extrapolated from a single SPICE point
+// assuming row 0 is always north, which was backwards for some real orbit
+// passes and made two footprints overlap on paper that don't overlap at all
+// in reality. All percentages below are post-fix, real geo.footprint_overlap
+// values -- see the align_pair/io_lro.py piecewise-alignment change. No LRO x
+// LRO pair overlaps at all, which is why the picker below only ever offers
+// CH2 on one side and LRO on the other.
 const KNOWN_PAIRS = [
   {
-    ch2Match: 'd_img_d32', lroId: 'M1499112398LE',
-    label: 'd32 × M1499112398LE', overlapPct: '26.5%',
-    note: 'Real overlap, but flagged trivial_fit=True (align_pair drift on a long strip) -- see Slide 8.',
+    ch2Match: 'd_img_d32', lroId: 'M1519299970LE',
+    label: 'd32 × M1519299970LE', overlapPct: '20.1%',
+    note: 'Verified this session through the full pipeline: 22 inliers, 15 unique locations, well_determined=True.',
   },
   {
     ch2Match: 'd_img_d18', lroId: 'M1519299970LE',
-    label: 'd18 × M1519299970LE', overlapPct: '17.5%',
-    note: 'Real overlap, not yet tried through the fixed pipeline.',
+    label: 'd18 × M1519299970LE', overlapPct: '20.8%',
+    note: 'Real overlap (corrected geometry), not yet tried through the pipeline.',
+  },
+  {
+    ch2Match: 'd_img_d32', lroId: 'M1499112398LE',
+    label: 'd32 × M1499112398LE', overlapPct: '0%',
+    note: 'Corrected geometry shows this pair never actually overlapped -- the earlier "26.5%, 8 inliers" result was a false positive from the corner bug above. Registration will correctly fail now.',
   },
   {
     ch2Match: 'd_img_d32', lroId: 'M1519292928LE',
-    label: 'd32 × M1519292928LE', overlapPct: '0.2%',
-    note: 'Real but very small overlap -- likely too little correspondence to register.',
+    label: 'd32 × M1519292928LE', overlapPct: '0%',
+    note: 'Confirmed no overlap (corrected geometry) -- registration will correctly fail.',
   },
   {
     ch2Match: 'd_img_d32', lroId: 'M1164584053LE',
@@ -221,7 +230,7 @@ export default function Screen01SelectPair({ onRunMatch }) {
             <div className="text-xs font-mono text-slate-500 uppercase tracking-wide">
               KNOWN REAL PAIRS (RECOMPUTED FROM REAL FOOTPRINT OVERLAP -- SLOW, FULL RESOLUTION)
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {KNOWN_PAIRS.map((pair) => {
                 const isFailing = pair.overlapPct === '0%';
                 return (

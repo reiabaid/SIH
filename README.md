@@ -13,3 +13,13 @@ python -m src.render
 python -m src.premise_test
 python -m scripts.build_lro_inventory
 ```
+
+## Docs
+
+- [`docs/USAGE.md`](docs/USAGE.md) — reading real CH2/LRO data, building inventories, running the API
+- [`docs/ARCHITECTURE_AND_SOLUTION.md`](docs/ARCHITECTURE_AND_SOLUTION.md) — pipeline architecture and approach
+- [`docs/FRONTEND.md`](docs/FRONTEND.md) — frontend build spec
+- [`docs/OPTIMIZATION_REPORT.md`](docs/OPTIMIZATION_REPORT.md) — match.py vectorization/parallelization notes
+- [`docs/TARGET_AREA.md`](docs/TARGET_AREA.md) — current real target search box
+- [`docs/PITCH_DECK_FOR_JUDGES.md`](docs/PITCH_DECK_FOR_JUDGES.md) — hackathon pitch deck
+- [`docs/archive/`](docs/archive/) — superseded status reports and individual team members' working notes, kept for history
