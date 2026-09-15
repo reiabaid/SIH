@@ -41,6 +41,21 @@ case**, not "eventually finishes."
 The plan below is built entirely around the "Chosen" rows — nothing
 speculative, nothing that requires a rewrite.
 
+**Update (profiled 2026-09-16, `scripts/profile_pipeline.py` /
+`docs/research/pipeline_time_breakdown.json`):** the "Chosen" strategy above
+was confirmed, but the emphasis inside it needed correcting. For the default
+fast path (sift-rung0), **just loading the two products is 67-72% of total
+wall time** — e.g. 68s of a ~102s job on one real pair, before any matching
+starts. `load_lro` (SPICE/WebGeocalc network calls) is the bigger half of
+that (~35-48s), but `load_ch2`'s raw raster decode is not negligible either
+(~17-21s) and isn't a network cost — it needs its own cache, not just a
+SPICE geometry cache. LightGlue's matching stage (90-151s) is still by far
+the single most expensive individual stage, but it only matters for jobs
+that pick that matcher — for the common case, **product loading is the
+actual bottleneck, not matching**. Riddhi/Manya's caching work below is
+scoped accordingly: cache the whole loaded product (decoded array + corners
++ geometry), not narrowly "SPICE geometry."
+
 ---
 
 ## Main objectives (project-wide, in priority order)
@@ -64,11 +79,15 @@ speculative, nothing that requires a rewrite.
 **Objective:** make the actual matching/alignment compute itself fast,
 without breaking this week's rung-1 fix.
 
-- Profile `run_pipeline` end-to-end on 2-3 real pairs from the Day 2 table
-  and produce a time breakdown (load / SPICE / align+LCN / tiled matching /
-  RANSAC / deliverable write) — right now we have *totals* per matcher but
-  not a breakdown of where the time inside each run actually goes. This is
-  the prerequisite for optimizing the right thing instead of guessing.
+- ~~Profile `run_pipeline` end-to-end...~~ **Done 2026-09-16** —
+  `scripts/profile_pipeline.py`, results in
+  `docs/research/pipeline_time_breakdown.json`. Finding: product loading
+  (67-72% of total wall time on the default matcher), not matching, is the
+  dominant cost — see the update note above. This changes what "optimize the
+  pipeline" means: the next highest-value work for Reia is making sure the
+  matcher-level choices below don't get undermined by an unchanged loading
+  cost once Riddhi/Manya's cache lands, and re-profiling after the cache is
+  in to confirm the win is real.
 - Make LightGlue opt-in, not part of the default matcher set run by
   `scripts/run_ch2_lro_pipeline.py`-style flows and the API's default rung —
   it's 3-10x slower for comparable coverage (Day 2 data). Expose it as a
@@ -91,16 +110,22 @@ without breaking this week's rung-1 fix.
 geometry/resampling work on every request, and be the person who proves
 every speed change here is still correct.
 
+- **Updated by profiling (see above): cache the whole loaded product, not
+  just geometry.** `load_ch2`/`load_lro` together are 67-72% of a default
+  job's wall time (measured: ~68s of a ~102s job) — bigger than align+LCN
+  combined. Build an on-disk cache for each product's *fully loaded* form
+  (decoded array + corners + geometry), keyed by product path/ID, so a
+  repeated request for the same product never re-decodes or re-queries
+  SPICE. `load_lro`'s SPICE/WebGeocalc calls are the larger half of that cost
+  (~35-48s) — coordinate with Manya since this touches `src/io_lro.py`
+  specifically — but `load_ch2`'s raw raster decode (~17-21s, no network
+  involved) needs its own cache too, or the win is only half-realized.
 - Build an on-disk cache for `align_pair`'s output (the resampled,
   common-grid product pair) keyed by `(product_a_id, product_b_id, gsd)` —
   this is deterministic, expensive (full-raster resampling), and currently
   recomputed from scratch on every single `/register` call for the same pair.
-- Build the SPICE/WebGeocalc geometry cache that was scoped but not
-  implemented in `docs/WEEK_PLAN.md`'s Day 3.5 spike (keyed by `product_id` +
-  `acquired_utc`, on-disk, invalidated never) — coordinate with Manya since
-  this touches `src/io_lro.py` where the WebGeocalc calls actually happen.
-  This alone removes ~10-20s of pure network wait *per product*, so ~20-40s
-  off every cold request.
+  Smaller win than the product-load cache above (~9-17s vs ~35-68s measured)
+  but still real, especially for repeated demo pairs.
 - Own the "did this actually get faster and stay correct" check: after each
   of Reia's/Manya's changes, re-run `pytest tests/ -v` (193+ baseline) and
   `scripts/reia_day2_verify_all_pairs.py`, and report the before/after
@@ -117,9 +142,12 @@ every speed change here is still correct.
 **Objective:** land the geometry cache on the ingestion side, then get the
 app actually running somewhere reachable.
 
-- Implement the SPICE geometry cache's read/write path inside
-  `src/io_lro.py`'s `load_product` (paired with Riddhi's cache design above)
-  — check cache before calling WebGeocalc, write through after a real call.
+- Implement the product-load cache's read/write path inside `src/io_lro.py`'s
+  `load_product` (paired with Riddhi's cache design above) — check cache
+  before calling WebGeocalc *and* before re-decoding the raster, write
+  through after a real load. Measured cost this is removing: ~35-48s per
+  LRO product load, ~67-72% of a default job's total wall time when combined
+  with the CH2-side cache.
 - **Deploy the app** (assigned per this plan's requirement that deployment
   goes to Riddhi or Manya): pick a target (a simple containerized deploy —
   e.g. Docker image running the FastAPI backend + built frontend, on
