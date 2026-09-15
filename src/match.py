@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 from src.types import MatchResult
-from src.prep import gradient_orientation_mod_pi, tile, untile_points
+from src.prep import gradient_orientation_mod_pi, log_gabor_max_index_map, tile, untile_points
 
 TILE_SIZE = 1024   # side length in px; large rasters (OHRC strips run ~55000x12000)
 TILE_OVERLAP = 128  # must exceed the largest expected inter-image shift at tile scale
@@ -27,7 +27,7 @@ LIGHTGLUE_MIN_SCORE = 0.2  # drop low-confidence matches before RANSAC ever sees
 
 MODPI_PATCH_SIZE = 16   # side length of the patch each rung-1 descriptor is built from
 MODPI_CELLS = 4          # patch is split into a CELLS x CELLS grid of orientation histograms
-MODPI_BINS = 8            # orientation bins per cell, spanning [0, pi)
+MODPI_BINS = 8            # log-Gabor orientation channels per cell (also norient for log_gabor_max_index_map)
 
 _lightglue_models = {}  # device -> (extractor, matcher), built once and reused
 _lightglue_lock = threading.Lock()  # guards first-time model construction across
@@ -149,21 +149,34 @@ def _gradient_magnitude_u8(gray_u8: np.ndarray) -> np.ndarray:
 
 def _describe_modpi(gray_u8: np.ndarray, keypoints, patch_size=MODPI_PATCH_SIZE,
                      cells=MODPI_CELLS, bins=MODPI_BINS):
-    """Rung-1 descriptor: for each keypoint, a grid of gradient-orientation-mod-pi
-    histograms (magnitude-weighted), instead of SIFT's signed 0-360 gradient
-    descriptor. Unsigned orientation is what survives a sun-angle flip.
+    """Rung-1 descriptor: for each keypoint, a grid of magnitude-weighted
+    histograms over RIFT-style Maximum-Index-Map orientation-channel labels,
+    instead of SIFT's signed 0-360 gradient descriptor.
+
+    This used to be built from raw Sobel gradient-orientation-mod-pi (see
+    gradient_orientation_mod_pi, still used elsewhere for sub-pixel refine).
+    That representation only survives a *global* illumination sign flip --
+    exactly what the synthetic ablation test constructs -- because it's the
+    same texture with every gradient reversed. On real cross-sensor pairs
+    (independent optics/noise/dynamic range, a genuinely non-uniform
+    illumination difference, not a clean 1-x inversion), verified this session
+    (2026-09-15) via a real-data true-match-vs-random-pair descriptor-distance
+    test: raw gradient orientation carried ~zero discriminative signal at
+    genuine correspondences (mean true-match distance was *not* below the
+    random-pair mean) despite passing the pure-inversion unit test, which is
+    why rung 1 scored 0 matches against every real CH2xLRO pair in the
+    inventory. log_gabor_max_index_map's "which log-Gabor orientation channel
+    wins" is a ranking/ordinal quantity, not a raw derivative -- the same
+    literature-backed intuition behind RIFT/HAPCG (docs/research/reia.md),
+    and far less sensitive to independent per-sensor contrast/gain than a
+    Sobel gradient's absolute direction and magnitude.
 
     Vectorized across all keypoints at once (patch gather via fancy indexing,
     per-cell histograms via np.add.at) instead of a per-keypoint Python loop --
     this was the actual bottleneck behind rung 1 running ~4-10x slower than
-    SIFT/LightGlue on real tiled imagery (confirmed this session: ~130-180s vs
-    ~15-50s on the same real pair). Numerically identical to the original
-    per-keypoint np.histogram(..., range=(0, pi)) computation: theta_mod is
-    always in [0, pi) (see gradient_orientation_mod_pi), so bin index =
-    floor(theta / (pi/bins)) matches np.histogram's bin assignment exactly,
-    with no edge case at the pi boundary to reconcile.
+    SIFT/LightGlue on real tiled imagery even before the MIM swap.
     """
-    theta_mod, mag = gradient_orientation_mod_pi(gray_u8.astype(np.float32))
+    mim, mag = log_gabor_max_index_map(gray_u8.astype(np.float32), nscale=3, norient=bins, downsample=2)
     half = patch_size // 2
     cell = patch_size // cells
     h, w = gray_u8.shape[:2]
@@ -181,10 +194,8 @@ def _describe_modpi(gray_u8: np.ndarray, keypoints, patch_size=MODPI_PATCH_SIZE,
     offs = np.arange(-half, half)
     row_idx = np.broadcast_to((ys[:, None, None] + offs[None, :, None]), (n, patch_size, patch_size))
     col_idx = np.broadcast_to((xs[:, None, None] + offs[None, None, :]), (n, patch_size, patch_size))
-    theta_patches = theta_mod[row_idx, col_idx]
+    bin_idx = mim[row_idx, col_idx]  # already an integer channel index in [0, bins)
     mag_patches = mag[row_idx, col_idx]
-
-    bin_idx = np.clip((theta_patches / (np.pi / bins)).astype(np.int64), 0, bins - 1)
 
     descs = np.zeros((n, cells * cells * bins), dtype=np.float32)
     cell_pixels = cell * cell
@@ -211,8 +222,8 @@ def _describe_modpi(gray_u8: np.ndarray, keypoints, patch_size=MODPI_PATCH_SIZE,
 def _match_sift(a: np.ndarray, b: np.ndarray, rung: int = 0) -> MatchResult:
     """rung=0: plain SIFT (raw intensity, signed gradient descriptor) — the baseline
     that's expected to struggle under an illumination flip.
-    rung=1: SIFT keypoint locations, but re-described with the mod-pi orientation
-    histogram from _describe_modpi — the illumination-robust fix.
+    rung=1: SIFT keypoint locations, but re-described with the log-Gabor
+    Maximum-Index-Map histogram from _describe_modpi — the illumination-robust fix.
     """
     t0 = time.time()
     a8, b8 = _to_uint8(a), _to_uint8(b)

@@ -8,14 +8,14 @@
   "runs": {
     "sift-rung0": {
       "matcher": "sift-rung0-tiled",
-      "wall_time_s": 22.92283010482788,
+      "wall_time_s": 35.002042055130005,
       "rmse_ground_truth": null,
-      "reprojection_residual": 0.23135379880417417,
+      "reprojection_residual": 0.4173982480371509,
       "inlier_count": 22,
       "total_matches": 480,
       "inlier_ratio": 0.04583333333333333,
-      "occupied_fraction": 0.0625,
-      "coefficient_of_variation": 4.088888389827094,
+      "occupied_fraction": 0.078125,
+      "coefficient_of_variation": 4.023690177514678,
       "grid_counts": [
         [
           0,
@@ -49,8 +49,8 @@
         ],
         [
           0,
-          0,
-          3,
+          1,
+          2,
           0,
           5,
           8,
@@ -98,13 +98,13 @@
           0
         ]
       ],
-      "unique_inlier_locations": 15,
+      "unique_inlier_locations": 16,
       "trivial_fit": false,
       "well_determined": true
     },
     "sift-rung1": {
       "matcher": "sift-rung1-tiled",
-      "wall_time_s": 22.064775466918945,
+      "wall_time_s": 27.386712312698364,
       "rmse_ground_truth": null,
       "reprojection_residual": NaN,
       "inlier_count": 0,
@@ -200,7 +200,7 @@
     },
     "lightglue": {
       "matcher": "lightglue-tiled",
-      "wall_time_s": 149.86347317695618,
+      "wall_time_s": 167.5090413093567,
       "rmse_ground_truth": null,
       "reprojection_residual": 0.7015053748935594,
       "inlier_count": 6,

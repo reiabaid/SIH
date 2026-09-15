@@ -43,6 +43,100 @@ def local_contrast_norm(arr: np.ndarray, sigma: float = 15.0, eps: float = 1e-6)
     return (high / local_std).astype(np.float32)
 
 
+def log_gabor_max_index_map(arr: np.ndarray, nscale: int = 4, norient: int = 6,
+                             min_wavelength: float = 3.0, mult: float = 1.6,
+                             sigma_onf: float = 0.75, downsample: int = 1):
+    """RIFT-style Maximum Index Map: for each pixel, which of `norient` log-Gabor
+    orientation channels carries the most energy, plus that channel's energy as
+    a magnitude-like confidence.
+
+    This replaces raw-gradient orientation (see gradient_orientation_mod_pi) as
+    the basis for rung 1's descriptor. A Sobel gradient's direction and
+    magnitude are sensitive to *local contrast*, not just polarity -- two
+    independently-sensed rasters (different optics, noise, dynamic range, a
+    real non-uniform illumination difference) can attenuate or amplify local
+    contrast at the same physical edge in ways a sign flip alone doesn't
+    capture, which is why rung 1's original mod-pi descriptor was verified
+    (2026-09-15 session) to carry ~zero discriminative signal at genuine
+    correspondences on real CH2xLRO pairs despite passing a pure-inversion
+    synthetic test.
+
+    Log-Gabor filters respond to phase structure in a band of spatial
+    frequencies rather than raw intensity derivatives, and here we only need
+    *which orientation dominates* at each pixel (an ordinal, ranking-based
+    quantity), not the raw response scale -- exactly the same intuition behind
+    RIFT/HAPCG's radiation-invariance claims in the literature (see
+    docs/research/reia.md), and unlike absolute gradient magnitude, "which
+    orientation wins" is far more stable under independent per-sensor
+    contrast/gain differences.
+
+    downsample: compute the filter bank on a downscaled copy of `arr` (an FFT
+    over every pixel of a full ~1024px tile is the dominant cost of rung 1 --
+    measured at ~2.6s/call at 1024x1024 with the defaults below, ~5.6s per
+    real tile-pair once doubled for both images plus SIFT/matching overhead),
+    then upsample the resulting maps back to `arr`'s original size with
+    nearest-neighbour resize (mim is a category label, energy a magnitude --
+    neither should be interpolated). FFT cost scales with pixel count, so
+    downsample=2 cuts it ~4x; combined with a lower nscale this is what makes
+    rung 1 practical at tile scale rather than a multi-minute-per-tile cost.
+
+    Returns (mim, energy): mim is int32 in [0, norient), energy is float32 the
+    winning orientation's summed-over-scale filter response magnitude (used to
+    weight the descriptor histogram the same way gradient magnitude does for
+    rung 1's predecessor).
+    """
+    if downsample > 1:
+        h0, w0 = arr.shape[:2]
+        small = cv2.resize(arr.astype(np.float32), (max(1, w0 // downsample), max(1, h0 // downsample)),
+                            interpolation=cv2.INTER_AREA)
+        mim_small, energy_small = log_gabor_max_index_map(
+            small, nscale=nscale, norient=norient, min_wavelength=min_wavelength,
+            mult=mult, sigma_onf=sigma_onf, downsample=1,
+        )
+        mim = cv2.resize(mim_small.astype(np.float32), (w0, h0), interpolation=cv2.INTER_NEAREST).astype(np.int32)
+        energy = cv2.resize(energy_small, (w0, h0), interpolation=cv2.INTER_NEAREST)
+        return mim, energy
+
+    h, w = arr.shape[:2]
+    a = arr.astype(np.float64)
+
+    # Frequency-domain radius/angle grids, DC at (0,0) (i.e. not fftshifted) so
+    # they line up directly with np.fft.fft2's output layout.
+    fy = np.fft.fftfreq(h).reshape(h, 1)
+    fx = np.fft.fftfreq(w).reshape(1, w)
+    radius = np.sqrt(fx * fx + fy * fy)
+    radius[0, 0] = 1.0  # avoid log(0) at DC; DC is excluded from every filter anyway
+    theta = np.arctan2(-fy, fx)  # image-space y grows downward; negate for a standard math angle
+    sin_theta, cos_theta = np.sin(theta), np.cos(theta)
+
+    fft_a = np.fft.fft2(a)
+
+    energy_per_orient = np.zeros((norient, h, w), dtype=np.float64)
+    theta_sigma = np.pi / norient / 1.2
+
+    for o in range(norient):
+        angle_o = o * np.pi / norient
+        ds = sin_theta * np.cos(angle_o) - cos_theta * np.sin(angle_o)
+        dc = cos_theta * np.cos(angle_o) + sin_theta * np.sin(angle_o)
+        dtheta = np.abs(np.arctan2(ds, dc))
+        angular_spread = np.exp(-(dtheta ** 2) / (2.0 * theta_sigma ** 2))
+
+        for s in range(nscale):
+            wavelength = min_wavelength * (mult ** s)
+            f0 = 1.0 / wavelength
+            radial = np.exp(-(np.log(radius / f0) ** 2) / (2.0 * np.log(sigma_onf) ** 2))
+            radial[0, 0] = 0.0  # zero out DC explicitly
+
+            response = np.fft.ifft2(fft_a * radial * angular_spread)
+            energy_per_orient[o] += np.abs(response)
+
+    mim = np.argmax(energy_per_orient, axis=0).astype(np.int32)
+    energy = np.take_along_axis(
+        energy_per_orient, mim[None, :, :], axis=0
+    )[0].astype(np.float32)
+    return mim, energy
+
+
 def gradient_orientation_mod_pi(arr: np.ndarray, ksize: int = 3):
     """Per-pixel gradient orientation, folded to [0, pi), plus its magnitude.
 

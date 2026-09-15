@@ -1,0 +1,2306 @@
+[
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung0",
+    "wall_time_s": 7.6,
+    "total_matches": 176,
+    "inliers": 13,
+    "unique_inlier_locations": 4,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 13,
+    "inlier_ratio": 0.07386363636363637,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.005174168290711,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung1",
+    "wall_time_s": 14.1,
+    "total_matches": 82,
+    "inliers": 23,
+    "unique_inlier_locations": 14,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 23,
+    "inlier_ratio": 0.2804878048780488,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.8288280503932475,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        12,
+        7,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "lightglue",
+    "wall_time_s": 52.8,
+    "total_matches": 0,
+    "inliers": 0,
+    "unique_inlier_locations": 0,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 0,
+    "inlier_ratio": 0.0,
+    "occupied_fraction": 0.0,
+    "coefficient_of_variation": NaN,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung0",
+    "wall_time_s": 10.2,
+    "total_matches": 247,
+    "inliers": 21,
+    "unique_inlier_locations": 16,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 21,
+    "inlier_ratio": 0.08502024291497975,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.93931426382503,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        7,
+        11,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung1",
+    "wall_time_s": 18.1,
+    "total_matches": 21,
+    "inliers": 12,
+    "unique_inlier_locations": 10,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 12,
+    "inlier_ratio": 0.5714285714285714,
+    "occupied_fraction": 0.046875,
+    "coefficient_of_variation": 4.79583152331272,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        6
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "lightglue",
+    "wall_time_s": 67.2,
+    "total_matches": 21,
+    "inliers": 6,
+    "unique_inlier_locations": 6,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 6,
+    "inlier_ratio": 0.2857142857142857,
+    "occupied_fraction": 0.015625,
+    "coefficient_of_variation": 7.937253933193772,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung0",
+    "wall_time_s": 44.9,
+    "total_matches": 334,
+    "inliers": 28,
+    "unique_inlier_locations": 23,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 28,
+    "inlier_ratio": 0.08383233532934131,
+    "occupied_fraction": 0.09375,
+    "coefficient_of_variation": 3.449341847899896,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        3,
+        8,
+        6,
+        3
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung1",
+    "wall_time_s": 39.5,
+    "total_matches": 0,
+    "inliers": 0,
+    "unique_inlier_locations": 0,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 0,
+    "inlier_ratio": 0.0,
+    "occupied_fraction": 0.0,
+    "coefficient_of_variation": NaN,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "lightglue",
+    "wall_time_s": 151.9,
+    "total_matches": 4,
+    "inliers": 4,
+    "unique_inlier_locations": 4,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 4,
+    "inlier_ratio": 1.0,
+    "occupied_fraction": 0.03125,
+    "coefficient_of_variation": 5.5677643628300215,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung0",
+    "wall_time_s": 23.9,
+    "total_matches": 429,
+    "inliers": 14,
+    "unique_inlier_locations": 11,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 14,
+    "inlier_ratio": 0.03263403263403263,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 5.797606825058007,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        10,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung1",
+    "wall_time_s": 24.8,
+    "total_matches": 511,
+    "inliers": 66,
+    "unique_inlier_locations": 42,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 66,
+    "inlier_ratio": 0.12915851272015655,
+    "occupied_fraction": 0.078125,
+    "coefficient_of_variation": 4.295661637891695,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        12,
+        26,
+        22,
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "lightglue",
+    "wall_time_s": 140.6,
+    "total_matches": 78,
+    "inliers": 6,
+    "unique_inlier_locations": 5,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 6,
+    "inlier_ratio": 0.07692307692307693,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.096068575814836,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung0",
+    "wall_time_s": 43.1,
+    "total_matches": 480,
+    "inliers": 21,
+    "unique_inlier_locations": 16,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 21,
+    "inlier_ratio": 0.04375,
+    "occupied_fraction": 0.078125,
+    "coefficient_of_variation": 4.175025628935417,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        5,
+        8,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung1",
+    "wall_time_s": 23.3,
+    "total_matches": 500,
+    "inliers": 29,
+    "unique_inlier_locations": 17,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 29,
+    "inlier_ratio": 0.058,
+    "occupied_fraction": 0.046875,
+    "coefficient_of_variation": 5.502458644061544,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        17,
+        11
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "lightglue",
+    "wall_time_s": 140.6,
+    "total_matches": 113,
+    "inliers": 6,
+    "unique_inlier_locations": 6,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 6,
+    "inlier_ratio": 0.05309734513274336,
+    "occupied_fraction": 0.046875,
+    "coefficient_of_variation": 4.8876260995383936,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung0",
+    "wall_time_s": 47.6,
+    "total_matches": 263,
+    "inliers": 10,
+    "unique_inlier_locations": 4,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 10,
+    "inlier_ratio": 0.03802281368821293,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.266145801540309,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung1",
+    "wall_time_s": 52.4,
+    "total_matches": 0,
+    "inliers": 0,
+    "unique_inlier_locations": 0,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 0,
+    "inlier_ratio": 0.0,
+    "occupied_fraction": 0.0,
+    "coefficient_of_variation": NaN,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "lightglue",
+    "wall_time_s": 218.3,
+    "total_matches": 62,
+    "inliers": 5,
+    "unique_inlier_locations": 5,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 5,
+    "inlier_ratio": 0.08064516129032258,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.113392760240627,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung0",
+    "wall_time_s": 53.4,
+    "total_matches": 447,
+    "inliers": 21,
+    "unique_inlier_locations": 21,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 21,
+    "inlier_ratio": 0.04697986577181208,
+    "occupied_fraction": 0.109375,
+    "coefficient_of_variation": 3.4519704189408444,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        4,
+        5,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung1",
+    "wall_time_s": 51.8,
+    "total_matches": 0,
+    "inliers": 0,
+    "unique_inlier_locations": 0,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 0,
+    "inlier_ratio": 0.0,
+    "occupied_fraction": 0.0,
+    "coefficient_of_variation": NaN,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "lightglue",
+    "wall_time_s": 199.5,
+    "total_matches": 56,
+    "inliers": 4,
+    "unique_inlier_locations": 4,
+    "trivial_fit": true,
+    "well_determined": false,
+    "inlier_count": 4,
+    "inlier_ratio": 0.07142857142857142,
+    "occupied_fraction": 0.03125,
+    "coefficient_of_variation": 6.244997998398398,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung0",
+    "wall_time_s": 20.9,
+    "total_matches": 221,
+    "inliers": 11,
+    "unique_inlier_locations": 10,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 11,
+    "inlier_ratio": 0.049773755656108594,
+    "occupied_fraction": 0.046875,
+    "coefficient_of_variation": 4.663024946629876,
+    "grid_counts": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        5,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung1",
+    "wall_time_s": 27.1,
+    "total_matches": 289,
+    "inliers": 72,
+    "unique_inlier_locations": 45,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 72,
+    "inlier_ratio": 0.2491349480968858,
+    "occupied_fraction": 0.0625,
+    "coefficient_of_variation": 4.506511064594054,
+    "grid_counts": [
+      [
+        2,
+        0,
+        0,
+        29,
+        16,
+        25,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "lightglue",
+    "wall_time_s": 92.1,
+    "total_matches": 37,
+    "inliers": 5,
+    "unique_inlier_locations": 5,
+    "trivial_fit": false,
+    "well_determined": true,
+    "inlier_count": 5,
+    "inlier_ratio": 0.13513513513513514,
+    "occupied_fraction": 0.046875,
+    "coefficient_of_variation": 4.694677837722201,
+    "grid_counts": [
+      [
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  }
+]
