@@ -1,0 +1,482 @@
+[
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 5.64,
+    "total": 153,
+    "inliers": 11,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 5.43,
+    "total": 176,
+    "inliers": 13,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 5.74,
+    "total": 176,
+    "inliers": 12,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 13.32,
+    "total": 82,
+    "inliers": 23,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 13.41,
+    "total": 82,
+    "inliers": 23,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 13.92,
+    "total": 82,
+    "inliers": 23,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 8.96,
+    "total": 150,
+    "inliers": 6,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 8.23,
+    "total": 247,
+    "inliers": 19,
+    "unique": 15,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 7.34,
+    "total": 247,
+    "inliers": 17,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 16.68,
+    "total": 21,
+    "inliers": 12,
+    "unique": 10,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 19.44,
+    "total": 21,
+    "inliers": 12,
+    "unique": 10,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 17.9,
+    "total": 21,
+    "inliers": 12,
+    "unique": 10,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 14.1,
+    "total": 157,
+    "inliers": 10,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 20.16,
+    "total": 251,
+    "inliers": 12,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 24.17,
+    "total": 334,
+    "inliers": 11,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 54.59,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 56.58,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 52.89,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 13.37,
+    "total": 157,
+    "inliers": 9,
+    "unique": 9,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 17.18,
+    "total": 261,
+    "inliers": 11,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 26.61,
+    "total": 429,
+    "inliers": 10,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 18.4,
+    "total": 169,
+    "inliers": 13,
+    "unique": 9,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 20.98,
+    "total": 316,
+    "inliers": 64,
+    "unique": 41,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 27.55,
+    "total": 511,
+    "inliers": 63,
+    "unique": 41,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 11.83,
+    "total": 161,
+    "inliers": 11,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 15.24,
+    "total": 255,
+    "inliers": 10,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 25.0,
+    "total": 480,
+    "inliers": 19,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 14.33,
+    "total": 176,
+    "inliers": 33,
+    "unique": 20,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 16.64,
+    "total": 280,
+    "inliers": 30,
+    "unique": 17,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 27.6,
+    "total": 500,
+    "inliers": 18,
+    "unique": 12,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 20.03,
+    "total": 153,
+    "inliers": 10,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 26.83,
+    "total": 253,
+    "inliers": 9,
+    "unique": 3,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 28.18,
+    "total": 263,
+    "inliers": 10,
+    "unique": 7,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 59.06,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 58.46,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 42.83,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 7.86,
+    "total": 156,
+    "inliers": 11,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 12.78,
+    "total": 251,
+    "inliers": 12,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 20.04,
+    "total": 447,
+    "inliers": 20,
+    "unique": 20,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 36.41,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 36.5,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 36.63,
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung0",
+    "min_pool_points": 150,
+    "wall_time_s": 8.41,
+    "total": 151,
+    "inliers": 7,
+    "unique": 7,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung0",
+    "min_pool_points": 250,
+    "wall_time_s": 9.17,
+    "total": 221,
+    "inliers": 9,
+    "unique": 8,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung0",
+    "min_pool_points": 500,
+    "wall_time_s": 9.44,
+    "total": 221,
+    "inliers": 9,
+    "unique": 9,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung1",
+    "min_pool_points": 150,
+    "wall_time_s": 17.02,
+    "total": 289,
+    "inliers": 72,
+    "unique": 45,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung1",
+    "min_pool_points": 250,
+    "wall_time_s": 16.24,
+    "total": 289,
+    "inliers": 72,
+    "unique": 45,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung1",
+    "min_pool_points": 500,
+    "wall_time_s": 17.41,
+    "total": 289,
+    "inliers": 72,
+    "unique": 45,
+    "well_determined": true
+  }
+]

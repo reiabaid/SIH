@@ -88,14 +88,46 @@ without breaking this week's rung-1 fix.
   matcher-level choices below don't get undermined by an unchanged loading
   cost once Riddhi/Manya's cache lands, and re-profiling after the cache is
   in to confirm the win is real.
-- Make LightGlue opt-in, not part of the default matcher set run by
-  `scripts/run_ch2_lro_pipeline.py`-style flows and the API's default rung —
-  it's 3-10x slower for comparable coverage (Day 2 data). Expose it as a
-  "thorough mode" instead of a default.
-- Re-examine `match_tiled`'s `MIN_POOL_POINTS` early-exit (currently 500) —
-  test whether a lower threshold (e.g. 150-200) still gives RANSAC enough
-  correct correspondences without processing every tile. Validate against
-  the Day 2 table, not just "it finished faster."
+- ~~Make LightGlue opt-in...~~ **Already true, checked 2026-09-16** —
+  `frontend/src/screens/Screen01SelectPair.jsx` already defaults
+  `selectedRung` to 0 (SIFT) and lists LightGlue as an explicit, user-chosen
+  option (rung 2), not a default. `src/api.py`'s `RegisterRequest.rung` has
+  no default either, so nothing silently picks LightGlue. No change needed
+  here — only the benchmarking/verification scripts
+  (`scripts/reia_day2_verify_all_pairs.py` etc.) run all three matchers by
+  design, which is correct for their purpose.
+- ~~Re-examine `match_tiled`'s `MIN_POOL_POINTS`...~~ **Tested 2026-09-16,
+  kept at 500 — do not lower it.** Swept 150/250/500 across the full 8-pair
+  inventory (`scripts/tune_early_exit.py`,
+  `docs/research/early_exit_tuning.json`). Threshold=250 flipped
+  `well_determined` True→False on 3/8 pairs; threshold=150 regressed those
+  same 3 plus a 4th. Neither lower value looked safe — no code change made.
+  **Caveat added after the fix below:** this sweep ran *before* the RANSAC
+  determinism bug (next item) was fixed, so some of the specific flips it
+  found may have been that bug's noise rather than a genuine
+  threshold-caused regression. The conservative conclusion (keep 500) still
+  stands either way, but if someone wants to actually lower this threshold
+  later, re-sweep it now that results are reproducible — the old sweep data
+  shouldn't be trusted for anything more precise than "don't casually lower
+  this."
+- ~~`match_tiled`'s RANSAC fit has run-to-run randomness...~~ **Fixed
+  2026-09-16, not just flagged.** Root cause turned out to be deeper than
+  "OpenCV's RNG isn't seeded": tile results were pooled in
+  `as_completed()`'s non-deterministic thread-completion order, and
+  `cv2.findHomography`'s `USAC_MAGSAC` sampling depends on input row order
+  even with a fixed seed (confirmed both halves separately — an isolated
+  synthetic test showed `cv2.setRNGSeed(0)` alone IS fully deterministic
+  given a fixed input order, but adding just that seed to `src/match.py`
+  first did NOT fix the real flaky pair, because the pooling order was still
+  changing underneath it). Fixed by keying pooled tile results by their
+  stable submission index and sorting back into that order before the fit
+  (`src/match.py`'s `match_tiled`). Verified: 3 reruns of the previously
+  flaky pair now produce byte-identical results (429 total/15 inliers every
+  time, vs 17/15/10 before). 193/193 tests still pass. **This fix changed a
+  real number**: re-running the full inventory under it caught a false
+  positive in the committed Day 2 table — see
+  `docs/research/day2_pair_verification.md`'s 2026-09-16 update. Inventory
+  coverage is 7/8, not the previously-reported 8/8.
 - Apply the same downsample-before-FFT trick that fixed rung 1's speed
   (`src/prep.py`'s `log_gabor_max_index_map(downsample=2)`) anywhere else in
   the pipeline doing full-resolution per-pixel work that doesn't need
@@ -110,16 +142,20 @@ without breaking this week's rung-1 fix.
 geometry/resampling work on every request, and be the person who proves
 every speed change here is still correct.
 
-- **Updated by profiling (see above): cache the whole loaded product, not
-  just geometry.** `load_ch2`/`load_lro` together are 67-72% of a default
-  job's wall time (measured: ~68s of a ~102s job) — bigger than align+LCN
-  combined. Build an on-disk cache for each product's *fully loaded* form
-  (decoded array + corners + geometry), keyed by product path/ID, so a
-  repeated request for the same product never re-decodes or re-queries
-  SPICE. `load_lro`'s SPICE/WebGeocalc calls are the larger half of that cost
-  (~35-48s) — coordinate with Manya since this touches `src/io_lro.py`
-  specifically — but `load_ch2`'s raw raster decode (~17-21s, no network
-  involved) needs its own cache too, or the win is only half-realized.
+- ~~Cache the whole loaded product, not just geometry.~~ **Partially done,
+  2026-09-16** — `src/product_cache.py` implemented and wired into
+  `src/io_lro.py`, a clean, validated win: `load_lro` (SPICE/WebGeocalc)
+  dropped from 35-48s to 0.3-0.5s, and 193/193 tests still pass. **Deliberately
+  NOT wired into `src/io_ch2.py`** — tried it, and the pickled full-resolution
+  OHRC array hit 4.49GB for one product; reading that back only cut
+  `load_ch2`'s ~17-21s to ~4-16s (size-dependent, not the near-zero LRO got),
+  because CH2's cost is disk-decode-bound, not network-bound, and a multi-GB
+  cache file per product doesn't scale to a real inventory. **Open follow-up
+  for Riddhi/Reia:** the right fix for CH2 is cropping to the actual overlap
+  region before decoding the full array (this was "Option F" considered
+  above), not caching the whole raster. Measured net effect on total
+  sift-rung0 pipeline time with the LRO-only cache in place: 31-67% faster
+  across the 3 profiled pairs (`docs/research/pipeline_time_breakdown.json`).
 - Build an on-disk cache for `align_pair`'s output (the resampled,
   common-grid product pair) keyed by `(product_a_id, product_b_id, gsd)` —
   this is deterministic, expensive (full-raster resampling), and currently

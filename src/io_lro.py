@@ -44,6 +44,7 @@ from datetime import datetime
 import numpy as np
 
 from src.types import Product
+from src.product_cache import cached_load
 
 
 class LROReadError(Exception):
@@ -487,6 +488,16 @@ def _extract_corners_from_label(parsed: dict, n_lines: int, n_samples: int,
 # ---------------------------------------------------------------------------
 
 def load_product(path: str) -> Product:
+    """Load an LRO NAC product, from the on-disk product cache (see
+    src/product_cache.py) when available -- this is the larger half of the
+    dominant cost in a default pipeline run (~35-48s measured, mostly NAIF
+    WebGeocalc network round-trips), so a repeat load of the same product
+    skips the network entirely after the first.
+    """
+    return cached_load(path, lambda: _load_product_uncached(path))
+
+
+def _load_product_uncached(path: str) -> Product:
     """
     Load an LRO NAC EDR or CDR .IMG file and return a Product.
 

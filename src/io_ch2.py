@@ -134,6 +134,23 @@ def _find_img_path(xml_path: str) -> str:
 
 
 def load_product(xml_path: str) -> Product:
+    """Load a Chandrayaan-2 OHRC product.
+
+    Deliberately NOT using src/product_cache.py's on-disk cache here, unlike
+    io_lro.load_product. Tried it (2026-09-16): an OHRC strip's array is
+    large enough that the pickled cache file hit 4.49GB for one product, and
+    reading that back only cut load_ch2's ~17-21s cost to ~4-16s (highly
+    file-size dependent), not the near-zero win the same approach gave LRO
+    (whose cost is genuinely network-bound, not I/O-bound). A multi-GB cache
+    file per product doesn't scale to a real inventory either. The right fix
+    here is cropping to the actual overlap region before decoding the full
+    array, not caching the whole thing -- flagged as a follow-up in
+    docs/WORK_DIVISION_PLAN.md rather than shipped as a rushed partial fix.
+    """
+    return _load_product_uncached(xml_path)
+
+
+def _load_product_uncached(xml_path: str) -> Product:
     """
     Load a Chandrayaan-2 OHRC product into the shared Product dataclass.
 

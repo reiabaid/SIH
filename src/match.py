@@ -13,6 +13,7 @@ from src.prep import gradient_orientation_mod_pi, log_gabor_max_index_map, tile,
 
 TILE_SIZE = 1024   # side length in px; large rasters (OHRC strips run ~55000x12000)
 TILE_OVERLAP = 128  # must exceed the largest expected inter-image shift at tile scale
+MIN_POOL_POINTS = 500  # match_tiled's early-exit threshold; see match_tiled's docstring
 
 GRID_SIZE = 8
 MAX_KEYPOINTS_PER_CELL = 40
@@ -333,6 +334,14 @@ def _match_lightglue(a: np.ndarray, b: np.ndarray) -> MatchResult:
 def _finalize(pts_a, pts_b, scores, a8, b8, matcher_name, t0) -> MatchResult:
     # MAGSAC instead of plain RANSAC: same call, no threshold to hand-tune — it
     # estimates the noise scale itself rather than needing a fixed inlier cutoff.
+    #
+    # setRNGSeed: USAC_MAGSAC draws random sample sets internally and OpenCV's
+    # RNG is unseeded by default, so identical input points could otherwise
+    # fit a different homography (and a different inlier count/well_determined
+    # verdict) on every run -- confirmed 2026-09-16 by rerunning the same real
+    # pair/config/tile-pooling and getting 10 vs 14 inliers from byte-identical
+    # pooled input. Seeding immediately before the fit makes it reproducible.
+    cv2.setRNGSeed(0)
     transform, ransac_mask = cv2.findHomography(
         pts_a, pts_b, cv2.USAC_MAGSAC, RANSAC_REPROJ_THRESHOLD
     )
@@ -394,7 +403,8 @@ def match(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0) ->
 
 
 def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0,
-                 tile_size: int = TILE_SIZE, overlap: int = TILE_OVERLAP) -> MatchResult:
+                 tile_size: int = TILE_SIZE, overlap: int = TILE_OVERLAP,
+                 min_pool_points: int = MIN_POOL_POINTS) -> MatchResult:
     """Tile-then-pool-then-globally-refit matching for rasters too large to hand
     match() whole (an OHRC strip is ~55000x12000px).
 
@@ -445,36 +455,48 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
             return None
         return untile_points(result.pts_a, offset_a), untile_points(result.pts_b, offset_b), result.scores
 
-    pool_a, pool_b, pool_scores = [], [], []
+    pooled = {}  # tile index -> (a_pts, b_pts, scores), keyed by submission order
 
     # Use submit + as_completed for early exit: once we've accumulated enough
-    # candidate matches (>= 500 points across all tiles processed so far),
+    # candidate matches (>= min_pool_points across all tiles processed so far),
     # skip remaining tiles rather than burning CPU on tiles that won't change
     # the global homography fit. On a 55k×12k OHRC strip this can save 30-60%
     # of wall-clock time when the early tiles already produce abundant matches.
-    MIN_POOL_POINTS = 500
+    #
+    # Tiles are collected in THREAD-COMPLETION order (as_completed), which is
+    # not deterministic run-to-run -- but the final RANSAC fit's result
+    # depends on the row order of its input, not just the set of points, so
+    # pooling in completion order made the whole pipeline non-reproducible
+    # even with a fixed RNG seed (confirmed 2026-09-16: same 429 pooled
+    # points, 10/15/17 inliers across 3 reruns of the identical real pair).
+    # `pooled` is keyed by each tile's stable submission index so results can
+    # be re-sorted back into a fixed order below before the fit ever sees them.
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        futures = {pool.submit(_match_one, pair): pair
-                   for pair in zip(tiles_a, tiles_b)}
+        futures = {pool.submit(_match_one, pair): idx
+                   for idx, pair in enumerate(zip(tiles_a, tiles_b))}
         from concurrent.futures import as_completed
         for future in as_completed(futures):
             out = future.result()
             if out is None:
                 continue
-            a_pts, b_pts, scores = out
-            pool_a.append(a_pts)
-            pool_b.append(b_pts)
-            pool_scores.append(scores)
-            total_pts = sum(len(p) for p in pool_a)
-            if total_pts >= MIN_POOL_POINTS:
+            pooled[futures[future]] = out
+            total_pts = sum(len(a_pts) for a_pts, _, _ in pooled.values())
+            if total_pts >= min_pool_points:
                 # Cancel remaining futures to stop burning CPU
                 for f in futures:
                     f.cancel()
                 break
 
     matcher_name = f"{matcher}-rung{rung}-tiled" if matcher == "sift" else f"{matcher}-tiled"
-    if not pool_a:
+    if not pooled:
         return _empty_result(a, b, matcher_name, time.time() - t0)
+
+    # Sort back into a fixed (submission-index) order -- see the comment
+    # above -- so the fit's input array is byte-identical regardless of which
+    # order tiles happened to finish in.
+    pool_a = [pooled[i][0] for i in sorted(pooled)]
+    pool_b = [pooled[i][1] for i in sorted(pooled)]
+    pool_scores = [pooled[i][2] for i in sorted(pooled)]
 
     pts_a = np.vstack(pool_a).astype(np.float32)
     pts_b = np.vstack(pool_b).astype(np.float32)
@@ -483,6 +505,12 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
     if len(pts_a) < 4:
         return _empty_result(a, b, matcher_name, time.time() - t0)
 
+    # See _finalize's comment: seed immediately before the fit for a
+    # reproducible result. This call runs after the ThreadPoolExecutor block
+    # above has fully exited (no concurrent per-tile fits still running), so
+    # unlike the per-tile calls inside _finalize, this one's determinism
+    # isn't at the mercy of other threads' RNG draws.
+    cv2.setRNGSeed(0)
     transform, ransac_mask = cv2.findHomography(
         pts_a, pts_b, cv2.USAC_MAGSAC, RANSAC_REPROJ_THRESHOLD
     )
