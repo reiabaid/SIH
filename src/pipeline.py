@@ -21,6 +21,7 @@ def run_pipeline(
     rung: int = 0,
     use_lcn: bool = True,
     contrast_sigma: float = 15.0,
+    lcn_downsample: int = 1,
     align: bool = False,
     tile_size: int = TILE_SIZE,
     tile_overlap: int = TILE_OVERLAP,
@@ -35,6 +36,14 @@ def run_pipeline(
       the descriptor's — with LCN hard-wired on, a rung-1 win can't be attributed to the
       mod-pi descriptor vs the LCN prep. The four ablation cells are (use_lcn, rung) over
       {False, True} x {0, 1}.
+    lcn_downsample: passed through to local_contrast_norm's own `downsample` --
+      estimate its low-frequency blur/variance fields on a downscaled copy for
+      speed (measured ~4.7x on a real full-resolution CH2 raster, 0.996
+      correlation, comparable SIFT keypoint yield) while still returning a
+      full-resolution result. Off (1) by default; validate against the full
+      real-pair inventory before relying on a higher value anywhere real
+      matching happens, per this docstring's own align note below about not
+      trading correctness for speed silently.
     align: resample both products onto one common geo grid via geo.align_pair before
       matching (Move 1 — closes the scale gap using metadata instead of asking the
       matcher to bridge it). Off by default so callers without real georeferencing
@@ -60,8 +69,8 @@ def run_pipeline(
     a = to_gray_float(match_product_a.array)
     b = to_gray_float(match_product_b.array)
     if use_lcn:
-        a = local_contrast_norm(a, sigma=contrast_sigma)
-        b = local_contrast_norm(b, sigma=contrast_sigma)
+        a = local_contrast_norm(a, sigma=contrast_sigma, downsample=lcn_downsample)
+        b = local_contrast_norm(b, sigma=contrast_sigma, downsample=lcn_downsample)
 
     if max(a.shape[:2]) > TILE_THRESHOLD_PX or max(b.shape[:2]) > TILE_THRESHOLD_PX:
         result = match_tiled(a, b, matcher=matcher, rung=rung,

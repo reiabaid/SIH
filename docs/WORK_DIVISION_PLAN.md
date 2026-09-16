@@ -128,10 +128,23 @@ without breaking this week's rung-1 fix.
   positive in the committed Day 2 table — see
   `docs/research/day2_pair_verification.md`'s 2026-09-16 update. Inventory
   coverage is 7/8, not the previously-reported 8/8.
-- Apply the same downsample-before-FFT trick that fixed rung 1's speed
-  (`src/prep.py`'s `log_gabor_max_index_map(downsample=2)`) anywhere else in
-  the pipeline doing full-resolution per-pixel work that doesn't need
-  full resolution to be correct.
+- ~~Apply the same downsample-before-FFT trick...~~ **Done 2026-09-17, kept
+  off by default.** Added a `downsample` parameter to `src/prep.py`'s
+  `local_contrast_norm` (estimate the smooth `low`/`local_std` fields on a
+  downscaled copy, upsample them back, keep `high = a - low` at full
+  resolution so real detail survives for SIFT) and threaded it through
+  `src/pipeline.py`'s `run_pipeline(lcn_downsample=...)`. Standalone: 4.7x
+  speedup (2.46s→0.52s on a real full-res CH2 raster), 0.996 correlation,
+  comparable SIFT keypoint yield (459k vs 475k). Full 8-pair inventory
+  validation at `lcn_downsample=2` (`scripts/validate_lcn_downsample.py`,
+  `docs/research/lcn_downsample_validation.json`): 15/16 pair+rung
+  combinations unchanged or improved, but **sift-rung0 on
+  d18×M1519299970LE flipped well_determined True→False** (15/10 baseline →
+  13/4). Same call as the CH2 caching and early-exit threshold decisions:
+  one regression is enough to not touch the default. `lcn_downsample`
+  stays 1 (off) by default; the parameter is available for anyone who wants
+  to opt in for a specific known-safe pair, but nothing wires it in
+  automatically.
 - **Methodology:** measure before changing, change one thing at a time,
   re-run the Day 2 inventory script after each change to catch a speed win
   that quietly breaks a pair. Do not tune parameters against a single pair.

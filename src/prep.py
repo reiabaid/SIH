@@ -22,7 +22,8 @@ def to_gray_float(arr: np.ndarray) -> np.ndarray:
     return a.astype(np.float32)
 
 
-def local_contrast_norm(arr: np.ndarray, sigma: float = 15.0, eps: float = 1e-6) -> np.ndarray:
+def local_contrast_norm(arr: np.ndarray, sigma: float = 15.0, eps: float = 1e-6,
+                         downsample: int = 1) -> np.ndarray:
     """Remove the low-frequency shading gradient (sun angle) while keeping local structure.
 
     Subtracts a large-sigma Gaussian blur (the illumination gradient), then divides by
@@ -34,12 +35,37 @@ def local_contrast_norm(arr: np.ndarray, sigma: float = 15.0, eps: float = 1e-6)
     <2% of the kernel weight, so the output is numerically near-identical but the
     convolution is ~4× cheaper on large rasters — the single biggest wall-clock win
     in the entire pipeline.
+
+    downsample: estimate `low` (the blur) and `local_std` on a downscaled copy,
+    then upsample both back to full resolution before combining with the
+    FULL-resolution `high = a - low` -- unlike log_gabor_max_index_map's
+    downsample (whose output is a coarse per-pixel label only ever sampled at
+    sparse keypoints), this function's *output* is the actual pixel data SIFT
+    detects keypoints on, so the returned array must stay full-resolution with
+    real detail intact. Safe to downsample here specifically because `low`
+    and `local_std` are themselves smooth, low-frequency fields by
+    construction (that's what a sigma=15 blur produces) -- a 2x downsample
+    barely perturbs a field that already only varies over 30+ pixel scales.
     """
     a = arr.astype(np.float32)
-    low = gaussian_filter(a, sigma=sigma, truncate=2.0)
-    high = a - low
-    local_var = gaussian_filter(high * high, sigma=sigma, truncate=2.0)
-    local_std = np.sqrt(np.maximum(local_var, 0.0)) + eps
+
+    if downsample > 1:
+        h, w = a.shape[:2]
+        sw, sh = max(1, w // downsample), max(1, h // downsample)
+        small = cv2.resize(a, (sw, sh), interpolation=cv2.INTER_AREA)
+        low_small = gaussian_filter(small, sigma=sigma / downsample, truncate=2.0)
+        low = cv2.resize(low_small, (w, h), interpolation=cv2.INTER_LINEAR)
+        high = a - low
+        high_small = cv2.resize(high, (sw, sh), interpolation=cv2.INTER_AREA)
+        var_small = gaussian_filter(high_small * high_small, sigma=sigma / downsample, truncate=2.0)
+        local_std_small = np.sqrt(np.maximum(var_small, 0.0)) + eps
+        local_std = cv2.resize(local_std_small, (w, h), interpolation=cv2.INTER_LINEAR)
+    else:
+        low = gaussian_filter(a, sigma=sigma, truncate=2.0)
+        high = a - low
+        local_var = gaussian_filter(high * high, sigma=sigma, truncate=2.0)
+        local_std = np.sqrt(np.maximum(local_var, 0.0)) + eps
+
     return (high / local_std).astype(np.float32)
 
 

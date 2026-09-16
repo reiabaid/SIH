@@ -1,0 +1,130 @@
+[
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung0",
+    "total": 190,
+    "inliers": 12,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1164584053LE",
+    "config": "sift-rung1",
+    "total": 108,
+    "inliers": 36,
+    "unique": 26,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung0",
+    "total": 207,
+    "inliers": 14,
+    "unique": 10,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "config": "sift-rung1",
+    "total": 30,
+    "inliers": 17,
+    "unique": 15,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung0",
+    "total": 306,
+    "inliers": 10,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "config": "sift-rung1",
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung0",
+    "total": 423,
+    "inliers": 13,
+    "unique": 4,
+    "well_determined": false
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "config": "sift-rung1",
+    "total": 506,
+    "inliers": 95,
+    "unique": 60,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung0",
+    "total": 498,
+    "inliers": 27,
+    "unique": 20,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "config": "sift-rung1",
+    "total": 540,
+    "inliers": 23,
+    "unique": 15,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung0",
+    "total": 240,
+    "inliers": 8,
+    "unique": 8,
+    "well_determined": true
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "config": "sift-rung1",
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung0",
+    "total": 456,
+    "inliers": 12,
+    "unique": 12,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "config": "sift-rung1",
+    "total": 0,
+    "inliers": 0,
+    "unique": 0,
+    "well_determined": false
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung0",
+    "total": 252,
+    "inliers": 15,
+    "unique": 14,
+    "well_determined": true
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "config": "sift-rung1",
+    "total": 550,
+    "inliers": 91,
+    "unique": 56,
+    "well_determined": true
+  }
+]
