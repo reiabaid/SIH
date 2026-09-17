@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, ShieldCheck, ArrowRight, ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 
 export default function Screen03Evidence({ jobId, selectedProductA, selectedProductB, onProceedToExport, onBack }) {
   const [status, setStatus] = useState('fetching'); // fetching, ready, failed

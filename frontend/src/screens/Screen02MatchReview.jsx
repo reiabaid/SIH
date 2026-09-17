@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Grid, Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 
 export default function Screen02MatchReview({ selectedProductA, selectedProductB, selectedRung, completedJobId, onAcceptMatch, onBack }) {
   const [showAllKeypoints, setShowAllKeypoints] = useState(true);

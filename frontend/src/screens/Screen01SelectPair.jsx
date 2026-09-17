@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { CheckCircle2, AlertCircle, Loader2, Zap } from 'lucide-react';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 
 // Matches src/match.py's real rung system + the lightglue matcher branch in
 // src/api.py's process_job_sync (rung == 2 -> matcher="lightglue"). No

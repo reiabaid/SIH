@@ -187,6 +187,7 @@ def load_inventory():
         rel_path = row.get(spec["path_col"])
         if not pid or not rel_path:
             continue
+        rel_path = rel_path.replace("\\", "/")
         if spec["path_col"] == "file_path":  # CH2
             resolved = _resolve_ch2_label_path(spec["base_dir"], rel_path)
         else:
@@ -315,10 +316,20 @@ async def register_job(req: RegisterRequest, background_tasks: BackgroundTasks):
     if not path_a or not path_b:
         raise HTTPException(status_code=400, detail="One or both products not found in inventory")
 
+    conn = get_db_connection()
+    existing_job = conn.execute('''
+        SELECT id FROM jobs 
+        WHERE product_a = ? AND product_b = ? AND rung = ? AND status = 'completed'
+        ORDER BY created_at DESC LIMIT 1
+    ''', (req.product_a, req.product_b, req.rung)).fetchone()
+    
+    if existing_job:
+        conn.close()
+        return {"job_id": existing_job["id"]}
+
     job_id = str(uuid.uuid4())
     created_at = datetime.utcnow().isoformat()
     
-    conn = get_db_connection()
     conn.execute('''
         INSERT INTO jobs (id, product_a, product_b, rung, status, created_at)
         VALUES (?, ?, ?, ?, 'pending', ?)
@@ -365,3 +376,8 @@ def get_job_artefact(job_id: str, filename: str):
         raise HTTPException(status_code=404, detail="Artefact file not found")
         
     return FileResponse(str(file_path))
+
+
+# Serve frontend build if it exists
+if os.path.isdir('frontend/dist'):
+    app.mount('/', StaticFiles(directory='frontend/dist', html=True), name='frontend')

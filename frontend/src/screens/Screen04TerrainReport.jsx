@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Globe, Sun, Download, AlertCircle, ArrowLeft } from 'lucide-react';
 import * as THREE from 'three';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 
 // Real deliverable files written by src/deliverable.py + src/cnet.py --
 // nothing here is fabricated (no PDF report, no bundled .tar, no "GCP
