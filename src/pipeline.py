@@ -4,7 +4,8 @@ from dataclasses import asdict
 
 import numpy as np
 
-from src.geo import align_pair, to_original_pixels, original_pixel_transform
+from src.align_cache import cached_align_pair
+from src.geo import to_original_pixels, original_pixel_transform
 from src.prep import to_gray_float, local_contrast_norm
 from src.match import match as run_match, match_tiled, TILE_SIZE, TILE_OVERLAP
 
@@ -44,9 +45,12 @@ def run_pipeline(
       real-pair inventory before relying on a higher value anywhere real
       matching happens, per this docstring's own align note below about not
       trading correctness for speed silently.
-    align: resample both products onto one common geo grid via geo.align_pair before
-      matching (Move 1 — closes the scale gap using metadata instead of asking the
-      matcher to bridge it). Off by default so callers without real georeferencing
+    align: resample both products onto one common geo grid via geo.align_pair
+      (through align_cache.cached_align_pair, an on-disk cache of that
+      deterministic, expensive resampling step keyed on product identity/shape/gsd —
+      see src/align_cache.py) before matching (Move 1 — closes the scale gap using
+      metadata instead of asking the matcher to bridge it). Off by default so callers
+      without real georeferencing
       (synthetic ablation pairs, `corners={}`) keep working unchanged; real product
       pairs should pass True. When True, match_result's pts_a/pts_b are inverted back
       out of the common-grid frame into each product's own original pixel space before
@@ -64,7 +68,7 @@ def run_pipeline(
     """
     match_product_a, match_product_b = product_a, product_b
     if align:
-        match_product_a, match_product_b = align_pair(product_a, product_b)
+        match_product_a, match_product_b = cached_align_pair(product_a, product_b)
 
     a = to_gray_float(match_product_a.array)
     b = to_gray_float(match_product_b.array)

@@ -169,22 +169,47 @@ every speed change here is still correct.
   above), not caching the whole raster. Measured net effect on total
   sift-rung0 pipeline time with the LRO-only cache in place: 31-67% faster
   across the 3 profiled pairs (`docs/research/pipeline_time_breakdown.json`).
-- Build an on-disk cache for `align_pair`'s output (the resampled,
-  common-grid product pair) keyed by `(product_a_id, product_b_id, gsd)` —
-  this is deterministic, expensive (full-raster resampling), and currently
-  recomputed from scratch on every single `/register` call for the same pair.
-  Smaller win than the product-load cache above (~9-17s vs ~35-68s measured)
-  but still real, especially for repeated demo pairs.
-- Own the "did this actually get faster and stay correct" check: after each
-  of Reia's/Manya's changes, re-run `pytest tests/ -v` (193+ baseline) and
-  `scripts/reia_day2_verify_all_pairs.py`, and report the before/after
-  wall-clock times and inlier counts side by side. This is the same
-  evaluation-lead role Riddhi already has this week, applied to speed
-  instead of accuracy.
+- ~~Build an on-disk cache for `align_pair`'s output...~~ **Done,
+  2026-09-17** — `src/align_cache.py`'s `cached_align_pair(a, b)` wraps
+  `geo.align_pair`, keyed on `(a.product_id, a.array.shape, b.product_id,
+  b.array.shape, gsd_common)` — array shape added beyond the plan's literal
+  `(product_a_id, product_b_id, gsd)` as a cheap guard against a product_id
+  that doesn't change if a source file were ever reprocessed under the same
+  id. Wired into `src/pipeline.py`'s `run_pipeline(align=True)` in place of
+  the direct `align_pair` call. Full phase-by-phase design log, including
+  two things caught along the way (a test-authoring mistake that made one
+  test file take 118s instead of ~1s from a GSD/footprint mismatch, and a
+  real hermeticity bug where a pre-existing test in `tests/test_match.py`
+  started silently writing into the real `data/cache/align_pairs/` once this
+  was wired in — fixed via a new `tests/conftest.py` that isolates both
+  on-disk caches for every test): `docs/work_Riddhi.md`.
+- ~~Own the "did this actually get faster and stay correct" check...~~
+  **Test suite done, 2026-09-17; real-inventory timing is an open
+  follow-up.** `pytest tests/ -v` → 195 passed (183 pre-existing + 14 in
+  `tests/test_align_cache.py` + 6 in `tests/test_pipeline_align_cache.py`),
+  7 failed, 1 skipped. The 7 failures are pre-existing and unrelated to this
+  work — `tests/test_match.py::test_lightglue_matcher_finds_real_correspondences`
+  and all 6 of `tests/test_final_metrics.py` fail with `OSError: [WinError
+  4551]`, a Windows Application Control policy on this machine blocking
+  `torch_python.dll`, not a code defect. **Could not run
+  `scripts/reia_day2_verify_all_pairs.py` for a real before/after** — the
+  actual CH2/LRO product files (`data/lro_nac/*.IMG`,
+  `data/ch2_products/...`) aren't present in this environment (confirmed:
+  no `.IMG` files anywhere in the repo, `data/jobs/` empty), consistent with
+  `docs/USAGE.md`'s note that these large downloads aren't committed to git.
+  **Open follow-up for whoever has the real inventory locally:** run
+  `scripts/reia_day2_verify_all_pairs.py` once cold (empty
+  `data/cache/align_pairs/`) and once warm (rerun immediately after), and
+  compare wall-clock + inlier counts against the pre-cache baseline already
+  on record in `docs/research/day2_pair_verification.json` /
+  `docs/research/pipeline_time_breakdown.json` (pre-cache `align_pair_s`
+  measured at 3.17–11.03s per pair across the 3 profiled pairs there — the
+  expected per-pair saving on a warm hit).
 - **Methodology:** cache correctness matters more than cache existence — a
   stale or wrongly-keyed cache that serves the wrong geometry is worse than
-  no cache. Write a test that a cache hit and a cache miss produce identical
-  output before this is trusted.
+  no cache. A test that a cache hit and a cache miss produce identical
+  output exists and passes (`tests/test_align_cache.py`,
+  `tests/test_pipeline_align_cache.py`) before this is trusted.
 
 ## Manya — ingestion-side caching + deployment (main, critical path)
 
