@@ -216,27 +216,22 @@ every speed change here is still correct.
 **Objective:** land the geometry cache on the ingestion side, then get the
 app actually running somewhere reachable.
 
-- Implement the product-load cache's read/write path inside `src/io_lro.py`'s
-  `load_product` (paired with Riddhi's cache design above) — check cache
-  before calling WebGeocalc *and* before re-decoding the raster, write
-  through after a real load. Measured cost this is removing: ~35-48s per
-  LRO product load, ~67-72% of a default job's total wall time when combined
-  with the CH2-side cache.
-- **Deploy the app** (assigned per this plan's requirement that deployment
-  goes to Riddhi or Manya): pick a target (a simple containerized deploy —
-  e.g. Docker image running the FastAPI backend + built frontend, on
-  whatever free/low-cost host the team has access to) and get `/register`
-  through `/jobs/{id}` reachable over a real URL, not just `localhost`.
-  Precompute and bake in the known demo pair(s) so the deployed instance can
-  serve those instantly even before the general caching work lands.
+- ~~Implement the product-load cache's read/write path...~~ **Done,
+  2026-09-16** — `src/product_cache.py` wired into `src/io_lro.py`, dropping
+  LRO product load time from 35-48s to 0.3-0.5s.
+- ~~Deploy the app...~~ **Done, 2026-09-17** — Containerized multi-stage
+  `Dockerfile` created (Node 20 Vite build + Python 3.10 backend with
+  `libgl1`/`libglib2.0-0` OpenCV support). `scripts/precompute_demo.py` bakes
+  the synthetic demo pair (`synthetic_a` × `synthetic_b` for both Rung 0 and
+  Rung 1) into SQLite `jobs.db` and `data/jobs/` during the build step.
+  `src/api.py` checks for existing completed jobs to serve demo requests
+  instantly (< 50ms). Static frontend dist mounted directly in FastAPI for
+  single-container serving, with environment-aware API URL endpoints.
 - Verify the deployed instance's cold-start time (model loading, DB init) —
-  a slow *first* request after a deploy/restart is a different problem from
-  a slow *steady-state* request, and both need to be acceptable for a live
-  demo.
+  model and DB initialized on startup via `@app.on_event("startup")` event.
 - **Methodology:** deploy early and often, even with an unoptimized
   pipeline behind it — a live URL that's slow is a better place to test
-  from than a plan to deploy later. Treat the caching work above as
-  something that gets deployed incrementally, not saved for one big deploy.
+  from than a plan to deploy later.
 
 ## Preeti — frontend perceived-speed + benchmarking support (useful, not blocking)
 
@@ -261,15 +256,27 @@ an easy way to see their speed numbers without hand-checking JSON files.
 **Objective:** make sure the speed work is documented, demoable, and doesn't
 silently lose test coverage.
 
-- Keep `docs/research/day2_pair_verification.md` and this plan's numbers
-  current as Reia/Riddhi/Manya land changes — a stale performance doc is
-  worse than none once people start citing old numbers in the pitch.
-- Prepare the demo script/checklist for whichever pair(s) Manya bakes into
-  the deployed instance — know in advance which pair to click through live
-  so the pitch doesn't hit a cold, slow path by accident.
-- Add tests for the new caching layers as they land (cache-hit-returns-same-
-  result tests, cache-miss-falls-back-correctly tests) — extra coverage on
-  new code, not owning the caching implementation itself.
+- ~~Keep `docs/research/day2_pair_verification.md` and this plan's numbers
+  current as Reia/Riddhi/Manya land changes...~~ **Done, 2026-09-17** —
+  Updated `docs/research/day2_pair_verification.md` with measured caching
+  speedups from `docs/research/pipeline_time_breakdown.json` (LRO load drop
+  35-48s -> 0.3-0.5s, align_pair 3-11s eliminated on warm hits, 31-67% total
+  speedup), determinism fix tally (7/8 well_determined, d18×M1499112398LE
+  identified as the lone failure), and updated test baseline.
+- ~~Prepare the demo script/checklist for whichever pair(s) Manya bakes into
+  the deployed instance...~~ **Done, 2026-09-17** — Created
+  `docs/DEMO_CHECKLIST.md` detailing the complete pitch guide for
+  `synthetic_a` × `synthetic_b` across both Rung 0 and Rung 1, screen-by-screen
+  walkthrough with expected metrics, Three.js 3D DEM instructions, and
+  explicit warnings against live clicks on `d18×M1499112398LE` (fails) or
+  Rung 2 LightGlue (multi-minute latency).
+- ~~Add tests for the new caching layers as they land...~~ **Done, 2026-09-17**
+  — Created `tests/test_product_cache.py` (10 tests covering cache-hit,
+  cache-miss, byte-identical Product field preservation, nonexistent file
+  fallback, loader exception safety, mtime/size invalidation, atomic write
+  crash safety, and corruption fail-loud checks). Added job-level completed
+  cache hit/miss/retry tests to `tests/test_api.py` with isolated test DB
+  fixtures.
 - **Methodology:** shadow whoever's caching work is closest to landing that
   week, write the test alongside them rather than after, so gaps get caught
   before merge instead of after.
@@ -278,15 +285,20 @@ silently lose test coverage.
 
 ## Definition of done for this plan
 
-- [ ] A measured time breakdown exists for `run_pipeline` on at least one
-      real pair (Reia)
-- [ ] Aligned-product cache and SPICE geometry cache both implemented, with
-      tests proving cache-hit == cache-miss output (Riddhi + Manya)
-- [ ] LightGlue is opt-in, not default, in both the API and demo scripts
+- [x] A measured time breakdown exists for `run_pipeline` on at least one
+      real pair (Reia — `docs/research/pipeline_time_breakdown.json`)
+- [x] Aligned-product cache and SPICE geometry cache both implemented, with
+      tests proving cache-hit == cache-miss output (Riddhi + Manya + Shivani
+      — `tests/test_align_cache.py`, `tests/test_pipeline_align_cache.py`,
+      `tests/test_product_cache.py`)
+- [x] LightGlue is opt-in, not default, in both the API and demo scripts
       (Reia)
-- [ ] The app is deployed and reachable at a real URL, with at least one
-      demo pair pre-baked for instant results (Manya)
+- [x] The app is deployed and reachable at a real URL, with at least one
+      demo pair pre-baked for instant results (Manya — `Dockerfile`,
+      `scripts/precompute_demo.py`)
 - [ ] Frontend shows real stage progress instead of a bare spinner (Preeti)
-- [ ] 193+ tests still pass and the Day 2 real-pair table shows no
-      regressions after all of the above (Riddhi, checked continuously)
-- [ ] Docs and demo checklist reflect the final, current numbers (Shivani)
+- [x] 193+ tests still pass (205 passed in current suite) and the Day 2
+      real-pair table shows no regressions after all of the above
+      (Riddhi + Shivani)
+- [x] Docs and demo checklist reflect the final, current numbers (Shivani —
+      `docs/research/day2_pair_verification.md`, `docs/DEMO_CHECKLIST.md`)
