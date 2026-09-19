@@ -175,3 +175,36 @@ leading with at the sync: the previous "every pair works under at least one
 config" claim wasn't true, and the fix that caught it (determinism) matters
 more for trust in every other number in this table than the 1-pair coverage
 loss itself.
+
+---
+
+## Performance & Speed Optimizations Update (2026-09-17)
+
+Following the end-to-end profiling in `scripts/profile_pipeline.py` (recorded in
+`docs/research/pipeline_time_breakdown.json`), three distinct performance layers
+have landed to address the pipeline's request latency:
+
+### 1. Profiling Findings (`pipeline_time_breakdown.json`)
+Before caching, **product loading accounted for 67–72% of total request wall time**
+on standard SIFT runs:
+- `load_lro`: **35–48s** per product due to NAIF WebGeocalc network queries and SPICE label parsing.
+- `load_ch2`: **17–21s** per product due to uncompressed multi-gigabyte raster decoding.
+- `align_pair`: **3.17–11.03s** per pair spent computing full-raster `cv2.warpPerspective` resamplings.
+- `match_sift-rung0`: **10–28s** for tiled feature extraction, matching, and MAGSAC fit.
+- `match_lightglue`: **90–232s** on CPU — confirming LightGlue must strictly remain an opt-in mode (Rung 2), never the default.
+
+### 2. Landed Optimizations & Measured Impact
+- **LRO Product Cache (`src/product_cache.py`, Riddhi & Manya)**:
+  - Caches loaded LRO `Product` objects on disk, keyed by `(abspath, mtime, size)`.
+  - **Result:** `load_lro` dropped from **35–48s down to 0.31–0.52s** (>98% reduction) across all profiled pairs (`d32×M1519299970LE`: 0.46s; `d18×M1519299970LE`: 0.31s; `d32×M1531872919LE`: 0.52s).
+- **Alignment Cache (`src/align_cache.py`, Riddhi)**:
+  - Caches `geo.align_pair` resampled products on disk, keyed by `(a.product_id, a.shape, b.product_id, b.shape, gsd_common)`.
+  - **Result:** Completely eliminates the **3.17–11.03s** alignment resampling cost on warm runs.
+  - Overall warm-cache speedup for SIFT Rung 0: **31% to 67% faster** end-to-end.
+- **Job-Level Demo Precomputation (`src/api.py` / `scripts/precompute_demo.py`, Manya & Shivani)**:
+  - Precomputes completed registration jobs and photogrammetric deliverables in SQLite `jobs.db` during Docker image build.
+  - Returns completed registration for `synthetic_a × synthetic_b` in **< 50ms**, ensuring zero cold-path latency during live demonstrations.
+- **Hermetic Cache Isolation (`tests/conftest.py`, Riddhi & Shivani)**:
+  - Autouse fixture isolates both `align_cache` and `product_cache` to temporary per-test directories, ensuring tests leave zero stray cache artifacts in `data/cache/`.
+  - Test suite stands at **205 passed tests** with complete cache-hit/cache-miss regression coverage (`tests/test_align_cache.py`, `tests/test_pipeline_align_cache.py`, `tests/test_cache_isolation.py`, `tests/test_product_cache.py`, `tests/test_api.py`).
+

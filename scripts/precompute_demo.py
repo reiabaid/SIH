@@ -14,25 +14,27 @@ async def precompute_demo():
     print("Loading inventory...")
     load_inventory()
     
-    req = RegisterRequest(
-        product_a="synthetic_a",
-        product_b="synthetic_b",
-        rung=0
-    )
-    
-    print("Triggering precomputation for synthetic demo pair (rung 0)...")
-    bg_tasks = BackgroundTasks()
-    res = await register_job(req, bg_tasks)
-    
-    job_id = res["job_id"]
-    print(f"Registered job {job_id}")
-    
-    print("Executing background tasks synchronously for precomputation...")
-    # Execute the tasks that were added
-    for task in bg_tasks.tasks:
-        await task.func(*task.args, **task.kwargs)
+    for rung in [0, 1]:
+        print(f"Triggering precomputation for synthetic demo pair (rung {rung})...")
+        req = RegisterRequest(
+            product_a="synthetic_a",
+            product_b="synthetic_b",
+            rung=rung
+        )
+        bg_tasks = BackgroundTasks()
+        res = await register_job(req, bg_tasks)
         
-    print(f"Precomputation completed for job {job_id}")
+        job_id = res["job_id"]
+        print(f"Registered job {job_id} for rung {rung}")
+        
+        if bg_tasks.tasks:
+            print(f"Executing background tasks synchronously for job {job_id}...")
+            for task in bg_tasks.tasks:
+                await task.func(*task.args, **task.kwargs)
+        else:
+            print(f"Job {job_id} was already precomputed (cache hit).")
+            
+        print(f"Precomputation completed for job {job_id} (rung {rung})")
 
 if __name__ == "__main__":
     asyncio.run(precompute_demo())
