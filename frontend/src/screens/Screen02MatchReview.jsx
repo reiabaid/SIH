@@ -11,6 +11,11 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
   const [metrics, setMetrics] = useState(null);
   const [geoJson, setGeoJson] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  // Real backend-reported stage (src/api.py's `stage` column, updated as
+  // process_job_sync actually progresses) -- not simulated. `polling` alone
+  // used to mean "somewhere between register and completed" with zero
+  // detail, which reads as a frozen/broken UI on a real, slower pair.
+  const [backendStage, setBackendStage] = useState(null);
 
   // Guards against React 18 StrictMode's dev-only double-invoke of this
   // effect: without it, the second invocation re-runs startJob() before the
@@ -82,6 +87,7 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
               const pollRes = await fetch(`${API_BASE}/jobs/${newJobId}`);
               if (!pollRes.ok) throw new Error("Failed to poll job status.");
               const pollData = await pollRes.json();
+              if (pollData.stage) setBackendStage(pollData.stage);
 
               if (pollData.status === 'completed') {
                 clearInterval(pollIntervalRef.current);
@@ -153,22 +159,56 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
   }
 
   if (jobStatus !== 'ready') {
+    // Real, backend-reported pipeline stages (src/api.py's `stage` column,
+    // written as process_job_sync actually progresses -- not a client-side
+    // timer or guess). Index is derived from jobStatus + backendStage
+    // together so registering/fetching (client-only phases) and the
+    // backend's own three real stages all land on one continuous stepper.
+    const PIPELINE_STEPS = [
+      { key: 'registering', label: 'Registering job' },
+      { key: 'loading_products', label: 'Loading real ISRO imagery' },
+      { key: 'aligning_and_matching', label: 'Aligning & matching tie-points' },
+      { key: 'writing_deliverable', label: 'Writing registered raster' },
+      { key: 'fetching_artefacts', label: 'Retrieving results' },
+    ];
+    const currentKey = jobStatus === 'registering' ? 'registering'
+      : jobStatus === 'fetching_artefacts' ? 'fetching_artefacts'
+      : (backendStage || 'loading_products'); // polling with no stage yet == just started loading
+    const currentIndex = PIPELINE_STEPS.findIndex(s => s.key === currentKey);
+
     return (
-      <div className="flex flex-col items-center justify-center h-[60vh] space-y-6 animate-fadeIn">
-        <Loader2 className="w-10 h-10 animate-spin text-cyan-500" />
-        <div className="text-center space-y-2">
-          <h2 className="text-lg font-display font-semibold text-slate-200">
-            {jobStatus === 'registering' && "Registering Match Job..."}
-            {jobStatus === 'polling' && "Executing Pipeline..."}
-            {jobStatus === 'fetching_artefacts' && "Retrieving Artifacts..."}
-          </h2>
-          <p className="text-sm font-mono text-cyan-400">
-            {prodA_id} → {prodB_id}
-          </p>
-          {jobStatus === 'polling' && (
-            <p className="text-xs font-mono text-slate-500 mt-2">Running sub-pixel tie-point alignment — this can take a while on real, full-resolution imagery.</p>
-          )}
+      <div className="flex flex-col items-center justify-center h-[60vh] space-y-8 animate-fadeIn">
+        <div className="text-center space-y-1">
+          <p className="text-sm font-mono text-cyan-400">{prodA_id} → {prodB_id}</p>
+          <p className="text-[11px] font-mono text-slate-600">Live pipeline status, reported directly from the backend job.</p>
         </div>
+
+        <div className="w-full max-w-md space-y-3">
+          {PIPELINE_STEPS.map((step, i) => {
+            const done = i < currentIndex;
+            const active = i === currentIndex;
+            return (
+              <div key={step.key} className="flex items-center space-x-3">
+                <div className="shrink-0 w-6 h-6 flex items-center justify-center">
+                  {done && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+                  {active && <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />}
+                  {!done && !active && <div className="w-2 h-2 rounded-full bg-slate-700" />}
+                </div>
+                <span className={`text-sm font-mono ${
+                  done ? 'text-slate-500' : active ? 'text-slate-200 font-semibold' : 'text-slate-600'
+                }`}>
+                  {step.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {currentKey === 'aligning_and_matching' && (
+          <p className="text-xs font-mono text-slate-500 max-w-md text-center">
+            Sub-pixel tie-point alignment on real, full-resolution imagery — this is the longest step.
+          </p>
+        )}
       </div>
     );
   }

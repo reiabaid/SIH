@@ -13,3 +13,4 @@ pvl
 fastapi
 uvicorn
 pdr
+webgeocalc

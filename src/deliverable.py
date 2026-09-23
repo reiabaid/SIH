@@ -130,7 +130,7 @@ def build_deliverable(product_a: Product, product_b: Product, match_result: Matc
                       out_dir: str) -> dict:
     """Warp A into B's pixel frame and write all hand-off artifacts."""
     os.makedirs(out_dir, exist_ok=True)
-    registered = cv2.warpPerspective(product_a.array.astype(np.float32),
+    registered = cv2.warpPerspective(product_a.array.astype(np.float32, copy=False),
                                      match_result.transform,
                                      (product_b.array.shape[1], product_b.array.shape[0]))
     registered_path = os.path.join(out_dir, "registered_a_to_b.tif")

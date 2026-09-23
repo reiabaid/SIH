@@ -1,0 +1,21 @@
+# Regenerable/ephemeral local state -- never belongs in a deployable image.
+# Found during a real docker build: data/ was 16GB locally, with
+# data/cache/ (on-disk product/align caches, src/product_cache.py +
+# src/align_cache.py -- regenerated automatically on first use) and
+# data/jobs/ (per-job run artifacts, regenerated per request) accounting for
+# ~13GB of that with zero reason to ship them in the image.
+data/cache/
+data/jobs/
+
+# Local dev/tooling, not part of the app itself
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.git/
+.pytest_cache/
+
+# Frontend build artifacts get produced fresh inside the frontend-builder
+# stage -- copying a local node_modules/dist in would be stale and wasteful.
+frontend/node_modules/
+frontend/dist/

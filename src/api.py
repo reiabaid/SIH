@@ -102,6 +102,7 @@ class JobResponse(BaseModel):
     product_b: str
     rung: int
     status: str
+    stage: Optional[str]
     rmse: Optional[float]
     inliers: Optional[int]
     total_matches: Optional[int]
@@ -124,6 +125,7 @@ def init_db():
             product_b TEXT,
             rung INTEGER,
             status TEXT,
+            stage TEXT,
             rmse REAL,
             inliers INTEGER,
             total_matches INTEGER,
@@ -133,6 +135,13 @@ def init_db():
             artefact_dir TEXT
         )
     ''')
+    # Idempotent migration for a jobs.db that already exists from before the
+    # `stage` column was added -- CREATE TABLE IF NOT EXISTS above is a no-op
+    # against an existing table, so an older DB file needs this explicitly.
+    try:
+        conn.execute("ALTER TABLE jobs ADD COLUMN stage TEXT")
+    except sqlite3.OperationalError:
+        pass  # column already exists
     conn.commit()
     conn.close()
 
@@ -244,25 +253,63 @@ def compute_overlap(req: OverlapRequest):
     }
 
 
-def load_product_dynamically(product_id: str, path: str):
+def load_product_dynamically(product_id: str, path: str, overlap_hint=None):
     if product_id in SYNTHETIC_IDS:
         return _load_synthetic_product(product_id)
     if "ch2" in product_id.lower():
-        return io_ch2.load_product(path)
+        return io_ch2.load_product(path, overlap_hint=overlap_hint)
     else:
         return io_lro.load_product(path)
+
+def _set_stage(job_id: str, stage: str) -> None:
+    """Own connection per call: process_job_sync runs on a worker thread via
+    asyncio.to_thread, and sqlite3 connections aren't safe to share across
+    threads. Best-effort -- a failed stage update shouldn't abort the job
+    itself, so swallow errors here rather than let a UI-only nicety take
+    down a real registration.
+    """
+    try:
+        conn = get_db_connection()
+        conn.execute("UPDATE jobs SET stage = ? WHERE id = ?", (stage, job_id))
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
 
 def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str, rung: int, artefact_dir: str):
     os.makedirs(artefact_dir, exist_ok=True)
     try:
-        product_a = load_product_dynamically(id_a, path_a)
-        product_b = load_product_dynamically(id_b, path_b)
-        
+        _set_stage(job_id, "loading_products")
+        # Load whichever product is CH2 SECOND, passing the other (already
+        # loaded) product as overlap_hint -- crops CH2's decode to just the
+        # overlap region instead of the full raster. Necessary for the
+        # process to fit in a memory-constrained deployment: a full CH2
+        # decode + align_pair OOM-crashes (exit 137) a real registration
+        # under Docker Desktop's default ~7.46GB limit, while cropping brings
+        # peak RSS down to a safe margin. Known trade-off, accepted as the
+        # lesser evil versus a hard crash: cropped contrast normalization
+        # can flip well_determined on a small number of real pairs (2/8 in
+        # the validated inventory, see docs/WORK_DIVISION_PLAN.md and
+        # docs/research/ch2_crop_validation.json).
+        a_is_ch2 = "ch2" in id_a.lower() and id_a not in SYNTHETIC_IDS
+        b_is_ch2 = "ch2" in id_b.lower() and id_b not in SYNTHETIC_IDS
+        if a_is_ch2 and not b_is_ch2:
+            product_b = load_product_dynamically(id_b, path_b)
+            product_a = load_product_dynamically(id_a, path_a, overlap_hint=product_b)
+        elif b_is_ch2 and not a_is_ch2:
+            product_a = load_product_dynamically(id_a, path_a)
+            product_b = load_product_dynamically(id_b, path_b, overlap_hint=product_a)
+        else:
+            product_a = load_product_dynamically(id_a, path_a)
+            product_b = load_product_dynamically(id_b, path_b)
+
         # We determine the matcher based on rung. 0 -> sift, 1 -> mod-x (which is mapped to "sift" rung 1 in some code, or "sift" but rung 1. In pipeline it takes matcher="sift" and rung=rung)
         matcher = "sift"
         if rung == 2:
             matcher = "lightglue"
 
+        _set_stage(job_id, "aligning_and_matching")
         out = run_pipeline(product_a, product_b, matcher=matcher, rung=rung, align=True)
         mr = out["match_result"]
         result = MatchResult(
@@ -270,6 +317,7 @@ def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str
             inlier_mask=mr["inlier_mask"], transform=mr["transform"], matcher=mr["matcher"],
             shape_a=mr["shape_a"], shape_b=mr["shape_b"], runtime_s=mr["runtime_s"],
         )
+        _set_stage(job_id, "writing_deliverable")
         metrics = build_deliverable(product_a, product_b, result, artefact_dir)
         write_control_network(
             result, product_a, product_b,
