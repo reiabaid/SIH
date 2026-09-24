@@ -38,7 +38,7 @@ def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
         from osgeo import gdal, osr
         driver = gdal.GetDriverByName("GTiff")
         dataset = driver.Create(path, width, height, 1, gdal.GDT_Float32,
-                                options=["COMPRESS=LZW"])
+                                options=["COMPRESS=NONE"])
         if dataset is None:
             raise RuntimeError(f"GDAL could not create {path}")
 
@@ -67,7 +67,12 @@ def _write_geotiff(path: str, array: np.ndarray, product: Product) -> None:
             dtype=np.float32,
             crs="EPSG:4326",
             transform=transform,
-            compress="lzw",
+            # Uncompressed on purpose: LZW on float32 pixel data barely
+            # compresses (measured 2026-09-24 on a real 52224x2532 registered
+            # raster: 529 MB raw -> 516 MB with LZW, a 2.5% saving) yet cost
+            # ~4.5s of single-threaded encode time -- about a quarter of
+            # build_deliverable. Pixel values are identical either way.
+            compress="none",
         ) as dst:
             dst.write(array.astype(np.float32), 1)
         return
@@ -123,7 +128,12 @@ def write_overlay(path: str, registered: np.ndarray, target: np.ndarray) -> None
     red = (np.clip(target, 0, 1) * 255).astype(np.uint8)
     green = (np.clip(registered, 0, 1) * 255).astype(np.uint8)
     blue = np.zeros_like(red)
-    Image.fromarray(np.stack([red, green, blue], axis=-1), mode="RGB").save(path)
+    # compress_level=1: PIL's default (6) spent ~12.9s encoding a real
+    # 52224x2532 overlay (measured 2026-09-24, ~70% of build_deliverable).
+    # Lossless either way -- PNG is always lossless; the level only trades
+    # encode time against file size.
+    Image.fromarray(np.stack([red, green, blue], axis=-1), mode="RGB").save(
+        path, compress_level=1)
 
 
 def build_deliverable(product_a: Product, product_b: Product, match_result: MatchResult,
