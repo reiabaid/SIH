@@ -79,6 +79,7 @@ def run_pipeline(
     tile_overlap: int = TILE_OVERLAP,
     cascade: bool = False,
     verify: bool = False,
+    max_offset_px: "float | None" = None,
 ) -> dict:
     """product_a, product_b: src.types.Product instances, already loaded.
 
@@ -134,6 +135,9 @@ def run_pipeline(
       config["agreement"] (see `agreement`). Costs one extra matching pass
       when rung 0 alone would have been well-determined.
 
+    max_offset_px: georeferencing prior for the tiled path, see
+      match.match_tiled. Only meaningful with align=True (common geo grid).
+
     Returns a dict with the MatchResult (as a dict, in original-pixel space whenever
     align=True) plus full metrics (rmse/inlier_stats/coverage) via metrics.evaluate.
     """
@@ -150,7 +154,8 @@ def run_pipeline(
     def _match(r):
         if max(a.shape[:2]) > TILE_THRESHOLD_PX or max(b.shape[:2]) > TILE_THRESHOLD_PX:
             return match_tiled(a, b, matcher=matcher, rung=r,
-                               tile_size=tile_size, overlap=tile_overlap)
+                               tile_size=tile_size, overlap=tile_overlap,
+                               max_offset_px=max_offset_px)
         return run_match(a, b, matcher=matcher, rung=r)
 
     rungs_tried = []

@@ -11,6 +11,7 @@ working grid under the fitted A->B transform, in metres (east +, north +).
     python -m scripts.offset_consistency
 """
 import json
+import sys
 
 import numpy as np
 
@@ -22,7 +23,9 @@ from src.match import match_tiled
 from src.metrics import fit_reliability
 from src.prep import local_contrast_norm, to_gray_float
 
-OUT = "docs/research/offset_consistency.json"
+PRIOR = float(sys.argv[1]) if len(sys.argv) > 1 else None  # max_offset_px
+OUT = ("docs/research/offset_consistency.json" if PRIOR is None
+       else f"docs/research/offset_consistency_prior{int(PRIOR)}.json")
 
 
 def _offset_en_m(transform, shape, gsd_m):
@@ -43,7 +46,7 @@ def main():
         a = local_contrast_norm(to_gray_float(pa.array))
         b = local_contrast_norm(to_gray_float(pb.array))
         for rung in (0, 1):
-            r = match_tiled(a, b, matcher="sift", rung=rung)
+            r = match_tiled(a, b, matcher="sift", rung=rung, max_offset_px=PRIOR)
             rel = fit_reliability(r)
             east, north = _offset_en_m(r.transform, r.shape_a, pa.gsd_m)
             row = {"ch2": ch2_id, "lro": lro_file[:-4], "rung": rung,

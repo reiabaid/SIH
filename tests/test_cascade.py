@@ -79,3 +79,18 @@ def _run_verify(monkeypatch, per_rung):
     monkeypatch.setattr(pipeline, "run_match", fake)
     return pipeline.run_pipeline(_product("a"), _product("b"), cascade=True, verify=True,
                                  use_lcn=False), calls
+
+
+def test_offset_prior_drops_candidates_far_from_the_metadata_position():
+    from src.match import match_tiled
+    from tests.test_match import _synthetic_crater_field
+    from tests.make_synthetic import make_synthetic_pair
+    img = _synthetic_crater_field(size=512, seed=3)
+    warped, _ = make_synthetic_pair(img, seed=5, rotation_deg=0.0, scale_range=(1.0, 1.0),
+                                    translation_frac=0.10)  # true shift ~50 px
+    free = match_tiled(img, warped, matcher="sift", tile_size=256, overlap=32)
+    tight = match_tiled(img, warped, matcher="sift", tile_size=256, overlap=32, max_offset_px=5)
+    assert len(free.pts_a) > 0
+    assert len(tight.pts_a) < len(free.pts_a)
+    if len(tight.pts_a):
+        assert np.linalg.norm(tight.pts_b - tight.pts_a, axis=1).max() <= 5

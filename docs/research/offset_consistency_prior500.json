@@ -1,0 +1,146 @@
+[
+  {
+    "ch2": "d18",
+    "lro": "M1164584053LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": -173.3,
+    "north_m": 355.1
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1164584053LE",
+    "rung": 1,
+    "well_determined": true,
+    "unique": 5,
+    "east_m": -513.9,
+    "north_m": 653.3
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1177420489LE",
+    "rung": 0,
+    "well_determined": true,
+    "unique": 7,
+    "east_m": -258.0,
+    "north_m": -1248.5
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1177420489LE",
+    "rung": 1,
+    "well_determined": false,
+    "unique": 0,
+    "east_m": 0.0,
+    "north_m": -0.0
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1499112398LE",
+    "rung": 0,
+    "well_determined": true,
+    "unique": 6,
+    "east_m": 1178.9,
+    "north_m": -1876.6
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1499112398LE",
+    "rung": 1,
+    "well_determined": false,
+    "unique": 0,
+    "east_m": 0.0,
+    "north_m": -0.0
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1519299970LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": -1238.2,
+    "north_m": 4212.7
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1519299970LE",
+    "rung": 1,
+    "well_determined": true,
+    "unique": 10,
+    "east_m": 1058.7,
+    "north_m": -2189.0
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1519299970LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": 341.4,
+    "north_m": -5091.1
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1519299970LE",
+    "rung": 1,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": 475.4,
+    "north_m": 1476.0
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1529523925LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": -2381.9,
+    "north_m": -2286.1
+  },
+  {
+    "ch2": "d18",
+    "lro": "M1529523925LE",
+    "rung": 1,
+    "well_determined": false,
+    "unique": 0,
+    "east_m": 0.0,
+    "north_m": -0.0
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1529537951LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": 578.3,
+    "north_m": 387.5
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1529537951LE",
+    "rung": 1,
+    "well_determined": false,
+    "unique": 0,
+    "east_m": 0.0,
+    "north_m": -0.0
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1531872919LE",
+    "rung": 0,
+    "well_determined": false,
+    "unique": 4,
+    "east_m": 760.6,
+    "north_m": -987.6
+  },
+  {
+    "ch2": "d32",
+    "lro": "M1531872919LE",
+    "rung": 1,
+    "well_determined": true,
+    "unique": 23,
+    "east_m": 54.5,
+    "north_m": -3024.9
+  }
+]

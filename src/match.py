@@ -404,7 +404,8 @@ def match(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0) ->
 
 def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0,
                  tile_size: int = TILE_SIZE, overlap: int = TILE_OVERLAP,
-                 min_pool_points: int = MIN_POOL_POINTS) -> MatchResult:
+                 min_pool_points: int = MIN_POOL_POINTS,
+                 max_offset_px: "float | None" = None) -> MatchResult:
     """Tile-then-pool-then-globally-refit matching for rasters too large to hand
     match() whole (an OHRC strip is ~55000x12000px).
 
@@ -423,6 +424,15 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
     correspondences pooled from every other tile, so it becomes a global
     outlier instead of a locally-confident wrong answer. This is the same
     mechanism tests/test_tiling.py validates directly against ground truth.
+
+    max_offset_px: a georeferencing prior. When a and b were resampled onto one
+    common geo grid (pipeline align=True) the metadata-implied registration is
+    the identity, so a candidate match whose two points are more than this many
+    pixels apart contradicts the metadata by more than the allowed
+    georeferencing error and is dropped BEFORE the global fit. Real fits found
+    without it landed 2-5 km from the metadata and disagreed with each other
+    (docs/research/offset_consistency.json); on repetitive terrain the along-strip
+    direction is otherwise unconstrained. None disables the prior.
     """
     t0 = time.time()
     tiles_a = tile(a, tile_size, overlap)
@@ -453,7 +463,14 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
         result = match(ta, tb, matcher=matcher, rung=rung)
         if len(result.pts_a) == 0:
             return None
-        return untile_points(result.pts_a, offset_a), untile_points(result.pts_b, offset_b), result.scores
+        pa, pb = untile_points(result.pts_a, offset_a), untile_points(result.pts_b, offset_b)
+        sc = result.scores
+        if max_offset_px is not None:
+            keep = np.linalg.norm(pb - pa, axis=1) <= max_offset_px
+            if not keep.any():
+                return None
+            pa, pb, sc = pa[keep], pb[keep], sc[keep]
+        return pa, pb, sc
 
     pooled = {}  # tile index -> (a_pts, b_pts, scores), keyed by submission order
 
