@@ -351,3 +351,10 @@ in memory) is roadmap, not built; d18×M1499112398LE fails every matcher.
       (Riddhi + Shivani)
 - [x] Docs and demo checklist reflect the final, current numbers (Shivani —
       `docs/research/day2_pair_verification.md`, `docs/DEMO_CHECKLIST.md`)
+
+### Verification addendum — 2026-09-24 (end of session)
+- Full suite: 251 passed (before the zero-match fix; +1 test since).
+- Browser-driven check (Playwright, live server): Screen 01 lists real CH2/LRO products, ranks references from footprints only (d18 -> M1529523925LE 24.4%, M1519299970LE 20.8%, M1499112398LE 20.7%, M1164584053LE 4.9%); the stage stepper advances through real backend stages; the cropped overlay viewer renders.
+- Bug found by that check: a matcher returning zero matches (d18 x M1529523925LE, rung 1) crashed `build_deliverable` (`cv2.perspectiveTransform` returns None on empty input; NaN metrics are not JSON-serialisable). Fixed and tested; the job now completes and reports 0 matches with the untrustworthy-fit banner.
+- Cold rung-1 run on that pair took ~90s on a machine with ~4 GB free RAM (rung 0 is faster); the single-digit-second goal is still not met for cold real pairs.
+- NOT done: Docker image rebuild/run with the final code (needs a machine with >=8 GB free and Docker Desktop running), hosted deployment, tiled/coarse-to-fine registration, rung0->rung1 cascade.
