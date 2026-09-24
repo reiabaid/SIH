@@ -11,7 +11,7 @@ const ARTEFACTS = [
   { file: 'registered_a_to_b.tif', label: 'Registered raster', desc: 'GeoTIFF warped into the reference frame' },
   { file: 'match_points.csv', label: 'Match points (CSV)', desc: 'Tie-points with pixel + geo coordinates' },
   { file: 'match_points.geojson', label: 'Match points (GeoJSON)', desc: 'Tie-point lines as GeoJSON' },
-  { file: 'overlay_rgb.png', label: 'Overlay preview', desc: 'Red/green registered alignment' },
+  { file: 'overlay_rgb.png', label: 'Overlay preview', desc: 'Red/green alignment, cropped to the overlap and downscaled (preview only; full resolution is in the registered raster)' },
   { file: 'control_network.net', label: 'Control network', desc: 'ISIS PVL format, ready for jigsaw' },
   { file: 'metrics.json', label: 'Metrics (raw JSON)', desc: 'Same numbers shown on the Evidence screen, as a machine-readable file' },
 ];

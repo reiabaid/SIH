@@ -124,7 +124,47 @@ def write_match_geojson(path: str, match_result: MatchResult, product_a: Product
         json.dump({"type": "FeatureCollection", "features": features}, handle, indent=2)
 
 
-def write_overlay(path: str, registered: np.ndarray, target: np.ndarray) -> None:
+def _overlap_bbox(registered: np.ndarray, margin_frac: float = 0.05):
+    """(row_start, row_end, col_start, col_end), exclusive ends, of the region
+    where `registered` actually has content, padded by `margin_frac` of each
+    extent. cv2.warpPerspective fills everything outside A's footprint with
+    exactly 0.0, so non-zero pixels mark where A landed in B's frame. Returns
+    None when nothing landed (degenerate registration) -- callers then keep
+    the full frame rather than crop to nothing.
+    """
+    filled = registered != 0
+    rows = np.flatnonzero(filled.any(axis=1))
+    if rows.size == 0:
+        return None
+    cols = np.flatnonzero(filled.any(axis=0))
+    h, w = registered.shape
+    pad_r = int((rows[-1] - rows[0] + 1) * margin_frac)
+    pad_c = int((cols[-1] - cols[0] + 1) * margin_frac)
+    return (max(0, rows[0] - pad_r), min(h, rows[-1] + 1 + pad_r),
+            max(0, cols[0] - pad_c), min(w, cols[-1] + 1 + pad_c))
+
+
+def write_overlay(path: str, registered: np.ndarray, target: np.ndarray,
+                  max_side: int = 4096) -> None:
+    """Write the red(target)/green(registered) alignment preview.
+
+    A preview, not a deliverable: the registered GeoTIFF and the match points
+    carry the full-resolution result. Cropped to the region where the
+    registered image actually landed, then downscaled so the longest side is
+    at most `max_side`. Uncropped, a real LRO NAC frame (52224x2532, ~20:1)
+    made a 140-220 MB PNG that took ~5-13s to encode and rendered as a
+    ~24px-wide sliver in the UI's viewer, so most of that was unusable.
+    """
+    box = _overlap_bbox(registered)
+    if box is not None:
+        r0, r1, c0, c1 = box
+        registered, target = registered[r0:r1, c0:c1], target[r0:r1, c0:c1]
+    longest = max(registered.shape)
+    if longest > max_side:
+        scale = max_side / longest
+        size = (max(1, int(registered.shape[1] * scale)), max(1, int(registered.shape[0] * scale)))
+        registered = cv2.resize(registered, size, interpolation=cv2.INTER_AREA)
+        target = cv2.resize(target, size, interpolation=cv2.INTER_AREA)
     red = (np.clip(target, 0, 1) * 255).astype(np.uint8)
     green = (np.clip(registered, 0, 1) * 255).astype(np.uint8)
     blue = np.zeros_like(red)

@@ -9,8 +9,8 @@ const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 // shown here.
 const RUNGS = [
   { id: 0, name: 'Rung 0 · SIFT', desc: 'Raw-intensity SIFT baseline. Expected to collapse once sun-azimuth difference grows.' },
-  { id: 1, name: 'Rung 1 · Mod-π', desc: 'Gradient-orientation-mod-π descriptor. Illumination-robust near a full (~180°) sun reversal.' },
-  { id: 2, name: 'LightGlue', desc: 'Learned matcher (SuperPoint + LightGlue). Strongest measured result across sun-angle differences.' },
+  { id: 1, name: 'Rung 1 · Log-Gabor MIM', desc: 'Log-Gabor Maximum Index Map (RIFT-style) descriptor: matches on which orientation channel dominates each pixel, so it tolerates independent sensor contrast differences.' },
+  { id: 2, name: 'LightGlue', desc: 'Learned matcher (SuperPoint + LightGlue). Slowest option: minutes on full-size real pairs.' },
 ];
 
 // Recomputed against the real inventory after fixing a real corner-orientation

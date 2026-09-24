@@ -5,6 +5,7 @@ const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 
 export default function Screen02MatchReview({ selectedProductA, selectedProductB, selectedRung, completedJobId, onAcceptMatch, onBack }) {
   const [showAllKeypoints, setShowAllKeypoints] = useState(true);
+  const [tallOverlay, setTallOverlay] = useState(false); // set from the loaded overlay's aspect ratio
 
   const [jobStatus, setJobStatus] = useState('registering'); // registering, polling, fetching_artefacts, ready, failed
   const [jobId, setJobId] = useState(completedJobId || null);
@@ -263,23 +264,31 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
           </div>
 
           {/* Interactive Match Visual Viewer */}
-          <div className="relative bg-[#141414] border border-[#2a2a2a] rounded-md h-[500px] overflow-hidden flex items-center justify-center p-2">
-            <div className="relative w-full h-full flex flex-col items-center justify-center">
+          {/* A real LRO NAC strip is far taller than wide; fit-to-box (object-contain)
+              shrinks it to a sliver, so tall overlays scroll at full viewer width
+              instead. Squarer overlays (e.g. the synthetic demo) keep fit-to-box.
+              The legend sits outside the scroller so it stays put while panning. */}
+          <div className="relative bg-[#141414] border border-[#2a2a2a] rounded-md h-[500px] overflow-hidden">
+            <div className={`w-full h-full p-2 ${tallOverlay ? 'overflow-y-auto' : 'flex items-center justify-center'}`}>
               <img
                 src={`${API_BASE}/jobs/${jobId}/artefacts/overlay_rgb.png`}
                 alt="RGB Overlay"
-                className="max-w-full max-h-full object-contain rounded-md"
+                onLoad={(e) => setTallOverlay(e.target.naturalHeight > 1.5 * e.target.naturalWidth)}
+                className={tallOverlay ? 'w-full h-auto rounded-md' : 'max-w-full max-h-full object-contain rounded-md'}
               />
-              <div className="absolute top-3 left-3 px-2 py-1.5 rounded-md bg-[#141414]/95 border border-[#2a2a2a] text-[10px] font-mono text-slate-400 space-y-1">
-                <div><span className="text-red-500 font-semibold">RED:</span> Reference (B)</div>
-                <div><span className="text-green-700 font-semibold">GREEN:</span> Moving (A)</div>
-                {showAllKeypoints && geoJson && (
-                  <div className="mt-1.5 text-cyan-400 pt-1.5 border-t border-[#2a2a2a]">
-                    Loaded {geoJson.features?.length || 0} tie-points from GeoJSON.<br />
-                    <span className="text-slate-600 text-[9px]">(Projection to pixel-space required for drawing)</span>
-                  </div>
-                )}
-              </div>
+            </div>
+            <div className="absolute top-3 left-3 px-2 py-1.5 rounded-md bg-[#141414]/95 border border-[#2a2a2a] text-[10px] font-mono text-slate-400 space-y-1">
+              <div><span className="text-red-500 font-semibold">RED:</span> Reference (B)</div>
+              <div><span className="text-green-700 font-semibold">GREEN:</span> Moving (A)</div>
+              {tallOverlay && (
+                <div className="text-slate-500">Scroll to pan along the strip</div>
+              )}
+              {showAllKeypoints && geoJson && (
+                <div className="mt-1.5 text-cyan-400 pt-1.5 border-t border-[#2a2a2a]">
+                  Loaded {geoJson.features?.length || 0} tie-points from GeoJSON.<br />
+                  <span className="text-slate-600 text-[9px]">(Projection to pixel-space required for drawing)</span>
+                </div>
+              )}
             </div>
           </div>
 

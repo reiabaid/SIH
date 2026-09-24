@@ -59,7 +59,7 @@ def main():
         timed("write_match_geojson", lambda: write_match_geojson(
             os.path.join(d, "match_points.geojson"), result, ch2, lro))
         png = os.path.join(d, "overlay_rgb.png")
-        timed("write_overlay (full-res PNG)", lambda: write_overlay(png, registered, lro.array))
+        timed("write_overlay (cropped preview)", lambda: write_overlay(png, registered, lro.array))
 
         print("\noutput file sizes:", flush=True)
         for name in sorted(os.listdir(d)):
