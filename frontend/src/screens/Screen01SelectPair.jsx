@@ -158,7 +158,9 @@ export default function Screen01SelectPair({ onRunMatch }) {
     >
       <div className="flex justify-between items-start mb-2">
         <div className="font-mono text-sm font-medium text-slate-200 truncate w-4/5" title={product.product_id}>
-          {product.product_id}
+          {product.product_id.startsWith('urn:isro:')
+            ? product.product_id.split(':').slice(-1)[0].replace(/^ch2_ohr_/, '')
+            : product.product_id}
         </div>
         {isSelected && <CheckCircle2 className={`w-4 h-4 shrink-0 ${accent === 'cyan' ? 'text-cyan-500' : 'text-blue-500'}`} />}
       </div>

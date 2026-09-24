@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import os
 
 import cv2
@@ -23,6 +24,8 @@ def _pixel_to_geo(product: Product, points: np.ndarray) -> np.ndarray:
     dst = np.float32([[product.corners[k][1], product.corners[k][0]] for k in order])
     transform = cv2.getPerspectiveTransform(src, dst)
     points = np.asarray(points, dtype=np.float32).reshape(-1, 1, 2)
+    if len(points) == 0:  # cv2.perspectiveTransform returns None for no points
+        return np.empty((0, 2), dtype=np.float32)
     return cv2.perspectiveTransform(points, transform).reshape(-1, 2)
 
 
@@ -200,6 +203,10 @@ def build_deliverable(product_a: Product, product_b: Product, match_result: Matc
         **coverage(match_result),
         **fit_reliability(match_result),
     }
+    # NaN means "nothing to evaluate" (e.g. zero matches); JSON has no NaN, so
+    # it is written as null rather than crashing the job.
+    metrics = {k: (None if isinstance(v, float) and math.isnan(v) else v)
+               for k, v in metrics.items()}
     with open(os.path.join(out_dir, "metrics.json"), "w") as handle:
         json.dump(metrics, handle, indent=2, allow_nan=False)
     return metrics

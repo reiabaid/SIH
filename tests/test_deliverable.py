@@ -77,3 +77,16 @@ def test_write_overlay_keeps_the_full_frame_when_nothing_landed(tmp_path):
     write_overlay(str(out), np.zeros_like(target), target)
 
     assert Image.open(out).size == (100, 400)  # no crop, under max_side: untouched
+
+
+def test_build_deliverable_survives_a_matcher_that_found_nothing(tmp_path):
+    """Zero matches is a legitimate outcome (e.g. a hard pair), not a crash:
+    the job must still finish and report total_matches == 0."""
+    from src.match import _empty_result
+    a = _synthetic_crater_field(size=128, seed=1)
+    result = _empty_result(a, a, "sift", 0.1)
+
+    metrics = build_deliverable(_product(a, "a"), _product(a, "b"), result, str(tmp_path))
+
+    assert metrics["total_matches"] == 0
+    assert (tmp_path / "match_points.csv").exists()
