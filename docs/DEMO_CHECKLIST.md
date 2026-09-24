@@ -1,5 +1,7 @@
 # LunarMatch — Live Pitch Demo Script & Checklist
 
+> **Accuracy caveat (2026-09-25 -- read before presenting).** The reprojection RMSE and "sub-pixel" figures below measure how well matched points fit the fitted transform. They are NOT registration accuracy against ground truth, which does not exist for the real pairs. Cross-checks on the 8 real CH2 x LRO pairs found no independently corroborated registration (0 consistent, 2 disagreeing by 0.9-5 km, 6 not comparable; see `docs/WORK_DIVISION_PLAN.md`). Say "the pipeline runs end to end on real ISRO data and reports a cross-check", not "sub-pixel accurate on real data". Sub-pixel accuracy is demonstrated on the synthetic pairs only.
+
 This document is the official pitch checklist and operational guide for live demonstrations of LunarMatch.
 It specifies the exact pre-baked demo pair, screen-by-screen walkthrough instructions, expected metrics, and critical pitfalls to avoid during live presentation.
 
@@ -68,11 +70,11 @@ docker run -p 8000:8000 lunarmatch
 ### Step 2: Screen 02 — Match Review
 1. **Verification Metrics Display**:
    - **Inlier Count**: ~330 verified tie points (Rung 0) or ~51–258 tie points (Rung 1).
-   - **Reprojection Error (RMSE)**: ~0.21 px (sub-pixel photogrammetric precision).
+   - **Reprojection Error (RMSE)**: ~0.21 px (fit residual only -- not accuracy against ground truth).
    - **Status**: `well_determined` (non-trivial fit).
 2. **Interactive Visuals**:
    - Toggle **"Show Keypoints"** to display correspondence vectors across the crater field.
-   - Zoom in on crater rim features to show exact sub-pixel alignment.
+   - Zoom in on crater rim features and show the overlay (do not claim a measured accuracy).
 3. Click **"Accept Match & Review Evidence"**.
 
 ---
@@ -101,7 +103,7 @@ docker run -p 8000:8000 lunarmatch
 | Action | Why to Avoid | Fallback / What to Say Instead |
 |---|---|---|
 | **DO NOT click `d18 × M1499112398LE`** | This is the 1/8 pair in the real inventory that has zero valid matchers post-determinism fix (`well_determined=False`). | If asked about inventory coverage: *"Our reproducible MAGSAC fix verified 7/8 real pairs succeed, eliminating a previous false positive on this specific pair."* |
-| **DO NOT click LightGlue (Rung 2) live** | LightGlue inference takes **90–240 seconds** on CPU. Running it live causes an uncomfortable multi-minute wait. | *"LightGlue is supported as an opt-in deep learning matcher for extreme non-linear deformations, but our default fast path delivers sub-pixel precision in seconds."* |
+| **DO NOT click LightGlue (Rung 2) live** | LightGlue inference takes **90–240 seconds** on CPU. Running it live causes an uncomfortable multi-minute wait. | *"LightGlue is supported as an opt-in deep learning matcher for extreme non-linear deformations, but our default path returns a fit and a cross-check between two matchers."* |
 | **DO NOT click an uncached real pair on cold hardware** | Cold LRO loading requires 35–48s of NAIF WebGeocalc network calls, and cold CH2 requires decoding 4.5 GB TIFF rasters. | Click `synthetic_a × synthetic_b` for live interaction. For real pairs, show the pre-rendered artifacts in `demo/` (`aligned_checkerboard_crater_crop.png`, `coverage_plot.png`, `win_plot.png`). |
 
 ---
@@ -110,7 +112,7 @@ docker run -p 8000:8000 lunarmatch
 
 If judges request real-world Chandrayaan-2 vs LRO evidence:
 - **Verified Working Real Pairs**:
-  - `d32 × M1519299970LE`: 22 inliers (Rung 0), 25 inliers (Rung 1), verified sub-pixel alignment.
+  - `d32 × M1519299970LE`: 22 inliers (Rung 0), 25 inliers (Rung 1), inlier counts only; not independently verified.
   - `d18 × M1519299970LE`: 15 inliers (Rung 0), **63 inliers** (Rung 1 — Log-Gabor MIM win).
   - `d32 × M1531872919LE`: 8 inliers (Rung 0), **72 inliers** (Rung 1 — Log-Gabor MIM win).
 - **Pre-rendered Assets in `demo/`**:

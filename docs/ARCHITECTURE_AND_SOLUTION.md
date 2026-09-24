@@ -1,5 +1,7 @@
 # 🌕 LunarMatch: Solar-Invariant Lunar Image Registration & Photogrammetry Architecture
 
+> **Status of accuracy claims (2026-09-25).** Sub-pixel RMSE figures in this document (0.37 px, < 0.5 px, 61/64 cells) come from synthetic pairs and from the fit residual of real runs; the residual measures fit to the transform, not accuracy against ground truth. On the 8 real CH2 x LRO pairs no registration has been independently corroborated (see `docs/WORK_DIVISION_PLAN.md`, "Cross-check results" and the sections after it). The app now runs both matchers on every Auto job and reports whether they agree.
+
 ## 📋 Executive Summary
 
 **LunarMatch** is an end-to-end multi-sensor lunar image registration and photogrammetry pipeline developed for Chandrayaan-2 (OHRC, TMC-2, IIRS) and NASA LRO (NAC) optical imagery. It solves the critical problem of **catastrophic feature matching collapse under varying solar illumination (sun angles)** on the lunar surface, achieving sub-pixel registration accuracy ($\text{RMSE} < 0.5\text{ px}$) and producing native USGS ISIS Control Network files (`.net` / PVL) for seamless handoff to ISRO photogrammetrists.
@@ -241,4 +243,4 @@ python -m pytest tests/ -v
 
 ## 🏁 Conclusion
 
-By combining **3D terrain solar simulation**, **common-grid polygon resampling**, **mod-$\pi$ unsigned gradient orientation histograms**, **$8 \times 8$ spatial keypoint balancing**, and **native ISIS PVL Control Network generation**, **LunarMatch** delivers an end-to-end, scientifically validated, and operationally ready image registration solution for ISRO lunar exploration.
+By combining **3D terrain solar simulation**, **common-grid polygon resampling**, **mod-$\pi$ unsigned gradient orientation histograms**, **$8 \times 8$ spatial keypoint balancing**, and **native ISIS PVL Control Network generation**, **LunarMatch** delivers an end-to-end, image registration pipeline with sub-pixel accuracy demonstrated on synthetic pairs and a built-in cross-check on real pairs for ISRO lunar exploration.
