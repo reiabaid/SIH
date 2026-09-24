@@ -13,6 +13,7 @@ from src.prep import gradient_orientation_mod_pi, log_gabor_max_index_map, tile,
 
 TILE_SIZE = 1024   # side length in px; large rasters (OHRC strips run ~55000x12000)
 TILE_OVERLAP = 128  # must exceed the largest expected inter-image shift at tile scale
+SIMILARITY_MAX_ITERS = 100_000  # 2-point samples; cheap, and inlier ratios are ~1-3%
 MIN_POOL_POINTS = 500  # match_tiled's early-exit threshold; see match_tiled's docstring
 
 GRID_SIZE = 8
@@ -405,7 +406,8 @@ def match(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0) ->
 def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int = 0,
                  tile_size: int = TILE_SIZE, overlap: int = TILE_OVERLAP,
                  min_pool_points: int = MIN_POOL_POINTS,
-                 max_offset_px: "float | None" = None) -> MatchResult:
+                 max_offset_px: "float | None" = None,
+                 model: str = "homography") -> MatchResult:
     """Tile-then-pool-then-globally-refit matching for rasters too large to hand
     match() whole (an OHRC strip is ~55000x12000px).
 
@@ -433,6 +435,13 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
     without it landed 2-5 km from the metadata and disagreed with each other
     (docs/research/offset_consistency.json); on repetitive terrain the along-strip
     direction is otherwise unconstrained. None disables the prior.
+
+    model: "homography" (8 DOF, default) or "similarity" (4 DOF: shift, rotation,
+    uniform scale). On a common geo grid the residual registration is close to a
+    small shift, and real pairs pool only ~1-3% correct candidates among the
+    hundreds: a 4-point homography sample is then almost never all-correct, and
+    the fit extrapolates km across an 11 km strip; a 2-point similarity sample
+    is found orders of magnitude more often and cannot swing that way.
     """
     t0 = time.time()
     tiles_a = tile(a, tile_size, overlap)
@@ -528,9 +537,17 @@ def match_tiled(a: np.ndarray, b: np.ndarray, matcher: str = "sift", rung: int =
     # unlike the per-tile calls inside _finalize, this one's determinism
     # isn't at the mercy of other threads' RNG draws.
     cv2.setRNGSeed(0)
-    transform, ransac_mask = cv2.findHomography(
-        pts_a, pts_b, cv2.USAC_MAGSAC, RANSAC_REPROJ_THRESHOLD
-    )
+    if model == "similarity":
+        affine, ransac_mask = cv2.estimateAffinePartial2D(
+            pts_a, pts_b, method=cv2.RANSAC, ransacReprojThreshold=RANSAC_REPROJ_THRESHOLD,
+            maxIters=SIMILARITY_MAX_ITERS, confidence=0.999)
+        transform = None if affine is None else np.vstack([affine, [0.0, 0.0, 1.0]])
+    elif model == "homography":
+        transform, ransac_mask = cv2.findHomography(
+            pts_a, pts_b, cv2.USAC_MAGSAC, RANSAC_REPROJ_THRESHOLD
+        )
+    else:
+        raise ValueError(f"unknown model: {model!r}")
     if transform is None:
         return _empty_result(a, b, matcher_name, time.time() - t0)
 

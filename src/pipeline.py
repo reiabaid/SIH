@@ -80,6 +80,7 @@ def run_pipeline(
     cascade: bool = False,
     verify: bool = False,
     max_offset_px: "float | None" = None,
+    model: str = "homography",
 ) -> dict:
     """product_a, product_b: src.types.Product instances, already loaded.
 
@@ -138,6 +139,8 @@ def run_pipeline(
     max_offset_px: georeferencing prior for the tiled path, see
       match.match_tiled. Only meaningful with align=True (common geo grid).
 
+    model: "homography" or "similarity", tiled path only -- see match.match_tiled.
+
     Returns a dict with the MatchResult (as a dict, in original-pixel space whenever
     align=True) plus full metrics (rmse/inlier_stats/coverage) via metrics.evaluate.
     """
@@ -155,7 +158,7 @@ def run_pipeline(
         if max(a.shape[:2]) > TILE_THRESHOLD_PX or max(b.shape[:2]) > TILE_THRESHOLD_PX:
             return match_tiled(a, b, matcher=matcher, rung=r,
                                tile_size=tile_size, overlap=tile_overlap,
-                               max_offset_px=max_offset_px)
+                               max_offset_px=max_offset_px, model=model)
         return run_match(a, b, matcher=matcher, rung=r)
 
     rungs_tried = []

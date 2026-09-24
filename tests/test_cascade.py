@@ -94,3 +94,20 @@ def test_offset_prior_drops_candidates_far_from_the_metadata_position():
     assert len(tight.pts_a) < len(free.pts_a)
     if len(tight.pts_a):
         assert np.linalg.norm(tight.pts_b - tight.pts_a, axis=1).max() <= 5
+
+
+def test_similarity_model_recovers_a_known_shift():
+    import cv2
+    from src.match import match_tiled
+    from tests.test_match import _synthetic_crater_field
+    img = _synthetic_crater_field(size=512, seed=3)
+    dx, dy = 20.0, -15.0
+    warped = cv2.warpAffine(img, np.float32([[1, 0, dx], [0, 1, dy]]), (512, 512))
+
+    sim = match_tiled(img, warped, matcher="sift", tile_size=256, overlap=32, model="similarity")
+
+    assert sim.inlier_mask.sum() >= 4
+    assert sim.transform[2].tolist() == [0.0, 0.0, 1.0]
+    pts = np.array([[100.0, 100.0, 1.0], [400.0, 300.0, 1.0]]).T
+    got = sim.transform @ pts
+    assert np.abs(got[:2] - (pts[:2] + np.array([[dx], [dy]]))).max() < 1.0
