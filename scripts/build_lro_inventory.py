@@ -31,6 +31,7 @@ def main():
         return
 
     rows = []
+    seen_ids = {}
     for path in paths:
         print(f"Loading {path} ...")
         try:
@@ -38,6 +39,15 @@ def main():
         except LROReadError as e:
             print(f"  FAILED: {e}")
             continue
+
+        if p.product_id in seen_ids:
+            # e.g. M1519292928LE.IMG and M1519292928LE1.IMG carry the same
+            # PRODUCT_ID: a second copy of one product, not a second product.
+            # A duplicate id would show as duplicate cards in the UI and make
+            # the id -> path lookup ambiguous, so keep the first.
+            print(f"  SKIPPED: duplicate product_id {p.product_id} (already loaded from {seen_ids[p.product_id]})")
+            continue
+        seen_ids[p.product_id] = path
 
         lats = [c[0] for c in p.corners.values()]
         lons = [c[1] for c in p.corners.values()]
