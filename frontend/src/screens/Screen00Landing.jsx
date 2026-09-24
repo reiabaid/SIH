@@ -48,27 +48,27 @@ export default function Screen00Landing({ onLaunchWorkspace }) {
       {/* Performance Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-[#141414] border border-[#2a2a2a] rounded-md p-5 md:p-6">
-          <div className="text-slate-500 text-[11px] font-mono uppercase tracking-wider">SUB-PIXEL PRECISION</div>
+          <div className="text-slate-500 text-[11px] font-mono uppercase tracking-wider">REAL PAIRS TESTED</div>
           <div className="text-3xl font-display font-bold font-mono text-cyan-400 mt-2">
-            0.372 <span className="text-xs text-slate-600 font-normal">px RMSE</span>
+            8 <span className="text-xs text-slate-600 font-normal">CH2 × LRO</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Achieves sub-pixel RMSE on rigorous matched features</div>
+          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Every footprint-overlapping pair in the inventory; each run reports its own fit residual and, in Auto mode, a cross-check between two matchers</div>
         </div>
 
         <div className="bg-[#141414] border border-[#2a2a2a] rounded-md p-5 md:p-6">
-          <div className="text-slate-500 text-[11px] font-mono uppercase tracking-wider">SUN ANGLE TOLERANCE</div>
+          <div className="text-slate-500 text-[11px] font-mono uppercase tracking-wider">ILLUMINATION-ROBUST MATCHING</div>
           <div className="text-3xl font-display font-bold font-mono text-slate-300 mt-2">
-            0° – 180° <span className="text-xs text-slate-600 font-normal">Azimuth</span>
+            Log-Gabor <span className="text-xs text-slate-600 font-normal">MIM</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Shadow invariant Mod-X descriptor</div>
+          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Orientation-index descriptor; shown to survive a full contrast flip on synthetic pairs</div>
         </div>
 
         <div className="bg-[#141414] border border-[#2a2a2a] rounded-md p-5 md:p-6">
           <div className="text-slate-500 text-[11px] font-mono uppercase tracking-wider">GRID SPATIAL COVERAGE</div>
           <div className="text-3xl font-display font-bold font-mono text-emerald-400 mt-2">
-            61 / 64 <span className="text-xs text-slate-600 font-normal">cells</span>
+            8 × 8 <span className="text-xs text-slate-600 font-normal">cells</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Enforced dense spatial distribution</div>
+          <div className="text-[11px] text-slate-500 mt-3 leading-relaxed">Coverage of the tie-point grid is measured and reported for every run</div>
         </div>
 
         <div className="bg-[#141414] border border-[#2a2a2a] rounded-md p-5 md:p-6">

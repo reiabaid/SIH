@@ -1,0 +1,114 @@
+[
+  {
+    "pair": "d18_x_M1164584053LE",
+    "seconds": 17.7,
+    "kept_rung": 1,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [
+      1
+    ],
+    "metadata_offset_m": {
+      "1": 2030.2
+    }
+  },
+  {
+    "pair": "d32_x_M1177420489LE",
+    "seconds": 21.8,
+    "kept_rung": 1,
+    "status": "inconsistent",
+    "gap_px": 4959.58,
+    "gap_m": 4962.27,
+    "rungs_compared": [
+      0,
+      1
+    ],
+    "metadata_offset_m": {
+      "0": 2899.0,
+      "1": 4041.3
+    }
+  },
+  {
+    "pair": "d18_x_M1499112398LE",
+    "seconds": 51.9,
+    "kept_rung": 0,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [],
+    "metadata_offset_m": {}
+  },
+  {
+    "pair": "d18_x_M1519299970LE",
+    "seconds": 45.3,
+    "kept_rung": 1,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [
+      1
+    ],
+    "metadata_offset_m": {
+      "1": 3840.2
+    }
+  },
+  {
+    "pair": "d32_x_M1519299970LE",
+    "seconds": 40.1,
+    "kept_rung": 1,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [
+      1
+    ],
+    "metadata_offset_m": {
+      "1": 4679.3
+    }
+  },
+  {
+    "pair": "d18_x_M1529523925LE",
+    "seconds": 74.5,
+    "kept_rung": 0,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [
+      0
+    ],
+    "metadata_offset_m": {
+      "0": 5565.1
+    }
+  },
+  {
+    "pair": "d32_x_M1529537951LE",
+    "seconds": 71.4,
+    "kept_rung": 0,
+    "status": "unverified",
+    "gap_px": null,
+    "gap_m": null,
+    "rungs_compared": [
+      0
+    ],
+    "metadata_offset_m": {
+      "0": 5507.8
+    }
+  },
+  {
+    "pair": "d32_x_M1531872919LE",
+    "seconds": 36.8,
+    "kept_rung": 1,
+    "status": "inconsistent",
+    "gap_px": 912.94,
+    "gap_m": 913.43,
+    "rungs_compared": [
+      0,
+      1
+    ],
+    "metadata_offset_m": {
+      "0": 3983.8,
+      "1": 3715.9
+    }
+  }
+]

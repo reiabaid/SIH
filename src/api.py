@@ -344,7 +344,7 @@ def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str
         _set_stage(job_id, "aligning_and_matching")
         # rung == AUTO_RUNG: SIFT first, rung 1 only if SIFT's fit is unreliable.
         out = run_pipeline(product_a, product_b, matcher=matcher, rung=max(rung, 0), align=True,
-                           cascade=(rung == AUTO_RUNG))
+                           cascade=(rung == AUTO_RUNG), verify=(rung == AUTO_RUNG))
         mr = out["match_result"]
         result = MatchResult(
             pts_a=mr["pts_a"], pts_b=mr["pts_b"], scores=mr["scores"],
@@ -353,6 +353,11 @@ def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str
         )
         _set_stage(job_id, "writing_deliverable")
         metrics = build_deliverable(product_a, product_b, result, artefact_dir)
+        # Independent-fit agreement (Auto only; None for a single fixed matcher).
+        # Stored beside the metrics so the UI can show it without a schema change.
+        metrics["agreement"] = out["config"].get("agreement")
+        with open(os.path.join(artefact_dir, "metrics.json"), "w") as handle:
+            json.dump(metrics, handle, indent=2, allow_nan=False)
         write_control_network(
             result, product_a, product_b,
             os.path.join(artefact_dir, "control_network.net"),

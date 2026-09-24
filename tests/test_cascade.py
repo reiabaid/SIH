@@ -47,3 +47,35 @@ def test_cascade_keeps_rung0_when_rung1_is_no_better(monkeypatch):
     out, calls = _run(monkeypatch, {0: 4, 1: 2})
     assert calls == [0, 1]
     assert out["config"]["rung"] == 0 and out["config"]["rungs_tried"] == [0, 1]
+
+
+def test_agreement_consistent_inconsistent_and_unverified():
+    from src.pipeline import agreement_between
+    good0, good1 = _result(12), _result(12)
+    assert agreement_between({0: good0, 1: good1}, 0.25)["status"] == "consistent"
+
+    shifted = _result(12)
+    shifted.transform = np.array([[1, 0, 300.0], [0, 1, 0], [0, 0, 1]])
+    out = agreement_between({0: good0, 1: shifted}, 0.25)
+    assert out["status"] == "inconsistent" and out["gap_px"] == 300.0 and out["gap_m"] == 75.0
+
+    # a degenerate (<5 unique locations) fit is never compared
+    assert agreement_between({0: good0, 1: _result(3)}, 0.25)["status"] == "unverified"
+
+
+def test_verify_runs_both_rungs_even_when_rung0_is_good(monkeypatch):
+    out, calls = _run_verify(monkeypatch, {0: 12, 1: 12})
+    assert calls == [0, 1]
+    assert out["config"]["agreement"]["status"] == "consistent"
+
+
+def _run_verify(monkeypatch, per_rung):
+    calls = []
+
+    def fake(a, b, matcher="sift", rung=0):
+        calls.append(rung)
+        return _result(per_rung[rung])
+
+    monkeypatch.setattr(pipeline, "run_match", fake)
+    return pipeline.run_pipeline(_product("a"), _product("b"), cascade=True, verify=True,
+                                 use_lcn=False), calls

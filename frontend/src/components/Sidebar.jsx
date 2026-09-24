@@ -47,8 +47,8 @@ export default function Sidebar({ currentScreen, setCurrentScreen }) {
         <div className="bg-[#141414] border border-[#2a2a2a] rounded-md p-4 space-y-2 text-xs font-mono">
           <div className="flex items-center justify-between text-[11px] text-slate-500 border-b border-[#2a2a2a] pb-2 mb-2 tracking-wider">
             <span>DATASET STATUS</span>
-            <span className="flex items-center text-emerald-400 text-[10px]">
-              <CheckCircle2 className="w-3 h-3 mr-1" /> VALIDATED
+            <span className="flex items-center text-amber-400 text-[10px]" title="No independent ground truth exists yet for the real pairs">
+              <CheckCircle2 className="w-3 h-3 mr-1" /> ACCURACY UNVERIFIED
             </span>
           </div>
           <div className="flex items-center justify-between text-[11px]">

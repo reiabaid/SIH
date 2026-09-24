@@ -155,7 +155,7 @@ def test_pipeline_exposes_rung_and_lcn_toggle():
     # rung reached match() (the matcher name encodes it) and the toggle was recorded
     assert out["match_result"]["matcher"] == "sift-rung1"
     assert out["config"] == {"matcher": "sift", "rung": 1, "use_lcn": False, "align": False,
-                            "rungs_tried": [1]}
+                            "rungs_tried": [1], "agreement": None}
 
 
 # ---- match_tiled: pool-then-globally-refit matching for large rasters ----

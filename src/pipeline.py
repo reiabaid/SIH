@@ -19,6 +19,45 @@ TILE_THRESHOLD_PX = 2048
 CASCADE_RUNGS = (0, 1)
 
 
+# Two independent fits count as agreeing when their transforms move a 5x5 grid
+# of points by <= this many working-grid pixels on average.
+AGREEMENT_TOLERANCE_PX = 5.0
+
+
+def _transform_gap_px(t1, t2, shape):
+    """Mean distance (px) between where two A->B transforms send a 5x5 grid over A."""
+    h, w = shape[:2]
+    xs, ys = np.meshgrid(np.linspace(0, w - 1, 5), np.linspace(0, h - 1, 5))
+    pts = np.stack([xs.ravel(), ys.ravel(), np.ones(25)])
+    p1, p2 = t1 @ pts, t2 @ pts
+    return float(np.linalg.norm(p1[:2] / p1[2] - p2[:2] / p2[2], axis=0).mean())
+
+
+def agreement_between(fits, gsd_m, tol_px=AGREEMENT_TOLERANCE_PX):
+    """Do independent fits of one pair agree? `fits`: {rung: MatchResult}.
+
+    status: "consistent" -- >= 2 well-determined fits, all within tol_px;
+            "inconsistent" -- >= 2 well-determined fits that disagree;
+            "unverified" -- fewer than 2 well-determined fits, nothing to compare.
+    Only well-determined fits are compared (a degenerate fit is noise).
+    """
+    good = {r: f for r, f in fits.items() if fit_reliability(f)["well_determined"]}
+    # Both images were resampled onto one common geo grid before matching, so
+    # the metadata-implied registration is the identity there: how far a fit
+    # moves points from identity is its disagreement with the georeferencing.
+    offsets_m = {r: round(_transform_gap_px(np.eye(3), f.transform, f.shape_a) * gsd_m, 1)
+                 for r, f in sorted(good.items())}
+    if len(good) < 2:
+        return {"status": "unverified", "gap_px": None, "gap_m": None,
+                "rungs_compared": sorted(good), "metadata_offset_m": offsets_m}
+    rungs = sorted(good)
+    gap = max(_transform_gap_px(good[rungs[0]].transform, good[r].transform,
+                                good[rungs[0]].shape_a) for r in rungs[1:])
+    return {"status": "consistent" if gap <= tol_px else "inconsistent",
+            "gap_px": round(gap, 2), "gap_m": round(gap * gsd_m, 2), "rungs_compared": rungs,
+            "metadata_offset_m": offsets_m}
+
+
 def _fit_key(result):
     """Rank fits: a well-determined fit beats any other, then more distinct
     inlier locations, then more inliers."""
@@ -39,6 +78,7 @@ def run_pipeline(
     tile_size: int = TILE_SIZE,
     tile_overlap: int = TILE_OVERLAP,
     cascade: bool = False,
+    verify: bool = False,
 ) -> dict:
     """product_a, product_b: src.types.Product instances, already loaded.
 
@@ -85,6 +125,15 @@ def run_pipeline(
       `rung` are ignored (SIFT rungs 0 then 1). config["rung"] reports the
       rung whose result was kept and config["rungs_tried"] all that ran.
 
+    verify: (with cascade) always run BOTH rungs and compare the two fitted
+      transforms. `well_determined` only says a fit has enough distinct
+      inlier locations -- validated 2026-09-25: two well-determined fits of
+      the same real pair (different LCN settings) disagreed by 850-5200 px on
+      6 of 8 pairs, so a single fit is not evidence of correctness. Agreement
+      between two independent descriptors is. Result is reported in
+      config["agreement"] (see `agreement`). Costs one extra matching pass
+      when rung 0 alone would have been well-determined.
+
     Returns a dict with the MatchResult (as a dict, in original-pixel space whenever
     align=True) plus full metrics (rmse/inlier_stats/coverage) via metrics.evaluate.
     """
@@ -105,16 +154,21 @@ def run_pipeline(
         return run_match(a, b, matcher=matcher, rung=r)
 
     rungs_tried = []
+    agreement = None
     if cascade:
         matcher = "sift"
         result = None
+        fits = {}
         for r in CASCADE_RUNGS:
             candidate = _match(r)
             rungs_tried.append(r)
+            fits[r] = candidate
             if result is None or _fit_key(candidate) > _fit_key(result):
                 result, rung = candidate, r
-            if fit_reliability(result)["well_determined"]:
+            if not verify and fit_reliability(result)["well_determined"]:
                 break
+        if verify:
+            agreement = agreement_between(fits, match_product_a.gsd_m)
     else:
         result = _match(rung)
         rungs_tried.append(rung)
@@ -143,5 +197,5 @@ def run_pipeline(
         "product_a_id": product_a.product_id,
         "product_b_id": product_b.product_id,
         "config": {"matcher": matcher, "rung": rung, "use_lcn": use_lcn, "align": align,
-                   "rungs_tried": rungs_tried},
+                   "rungs_tried": rungs_tried, "agreement": agreement},
     }

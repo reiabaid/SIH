@@ -246,6 +246,29 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
         </div>
       )}
 
+      {/* Cross-check between independent matchers (Auto runs both SIFT and the
+          Log-Gabor descriptor): one fit alone can look well-determined and still be
+          wrong, agreement between two is the real evidence. */}
+      {metrics?.agreement && !metrics?.trivial_fit && (
+        metrics.agreement.status === 'consistent' ? (
+          <div className="text-xs font-mono text-emerald-300 bg-emerald-950/30 border border-emerald-800 rounded-md p-3">
+            <span className="font-bold">Cross-checked.</span> SIFT and the Log-Gabor matcher independently agree to within
+            {' '}{metrics.agreement.gap_px} px (~{metrics.agreement.gap_m} m).
+          </div>
+        ) : metrics.agreement.status === 'inconsistent' ? (
+          <div className="text-xs font-mono text-red-300 bg-red-950/30 border border-red-800 rounded-md p-3">
+            <span className="font-bold">Matchers disagree.</span> SIFT and the Log-Gabor matcher each found a fit, but they
+            differ by {metrics.agreement.gap_px} px (~{metrics.agreement.gap_m} m). At least one is wrong — do not rely on this
+            registration without independent verification.
+          </div>
+        ) : (
+          <div className="text-xs font-mono text-slate-300 bg-slate-900/40 border border-slate-700 rounded-md p-3">
+            <span className="font-bold">Not cross-checked.</span> Only one matcher produced a well-determined fit, so there is
+            nothing independent to compare it against.
+          </div>
+        )
+      )}
+
       {/* Main Viewport & Right Metrics Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
@@ -381,7 +404,7 @@ export default function Screen02MatchReview({ selectedProductA, selectedProductB
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Sub-Pixel RMSE:</span>
+                <span className="text-slate-500" title="How well the matched points fit the fitted transform. Not the registration accuracy against the true position.">Fit residual:</span>
                 <span className="text-cyan-400 font-semibold text-sm">{safeNum(metrics?.reprojection_residual, 3)} px</span>
               </div>
               <div className="flex justify-between">

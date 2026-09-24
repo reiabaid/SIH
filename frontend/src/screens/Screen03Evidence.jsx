@@ -156,7 +156,7 @@ export default function Screen03Evidence({ jobId, selectedProductA, selectedProd
                 <span className="text-emerald-400 font-medium">{metrics?.inlier_ratio !== undefined && metrics?.inlier_ratio !== null ? safeNum(metrics.inlier_ratio * 100, 1) + '%' : 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500">Sub-pixel RMSE:</span>
+                <span className="text-slate-500" title="How well the matched points fit the fitted transform. Not the registration accuracy against the true position.">Fit residual:</span>
                 <span className="text-cyan-400 font-semibold">{safeNum(metrics?.reprojection_residual, 3)} px</span>
               </div>
               {metrics?.rmse_ground_truth !== undefined && metrics?.rmse_ground_truth !== null && (
