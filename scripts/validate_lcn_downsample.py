@@ -1,88 +1,62 @@
-"""Validate local_contrast_norm's new `downsample` parameter (Reia's speed
-work, docs/WORK_DIVISION_PLAN.md) against the full real 8-pair inventory
-before trusting it anywhere real. Only sift-rung0/rung1 are tested --
-LightGlue doesn't need this speed win as urgently and would multiply the
-run's cost for no extra signal.
+"""Does local_contrast_norm(downsample=4) change registration results?
 
-Compares against the known-good, RANSAC-deterministic baseline already
-committed in docs/research/day2_pair_verification.json.
+LCN was ~14s of a ~70s cold run (docs/research/pipeline_time_breakdown.json).
+downsample=4 was measured ~4.7x faster on one raster but never validated on the
+full real inventory. Runs the Auto cascade (as production does) with
+lcn_downsample 1 vs 4 on all 8 real pairs and compares verdict, inlier count and
+the agreement of the two fitted transforms (mean displacement, in pixels of
+product A's frame, over a 5x5 grid of points).
+
+    python -m scripts.validate_lcn_downsample
 """
 from __future__ import annotations
 
 import json
+import time
 
+import numpy as np
+
+from scripts.validate_ch2_crop import CH2_XMLS, PAIRS, _to_match_result
 from src.io_ch2 import load_product as load_ch2
-from src.io_lro import load_product as load_lro, LROReadError
-from src.metrics import fit_reliability, inlier_stats
+from src.io_lro import load_product as load_lro
+from src.metrics import fit_reliability
 from src.pipeline import run_pipeline
-from src.types import MatchResult
 
-D18_XML = ("data/ch2_products/ch2_ohr_ncp_20200229T0739312111_d_img_d18/"
-           "miscellaneous/calibrated/20200229/"
-           "ch2_ohr_ncp_20200229T0739312111_d_img_d18.xml")
-D32_XML = ("data/ch2_products/ch2_ohr_ncp_20200229T0938004033_d_img_d32/"
-           "miscellaneous/calibrated/20200229/"
-           "ch2_ohr_ncp_20200229T0938004033_d_img_d32.xml")
-CH2_XMLS = {"d18": D18_XML, "d32": D32_XML}
-
-PAIRS = [
-    ("d18", "M1164584053LE.IMG"),
-    ("d32", "M1177420489LE.IMG"),
-    ("d18", "M1499112398LE.IMG"),
-    ("d18", "M1519299970LE.IMG"),
-    ("d32", "M1519299970LE.IMG"),
-    ("d18", "M1529523925LE.IMG"),
-    ("d32", "M1529537951LE.IMG"),
-    ("d32", "M1531872919LE.IMG"),
-]
+OUT = "docs/research/lcn_downsample_validation.json"
 
 
-def _to_match_result(mr: dict) -> MatchResult:
-    return MatchResult(
-        pts_a=mr["pts_a"], pts_b=mr["pts_b"], scores=mr["scores"],
-        inlier_mask=mr["inlier_mask"], transform=mr["transform"], matcher=mr["matcher"],
-        shape_a=mr["shape_a"], shape_b=mr["shape_b"], runtime_s=mr["runtime_s"],
-    )
+def _transform_gap(t1, t2, shape):
+    h, w = shape
+    xs, ys = np.meshgrid(np.linspace(0, w - 1, 5), np.linspace(0, h - 1, 5))
+    pts = np.stack([xs.ravel(), ys.ravel(), np.ones(25)])
+    p1, p2 = t1 @ pts, t2 @ pts
+    p1, p2 = p1[:2] / p1[2], p2[:2] / p2[2]
+    return float(np.linalg.norm(p1 - p2, axis=0).mean())
 
 
 def main():
-    ch2_cache, lro_cache = {}, {}
-    results = []
-
+    rows = []
     for ch2_id, lro_file in PAIRS:
-        pair_label = f"{ch2_id}_x_{lro_file[:-4]}"
-        print(f"\n=== {pair_label} ===")
-
-        if ch2_id not in ch2_cache:
-            ch2_cache[ch2_id] = load_ch2(CH2_XMLS[ch2_id])
-        ch2 = ch2_cache[ch2_id]
-        if lro_file not in lro_cache:
-            try:
-                lro_cache[lro_file] = load_lro(f"data/lro_nac/{lro_file}")
-            except LROReadError as e:
-                print(f"  SKIP: {e}")
-                continue
-        lro = lro_cache[lro_file]
-
-        for rung in (0, 1):
-            label = f"sift-rung{rung}"
-            out = run_pipeline(ch2, lro, matcher="sift", rung=rung, align=True, lcn_downsample=2)
+        label = f"{ch2_id}_x_{lro_file[:-4]}"
+        lro = load_lro(f"data/lro_nac/{lro_file}")
+        ch2 = load_ch2(CH2_XMLS[ch2_id], overlap_hint=lro)
+        runs = {}
+        for ds in (1, 4):
+            t0 = time.time()
+            out = run_pipeline(ch2, lro, align=True, cascade=True, lcn_downsample=ds)
+            elapsed = time.time() - t0
             mr = _to_match_result(out["match_result"])
-            reliability = fit_reliability(mr)
-            n_inliers = int(mr.inlier_mask.sum())
-            row = {
-                "pair": pair_label, "config": label,
-                "total": len(mr.pts_a), "inliers": n_inliers,
-                "unique": reliability["unique_inlier_locations"],
-                "well_determined": reliability["well_determined"],
-            }
-            print(f"  [{label} lcn_downsample=2] total={row['total']} inliers={n_inliers} "
-                  f"unique={row['unique']} well_determined={row['well_determined']}")
-            results.append(row)
-
-    with open("docs/research/lcn_downsample_validation.json", "w") as f:
-        json.dump(results, f, indent=2)
-    print("\nWrote docs/research/lcn_downsample_validation.json")
+            rel = fit_reliability(mr)
+            runs[ds] = (mr, {
+                "seconds": round(elapsed, 1), "rung": out["config"]["rung"],
+                "inliers": int(mr.inlier_mask.sum()), "unique": rel["unique_inlier_locations"],
+                "well_determined": rel["well_determined"]})
+            print(f"{label} ds={ds}: {runs[ds][1]}", flush=True)
+        gap = _transform_gap(runs[1][0].transform, runs[4][0].transform, runs[1][0].shape_a)
+        rows.append({"pair": label, "ds1": runs[1][1], "ds4": runs[4][1],
+                     "transform_gap_px": round(gap, 2)})
+        print(f"{label}: transform gap {gap:.2f}px", flush=True)
+        json.dump(rows, open(OUT, "w"), indent=2)
 
 
 if __name__ == "__main__":

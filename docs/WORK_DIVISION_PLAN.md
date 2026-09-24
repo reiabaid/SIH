@@ -358,3 +358,9 @@ in memory) is roadmap, not built; d18×M1499112398LE fails every matcher.
 - Bug found by that check: a matcher returning zero matches (d18 x M1529523925LE, rung 1) crashed `build_deliverable` (`cv2.perspectiveTransform` returns None on empty input; NaN metrics are not JSON-serialisable). Fixed and tested; the job now completes and reports 0 matches with the untrustworthy-fit banner.
 - Cold rung-1 run on that pair took ~90s on a machine with ~4 GB free RAM (rung 0 is faster); the single-digit-second goal is still not met for cold real pairs.
 - NOT done: Docker image rebuild/run with the final code (needs a machine with >=8 GB free and Docker Desktop running), hosted deployment, tiled/coarse-to-fine registration, rung0->rung1 cascade.
+
+### LCN downsample validation — 2026-09-25 (result: do NOT enable)
+`scripts/validate_lcn_downsample.py` ran the Auto cascade with `lcn_downsample` 1 vs 4 on all 8 real pairs (`docs/research/lcn_downsample_validation.json`).
+- Speed: ds=4 was faster on 5 of 8 pairs (up to ~2x), slower on d18 x M1529523925LE (61s vs 29s).
+- Agreement: the two runs' fitted transforms agreed on only 2 of 8 pairs (d32 x M1529537951LE 6.3px, d32 x M1531872919LE 1.4px). On the other six they differ by 850-5200 px (of CH2 pixels, 0.23 m/px) even though both sides are reported `well_determined` on 7 of them.
+- Consequences: (1) `lcn_downsample` stays 1; (2) more importantly, `well_determined` (>=5 unique inlier locations) does NOT establish a correct registration -- two "well-determined" fits of the same pair can be hundreds of metres apart. There is still no ground truth. A consistency check (agreement between independent runs/configs) or an independent accuracy reference is needed before claiming sub-pixel accuracy on real pairs.
