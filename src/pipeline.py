@@ -8,11 +8,23 @@ from src.align_cache import cached_align_pair
 from src.geo import to_original_pixels, original_pixel_transform
 from src.prep import to_gray_float, local_contrast_norm
 from src.match import match as run_match, match_tiled, TILE_SIZE, TILE_OVERLAP
+from src.metrics import fit_reliability
 
 # Above this side length (either axis, post-alignment) tile the match instead of
 # handing SIFT the whole raster -- an OHRC strip is ~55000x12000px and was never
 # going to work as one call.
 TILE_THRESHOLD_PX = 2048
+
+# Order tried by run_pipeline(cascade=True): cheapest first.
+CASCADE_RUNGS = (0, 1)
+
+
+def _fit_key(result):
+    """Rank fits: a well-determined fit beats any other, then more distinct
+    inlier locations, then more inliers."""
+    rel = fit_reliability(result)
+    return (rel["well_determined"], rel["unique_inlier_locations"],
+            int(result.inlier_mask.sum()))
 
 
 def run_pipeline(
@@ -26,6 +38,7 @@ def run_pipeline(
     align: bool = False,
     tile_size: int = TILE_SIZE,
     tile_overlap: int = TILE_OVERLAP,
+    cascade: bool = False,
 ) -> dict:
     """product_a, product_b: src.types.Product instances, already loaded.
 
@@ -63,6 +76,15 @@ def run_pipeline(
       trusting each tile's own RANSAC — see match.match_tiled's docstring for why a
       per-tile fit alone is unsafe on repetitive terrain.
 
+    cascade: try SIFT (rung 0) first; only if its fit is not well_determined
+      (metrics.fit_reliability) also try rung 1, and keep whichever fit is
+      better. Alignment and LCN are done once and shared. Measured on the
+      8 validated real pairs, rung 0 alone is well-determined on some and
+      rung 1 on others, so this covers more pairs than either fixed choice
+      while paying rung 1's extra cost only when rung 0 fails. `matcher` /
+      `rung` are ignored (SIFT rungs 0 then 1). config["rung"] reports the
+      rung whose result was kept and config["rungs_tried"] all that ran.
+
     Returns a dict with the MatchResult (as a dict, in original-pixel space whenever
     align=True) plus full metrics (rmse/inlier_stats/coverage) via metrics.evaluate.
     """
@@ -76,11 +98,26 @@ def run_pipeline(
         a = local_contrast_norm(a, sigma=contrast_sigma, downsample=lcn_downsample)
         b = local_contrast_norm(b, sigma=contrast_sigma, downsample=lcn_downsample)
 
-    if max(a.shape[:2]) > TILE_THRESHOLD_PX or max(b.shape[:2]) > TILE_THRESHOLD_PX:
-        result = match_tiled(a, b, matcher=matcher, rung=rung,
-                             tile_size=tile_size, overlap=tile_overlap)
+    def _match(r):
+        if max(a.shape[:2]) > TILE_THRESHOLD_PX or max(b.shape[:2]) > TILE_THRESHOLD_PX:
+            return match_tiled(a, b, matcher=matcher, rung=r,
+                               tile_size=tile_size, overlap=tile_overlap)
+        return run_match(a, b, matcher=matcher, rung=r)
+
+    rungs_tried = []
+    if cascade:
+        matcher = "sift"
+        result = None
+        for r in CASCADE_RUNGS:
+            candidate = _match(r)
+            rungs_tried.append(r)
+            if result is None or _fit_key(candidate) > _fit_key(result):
+                result, rung = candidate, r
+            if fit_reliability(result)["well_determined"]:
+                break
     else:
-        result = run_match(a, b, matcher=matcher, rung=rung)
+        result = _match(rung)
+        rungs_tried.append(rung)
 
     if align:
         m_a = original_pixel_transform(match_product_a, product_a)  # aligned_a_px -> a_px
@@ -105,5 +142,6 @@ def run_pipeline(
         "match_result": asdict(result),
         "product_a_id": product_a.product_id,
         "product_b_id": product_b.product_id,
-        "config": {"matcher": matcher, "rung": rung, "use_lcn": use_lcn, "align": align},
+        "config": {"matcher": matcher, "rung": rung, "use_lcn": use_lcn, "align": align,
+                   "rungs_tried": rungs_tried},
     }

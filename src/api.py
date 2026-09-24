@@ -93,6 +93,10 @@ def _load_synthetic_product(product_id: str) -> Product:
     return Product(array=warped, gsd_m=1.0, corners=dict(_SYNTHETIC_CORNERS),
                    source="SYNTH", product_id="synthetic_b")
 
+# Pseudo-rung requested by the UI's "Auto" option (see pipeline.run_pipeline cascade).
+AUTO_RUNG = -1
+
+
 class RegisterRequest(BaseModel):
     product_a: str
     product_b: str
@@ -338,7 +342,9 @@ def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str
             matcher = "lightglue"
 
         _set_stage(job_id, "aligning_and_matching")
-        out = run_pipeline(product_a, product_b, matcher=matcher, rung=rung, align=True)
+        # rung == AUTO_RUNG: SIFT first, rung 1 only if SIFT's fit is unreliable.
+        out = run_pipeline(product_a, product_b, matcher=matcher, rung=max(rung, 0), align=True,
+                           cascade=(rung == AUTO_RUNG))
         mr = out["match_result"]
         result = MatchResult(
             pts_a=mr["pts_a"], pts_b=mr["pts_b"], scores=mr["scores"],

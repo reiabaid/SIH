@@ -8,17 +8,18 @@ const API_BASE = import.meta.env.PROD ? '' : 'http://127.0.0.1:8000';
 // confidence thresholds or per-rung tuning exist in the backend, so none are
 // shown here.
 const RUNGS = [
+  { id: -1, name: 'Auto (recommended)', desc: 'Runs fast SIFT first; only if its fit is unreliable does it also try the Log-Gabor matcher and keeps the better result.' },
   { id: 0, name: 'Rung 0 · SIFT', desc: 'Raw-intensity SIFT baseline. Expected to collapse once sun-azimuth difference grows.' },
   { id: 1, name: 'Rung 1 · Log-Gabor MIM', desc: 'Log-Gabor Maximum Index Map (RIFT-style) descriptor: matches on which orientation channel dominates each pixel, so it tolerates independent sensor contrast differences.' },
   { id: 2, name: 'LightGlue', desc: 'Learned matcher (SuperPoint + LightGlue). Slowest option: minutes on full-size real pairs.' },
 ];
 
 export default function Screen01SelectPair({ onRunMatch }) {
-  // Default to rung 0 (SIFT): the faster matcher on real full-size pairs
+  // Default to Auto (SIFT, then Log-Gabor only if needed). Rung 0 is the faster matcher on real full-size pairs
   // (~25-45s end-to-end vs ~35s+ for rung 1; LightGlue takes minutes). Purely a
   // speed default -- rung 1 finds more matches on several pairs -- and
   // still user-changeable.
-  const [selectedRung, setSelectedRung] = useState(0);
+  const [selectedRung, setSelectedRung] = useState(-1);
 
   const safeFormat = (val, decimals) => {
     if (val === null || val === undefined || val === '') return 'N/A';
@@ -338,7 +339,7 @@ export default function Screen01SelectPair({ onRunMatch }) {
         <div className="text-xs font-mono text-slate-500 uppercase tracking-wide">
           SELECT MATCHER
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {RUNGS.map((r) => {
             const isSelected = selectedRung === r.id;
             return (
