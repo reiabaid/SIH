@@ -283,6 +283,55 @@ silently lose test coverage.
 
 ---
 
+## Status update — 2026-09-24
+
+**Lost work, redone.** A previous session's uncommitted work (CH2
+crop-before-decode, the memory fixes, its tests) was overwritten by a later git
+operation in the shared working directory and had to be rebuilt
+(`eeff428`). Commit each fix as soon as it is verified; do not batch.
+
+**CH2 crop-before-decode** (`overlap_hint` in `src/io_ch2.py`, wired into
+`src/api.py`, 7 tests in `tests/test_io_ch2.py`): a full CH2 decode plus
+`align_pair` OOM-killed a real registration under Docker Desktop's ~7.46 GB
+limit; cropping to the overlap removes that. Measured trade-off
+(`docs/research/ch2_crop_validation.json`): sift-rung0 flips
+`well_determined` True→False on 2 of 8 pairs (d32×M1519299970LE 22/16→15/4,
+d18×M1519299970LE 15/10→12/4) and False→True on one; rung 1 is unaffected.
+**Earlier notes here and in code comments blamed the crop-local min/max
+normalisation. That was wrong:** OHRC rasters are 8-bit and span 0–255, and
+re-running both flipped pairs with the whole-raster range gave identical
+inliers and unique-location counts (2026-09-24). The cause is unidentified;
+they may simply be borderline for SIFT. Not re-checked against a fresh
+full-decode run (needs ~7 GB), only against the recorded baseline.
+
+**Deliverable step:** `build_deliverable` 17.5 s → ~1.4 s on the real
+flagship pair (uncompressed GeoTIFF: LZW saved 2.5% for 4.5 s; overlay PNG is
+now a cropped, ≤4096 px preview, 214 MB → 1.7 MB). The registered GeoTIFF and
+match points are unchanged and full resolution.
+
+**Live pipeline stages:** `jobs.stage` (`loading_products` →
+`aligning_and_matching` → `writing_deliverable`) drives a stepper in
+`Screen02MatchReview.jsx`. Real per-stage timing, fresh d32×M1531872919LE:
+rung 0 24.4 s total, rung 1 34.6 s (130 inliers, 0.11 px residual — a
+self-consistency figure, not accuracy against ground truth); both measured
+before the overlay crop, which trims another ~5 s.
+
+**Catalog:** `src/catalog.py` answers "what overlaps this image?" from
+footprints only. `/candidates` ranks references (19 ms); `/overlap` no longer
+decodes either raster (it fully decoded the CH2 strip on every selection:
+~20 s and several GB → 8.5 ms). Screen01's hard-coded pair cards and their
+internal notes are replaced by these ranked suggestions. LRO footprints are
+recorded when a product is loaded; `scripts/ingest_catalog.py` covers ones
+never loaded.
+
+**Still open:** the Docker image has not been rebuilt or re-verified
+end-to-end with these fixes (Docker Desktop's memory must also be raised);
+nothing has been pushed to the remote; the new UI has not been checked in a
+real browser; tiled / coarse-to-fine registration (so a full raster is never
+in memory) is roadmap, not built; d18×M1499112398LE fails every matcher.
+
+---
+
 ## Definition of done for this plan
 
 - [x] A measured time breakdown exists for `run_pipeline` on at least one

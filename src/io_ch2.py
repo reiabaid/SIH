@@ -225,13 +225,16 @@ def _load_product_uncached(xml_path: str, overlap_hint: "Product | dict | None" 
         here -- in that case the crop still gets applied in-memory after a
         full read, which saves the returned array's size but not the I/O.
 
-        Known behavioural difference from an un-hinted load: contrast
-        normalisation below is fit to the *cropped* array's own min/max, not
-        the full raster's, so a cropped and an uncropped load of the same
-        product can differ slightly in overall brightness/contrast scaling
-        even where both cover the same physical ground. Validate against the
-        full real-pair inventory before relying on this for anything beyond
-        the two products actually being registered against each other.
+        Known effect on results (measured, cause not identified): in the
+        8-pair inventory, cropping flipped sift-rung0 well_determined
+        True -> False on two pairs (d32 x M1519299970LE 22/16 -> 15/4,
+        d18 x M1519299970LE 15/10 -> 12/4) and False -> True on one, with
+        rung 1 unaffected (docs/research/ch2_crop_validation.json).
+        Normalising against the crop's own min/max rather than the whole
+        raster's is NOT the cause: OHRC rasters are 8-bit and span 0-255, and
+        re-running both flipped pairs with the whole-raster range gave the
+        same inliers and unique-location counts (2026-09-24). Most likely
+        those two pairs are borderline for SIFT, but that is unproven.
 
     Raises
     ------

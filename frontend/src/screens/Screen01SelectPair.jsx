@@ -13,47 +13,11 @@ const RUNGS = [
   { id: 2, name: 'LightGlue', desc: 'Learned matcher (SuperPoint + LightGlue). Slowest option: minutes on full-size real pairs.' },
 ];
 
-// Recomputed against the real inventory after fixing a real corner-orientation
-// bug in io_lro.py: LRO's corners were extrapolated from a single SPICE point
-// assuming row 0 is always north, which was backwards for some real orbit
-// passes and made two footprints overlap on paper that don't overlap at all
-// in reality. All percentages below are post-fix, real geo.footprint_overlap
-// values -- see the align_pair/io_lro.py piecewise-alignment change. No LRO x
-// LRO pair overlaps at all, which is why the picker below only ever offers
-// CH2 on one side and LRO on the other.
-const KNOWN_PAIRS = [
-  {
-    ch2Match: 'd_img_d32', lroId: 'M1519299970LE',
-    label: 'd32 × M1519299970LE', overlapPct: '20.1%',
-    note: 'Verified this session through the full pipeline: 22 inliers, 15 unique locations, well_determined=True.',
-  },
-  {
-    ch2Match: 'd_img_d18', lroId: 'M1519299970LE',
-    label: 'd18 × M1519299970LE', overlapPct: '20.8%',
-    note: 'Real overlap (corrected geometry), not yet tried through the pipeline.',
-  },
-  {
-    ch2Match: 'd_img_d32', lroId: 'M1499112398LE',
-    label: 'd32 × M1499112398LE', overlapPct: '0%',
-    note: 'Corrected geometry shows this pair never actually overlapped -- the earlier "26.5%, 8 inliers" result was a false positive from the corner bug above. Registration will correctly fail now.',
-  },
-  {
-    ch2Match: 'd_img_d32', lroId: 'M1519292928LE',
-    label: 'd32 × M1519292928LE', overlapPct: '0%',
-    note: 'Confirmed no overlap (corrected geometry) -- registration will correctly fail.',
-  },
-  {
-    ch2Match: 'd_img_d32', lroId: 'M1164584053LE',
-    label: 'd32 × M1164584053LE', overlapPct: '0%',
-    note: 'Confirmed no overlap -- registration will correctly fail. Demonstrates the failure path.',
-  },
-];
-
 export default function Screen01SelectPair({ onRunMatch }) {
-  // Default to rung 0 (SIFT): measured this session as the fastest matcher on
-  // real full-resolution imagery (~13-50s tiled) -- mod-pi's per-keypoint
-  // Python descriptor loop runs ~130-180s, LightGlue ~190s on the same pair.
-  // Not a quality claim, purely a demo-speed default; still user-changeable.
+  // Default to rung 0 (SIFT): the faster matcher on real full-size pairs
+  // (~25-45s end-to-end vs ~35s+ for rung 1; LightGlue takes minutes). Purely a
+  // speed default -- rung 1 finds more matches on several pairs -- and
+  // still user-changeable.
   const [selectedRung, setSelectedRung] = useState(0);
 
   const safeFormat = (val, decimals) => {
@@ -119,12 +83,54 @@ export default function Screen01SelectPair({ onRunMatch }) {
   const ch2Products = useMemo(() => products.filter(p => !isSynthetic(p.product_id) && (p.product_id || '').toLowerCase().includes('ch2')), [products]);
   const lroProducts = useMemo(() => products.filter(p => !isSynthetic(p.product_id) && !(p.product_id || '').toLowerCase().includes('ch2')), [products]);
 
-  const applyKnownPair = (pair) => {
-    const ch2 = ch2Products.find(p => p.product_id.includes(pair.ch2Match));
-    const lro = lroProducts.find(p => p.product_id === pair.lroId);
-    if (ch2) setSelectedCh2(ch2);
-    if (lro) setSelectedLro(lro);
-  };
+  // Suggested references: rank the other instrument's images by footprint
+  // overlap with the chosen Chandrayaan-2 image (GET /candidates -- metadata
+  // only, no pixels decoded). Replaces a hard-coded list of pair cards.
+  const [candidates, setCandidates] = useState([]);
+  const [candidatesLoading, setCandidatesLoading] = useState(false);
+  const [candidatesNotIngested, setCandidatesNotIngested] = useState(0);
+  const [candidatesError, setCandidatesError] = useState(null);
+
+  useEffect(() => {
+    const isRealCh2 = selectedCh2 && !(selectedCh2.product_id || '').startsWith('synthetic_');
+    if (!isRealCh2) {
+      setCandidates([]);
+      setCandidatesNotIngested(0);
+      setCandidatesError(null);
+      return;
+    }
+    let cancelled = false;
+    setCandidatesLoading(true);
+    setCandidatesError(null);
+    fetch(`${API_BASE}/candidates?product_id=${encodeURIComponent(selectedCh2.product_id)}`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (cancelled) return;
+        setCandidates(data.candidates || []);
+        setCandidatesNotIngested(data.not_ingested || 0);
+        setCandidatesLoading(false);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        setCandidates([]);
+        setCandidatesError(`Could not load suggestions (${err.message}).`);
+        setCandidatesLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [selectedCh2]);
+
+  // Pre-select the best-overlapping reference unless the user's current pick
+  // is still a valid (overlapping) one.
+  useEffect(() => {
+    if (candidates.length === 0) return;
+    const stillValid = selectedLro && candidates.some(c => c.product_id === selectedLro.product_id);
+    if (stillValid) return;
+    const best = lroProducts.find(p => p.product_id === candidates[0].product_id);
+    if (best) setSelectedLro(best);
+  }, [candidates]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applySyntheticDemo = () => {
     const a = products.find(p => p.product_id === 'synthetic_a');
@@ -178,7 +184,7 @@ export default function Screen01SelectPair({ onRunMatch }) {
       <div>
         <h2 className="text-2xl font-display font-bold text-slate-100">Select an image pair</h2>
         <p className="text-sm text-slate-500 font-mono mt-0.5">
-          One ISRO Chandrayaan-2 product, one NASA LRO product -- no LRO x LRO pair in the inventory overlaps at all.
+          Pick a Chandrayaan-2 image; the catalog ranks the LRO reference images that overlap it, from footprint metadata alone.
         </p>
       </div>
 
@@ -224,37 +230,69 @@ export default function Screen01SelectPair({ onRunMatch }) {
             <span className="text-[10px] font-mono text-emerald-500 shrink-0 ml-4">SELECT →</span>
           </button>
 
-          {/* Known overlapping pairs -- recomputed against the real inventory
-              this session, see KNOWN_PAIRS comment above. */}
+          {/* Suggested references for the chosen Chandrayaan-2 image, ranked by
+              real footprint overlap from the backend catalog. */}
           <div className="space-y-2">
             <div className="text-xs font-mono text-slate-500 uppercase tracking-wide">
-              KNOWN REAL PAIRS (RECOMPUTED FROM REAL FOOTPRINT OVERLAP -- SLOW, FULL RESOLUTION)
+              SUGGESTED REFERENCE IMAGES{selectedCh2 && !isSynthetic(selectedCh2.product_id)
+                ? ` FOR ${selectedCh2.product_id.split('_').slice(-1)[0].toUpperCase()}` : ''}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {KNOWN_PAIRS.map((pair) => {
-                const isFailing = pair.overlapPct === '0%';
-                return (
-                  <button
-                    key={pair.label}
-                    onClick={() => applyKnownPair(pair)}
-                    className={`text-left p-3 rounded-md border transition ${
-                      isFailing
-                        ? 'bg-[#141414] border-red-900/60 hover:border-red-700'
-                        : 'bg-[#141414] border-[#2a2a2a] hover:border-cyan-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-semibold text-slate-200">{pair.label}</span>
-                      <Zap className={`w-3.5 h-3.5 shrink-0 ${isFailing ? 'text-red-500' : 'text-cyan-500'}`} />
-                    </div>
-                    <div className={`text-[10px] font-mono mt-1 ${isFailing ? 'text-red-400' : 'text-emerald-500'}`}>
-                      overlap: {pair.overlapPct}
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-1 leading-snug">{pair.note}</div>
-                  </button>
-                );
-              })}
-            </div>
+            {!selectedCh2 || isSynthetic(selectedCh2.product_id) ? (
+              <div className="text-xs font-mono text-slate-600 border border-dashed border-[#2a2a2a] rounded-md p-4">
+                Select a Chandrayaan-2 image below and the catalog will list the LRO images whose footprints overlap it.
+              </div>
+            ) : candidatesLoading ? (
+              <div className="flex items-center text-xs font-mono text-slate-500 p-4">
+                <Loader2 className="w-4 h-4 animate-spin text-cyan-500 mr-2" /> Ranking overlapping references...
+              </div>
+            ) : candidatesError ? (
+              <div className="text-xs font-mono text-red-400 border border-red-900/60 rounded-md p-4">{candidatesError}</div>
+            ) : candidates.length === 0 ? (
+              <div className="text-xs font-mono text-amber-400 border border-amber-900/60 rounded-md p-4">
+                No catalogued LRO image overlaps this footprint.
+                {candidatesNotIngested > 0 && ` ${candidatesNotIngested} image(s) have no footprint recorded yet (run scripts/ingest_catalog).`}
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {candidates.map((c, idx) => {
+                    const isPicked = selectedLro?.product_id === c.product_id;
+                    return (
+                      <button
+                        key={c.product_id}
+                        onClick={() => {
+                          const p = lroProducts.find(x => x.product_id === c.product_id);
+                          if (p) setSelectedLro(p);
+                        }}
+                        className={`text-left p-3 rounded-md border transition ${
+                          isPicked ? 'bg-blue-950/40 border-blue-500' : 'bg-[#141414] border-[#2a2a2a] hover:border-blue-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-xs font-semibold text-slate-200">{c.product_id}</span>
+                          {idx === 0 && <span className="text-[9px] font-mono text-emerald-400 border border-emerald-800 rounded px-1">BEST</span>}
+                        </div>
+                        <div className="text-[10px] font-mono mt-1 text-emerald-500">
+                          covers {c.overlap_percent}% of the CH2 image
+                        </div>
+                        <div className="text-[10px] font-mono text-slate-500">
+                          {c.candidate_covered_percent}% of this reference lies inside it
+                        </div>
+                        <div className="text-[10px] font-mono text-slate-600 mt-1">
+                          {c.acquired_utc ? String(c.acquired_utc).slice(0, 10) : 'date n/a'}
+                          {' · '}sun incidence {safeFormat(c.incidence_deg, 1) !== 'N/A' ? `${safeFormat(c.incidence_deg, 1)}°` : 'n/a'}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                {candidatesNotIngested > 0 && (
+                  <div className="text-[10px] font-mono text-slate-600">
+                    {candidatesNotIngested} catalogued image(s) have no footprint recorded yet and are not ranked (run scripts/ingest_catalog).
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

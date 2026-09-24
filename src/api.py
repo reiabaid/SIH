@@ -24,6 +24,7 @@ from src.types import MatchResult, Product
 from src.geo import footprint_overlap
 import src.io_lro as io_lro
 import src.io_ch2 as io_ch2
+import src.catalog as catalog
 from tests.make_synthetic import make_synthetic_pair
 
 app = FastAPI(title="LunarMatch API", description="API and Job Store for Member 5")
@@ -51,6 +52,7 @@ if os.path.isdir("demo"):
 
 DB_PATH = "jobs.db"
 PRODUCT_CACHE = {}
+PRODUCT_META = {}  # product_id -> its inventory CSV row (metadata only)
 
 # A fast synthetic pair for demo purposes -- the real CH2 x LRO pairs take
 # minutes (huge full-resolution rasters, real SPICE lookups); this runs the
@@ -191,6 +193,7 @@ def _resolve_ch2_label_path(base_dir: Path, rel_path: str) -> "str | None":
 def load_inventory():
     global PRODUCT_CACHE
     PRODUCT_CACHE.clear()
+    PRODUCT_META.clear()
     for spec, row in _iter_inventory_rows():
         pid = row.get("product_id")
         rel_path = row.get(spec["path_col"])
@@ -203,6 +206,7 @@ def load_inventory():
             resolved = str((spec["base_dir"] / rel_path).as_posix())
         if resolved:
             PRODUCT_CACHE[pid] = resolved
+            PRODUCT_META[pid] = dict(row)
     for sid in SYNTHETIC_IDS:
         PRODUCT_CACHE[sid] = "SYNTHETIC"
 
@@ -239,18 +243,41 @@ def compute_overlap(req: OverlapRequest):
     if not path_a or not path_b:
         raise HTTPException(status_code=400, detail="One or both products not found")
 
-    try:
-        product_a = load_product_dynamically(req.product_a, path_a)
-        product_b = load_product_dynamically(req.product_b, path_b)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to load products: {e}")
-
-    overlap_frac = footprint_overlap(product_a, product_b)
+    # Footprints only -- decoding both rasters just to compare four corners
+    # each meant a multi-GB CH2 decode on every pair selection in the UI.
+    # Falls back to loading the products only when a footprint isn't known
+    # yet (a synthetic product, or an LRO product never loaded before).
+    fp_a = None if req.product_a in SYNTHETIC_IDS else catalog.footprint(req.product_a, path_a)
+    fp_b = None if req.product_b in SYNTHETIC_IDS else catalog.footprint(req.product_b, path_b)
+    if fp_a is not None and fp_b is not None:
+        overlap_frac, _ = catalog.overlap_fractions(fp_a["corners"], fp_b["corners"])
+    else:
+        try:
+            product_a = load_product_dynamically(req.product_a, path_a)
+            product_b = load_product_dynamically(req.product_b, path_b)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to load products: {e}")
+        overlap_frac = footprint_overlap(product_a, product_b)
     return {
         "product_a": req.product_a,
         "product_b": req.product_b,
         "overlap_percent": round(overlap_frac * 100, 1),
     }
+
+
+@app.get("/candidates")
+def get_candidates(product_id: str):
+    """Rank images of the other instrument by footprint overlap with
+    `product_id` -- metadata only, no pixels decoded. `not_ingested` counts
+    products whose footprint isn't known yet (an LRO product that has never
+    been loaded), so a short list is never mistaken for a complete one.
+    """
+    if product_id not in PRODUCT_CACHE or product_id in SYNTHETIC_IDS:
+        raise HTTPException(status_code=404, detail="Product not found in inventory")
+    inventory = {pid: {"path": path, **PRODUCT_META.get(pid, {})}
+                 for pid, path in PRODUCT_CACHE.items()}
+    candidates, not_ingested = catalog.rank_candidates(product_id, inventory)
+    return {"product_id": product_id, "candidates": candidates, "not_ingested": not_ingested}
 
 
 def load_product_dynamically(product_id: str, path: str, overlap_hint=None):
@@ -288,10 +315,11 @@ def process_job_sync(job_id: str, id_a: str, path_a: str, id_b: str, path_b: str
         # decode + align_pair OOM-crashes (exit 137) a real registration
         # under Docker Desktop's default ~7.46GB limit, while cropping brings
         # peak RSS down to a safe margin. Known trade-off, accepted as the
-        # lesser evil versus a hard crash: cropped contrast normalization
-        # can flip well_determined on a small number of real pairs (2/8 in
-        # the validated inventory, see docs/WORK_DIVISION_PLAN.md and
-        # docs/research/ch2_crop_validation.json).
+        # lesser evil versus a hard crash: cropping flipped sift-rung0
+        # well_determined on 2 of 8 real pairs (and improved one). It is not
+        # the crop-local normalisation -- isolated and ruled out -- so the
+        # cause is unidentified; see io_ch2.load_product and
+        # docs/research/ch2_crop_validation.json.
         a_is_ch2 = "ch2" in id_a.lower() and id_a not in SYNTHETIC_IDS
         b_is_ch2 = "ch2" in id_b.lower() and id_b not in SYNTHETIC_IDS
         if a_is_ch2 and not b_is_ch2:

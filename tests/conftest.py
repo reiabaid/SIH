@@ -17,6 +17,7 @@
 import pytest
 
 import src.align_cache as align_cache
+import src.catalog as catalog
 import src.product_cache as product_cache
 
 
@@ -32,3 +33,4 @@ def isolate_disk_caches(tmp_path, monkeypatch):
     """
     monkeypatch.setattr(align_cache, "CACHE_DIR", str(tmp_path / "align_pairs"))
     monkeypatch.setattr(product_cache, "CACHE_DIR", str(tmp_path / "products"))
+    monkeypatch.setattr(catalog, "FOOTPRINT_DIR", str(tmp_path / "footprints"))

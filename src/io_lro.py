@@ -494,7 +494,16 @@ def load_product(path: str) -> Product:
     WebGeocalc network round-trips), so a repeat load of the same product
     skips the network entirely after the first.
     """
-    return cached_load(path, lambda: _load_product_uncached(path))
+    product = cached_load(path, lambda: _load_product_uncached(path))
+    # Record the footprint so src/catalog.py can rank overlapping images
+    # without decoding this raster again. Best-effort: never fail a load
+    # over catalog bookkeeping.
+    try:
+        from src.catalog import record_footprint
+        record_footprint(path, product)
+    except Exception:
+        pass
+    return product
 
 
 def _load_product_uncached(path: str) -> Product:
