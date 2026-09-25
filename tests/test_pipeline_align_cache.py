@@ -159,7 +159,7 @@ def test_tiling_decision_is_consistent_across_cold_and_warm_cache(monkeypatch):
     """
     tiled_calls = []
 
-    def stub_tiled(a, b, matcher="sift", rung=0, tile_size=None, overlap=None):
+    def stub_tiled(a, b, matcher="sift", rung=0, tile_size=None, overlap=None, **_options):
         tiled_calls.append(a.shape)
         return _stub_match(a, b, matcher=matcher, rung=rung)
 
