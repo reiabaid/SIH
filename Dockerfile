@@ -35,4 +35,9 @@ RUN python scripts/precompute_demo.py
 
 EXPOSE 8000
 
-CMD ["uvicorn", "src.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# entrypoint.sh: runs ingest_catalog once on first boot (NAIF WebGeocalc calls at runtime,
+# not build time), then starts the server.
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
